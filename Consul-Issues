@@ -1,0 +1,4 @@
+1. Discrepancy Between Service Intentions and Topology View in HCP Consul UI.
+Details: version: 1.16.2, Dev tier HCP Consul cluster
+Document followed: https://developer.hashicorp.com/consul/tutorials/get-started-hcp/hcp-gs-deploy
+Fix: 
