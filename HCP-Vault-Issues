@@ -2,3 +2,7 @@
 Error: "Vault error: error performing token check: no lease entry found for token that ought to have one, possible eventual consistency issue"
 Fix: https://support.hashicorp.com/hc/en-us/articles/30036903752211-Resolving-Vault-error-error-performing-token-check-in-HCP-Vault-Dedicated-Cluster
      https://developer.hashicorp.com/vault/docs/configuration/replication#allow_forwarding_via_token
+
+2. HCP Vault dedicated Splunk integration issue
+Error: Incorrect HEC endpoint provided ("HEC endpoint must be in valid format") + splunk integration done during cluster upgrade
+Fix: Provided correct endpoint details
