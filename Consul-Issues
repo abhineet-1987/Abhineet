@@ -2,4 +2,4 @@
 Details: version: 1.16.2, Dev tier HCP Consul cluster
 Document followed: https://developer.hashicorp.com/consul/tutorials/get-started-hcp/hcp-gs-deploy
 https://registry.terraform.io/providers/hashicorp/hcp/latest/docs/resources/consul_cluster#min_consul_version
-Fix: Topology view in consul UI shows the services and their dependencies defined in upstream section of the sidecar service config definition and not from the Intentions. I am trying to replicate it th
+Fix: Topology view in consul UI shows the services and their dependencies defined in upstream section of the sidecar service config definition and not from the Intentions. 
