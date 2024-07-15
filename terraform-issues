@@ -1,0 +1,13 @@
+1. Azurerm provider is case sensitive while Azure is case insensitive, hence while running terraform apply, it was considering to create a new resource but azure considering the same name, giving error that resource already exists
+2. Getting error "Error: unable to build authorizer for Resource Manager API: could not configure AzureCli Authorizer: could not parse Azure CLI version: launching Azure CLI: exec: "az": executable file not found in $PATH"
+Resolution: Below vaules were not set:
+ARM_CLIENT_ID=xxxxxxxxxxxxxx
+ARM_CLIENT_SECRET=xxxxxxxxxxxxxx
+ARM_SUBSCRIPTION_ID=xxxxxxxxxxxxx
+ARM_TENANT_ID=xxxxxxxxxxxxxx
+3. Issue writing Terraform code to create a load balancer in GCP
+Cause: instance = "${google_compute_instance.gcpkeeperd1.self_link}"
+This is returning a link, not a name.
+Solution:instance = "${google_compute_instance.gcpkeeperd1.name}"
+network_endpoint_group = "${google_compute_network_endpoint_group.keeper-backend-1.name}"
+https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network_endpoint.html
