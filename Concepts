@@ -1,0 +1,16 @@
+12 factor app concepts:-
+ Portability: Apps should not be tightly coupled to underlying infra, hence cloud. (modern cloud platforms), Scalability, Continuous deployment
+
+1. Codebase : git, github, gitlab, bitbucket
+2. Dependencies : External modules/packages required for applications
+3. Concurrency: Load balancing + Horizontal scaling (Vertical scaling needs application downtime)
+4. Processes: Stateless and share nothing. LBs have the concept of sticky sessions to make the setup session aware, but this violates the rule of stateless concept. So conceptually it is better to store session data externally rather on the VMs
+              or instances where application is running. We can store them in some DB or Caching service (eg redis)
+5. Backing Service
+6. Config: Use of environment variables for different environments
+7. Build, Release and Run: Build -> Allow end user to run application (Linux->binary file, Windows->exe, docker images). Release = build output + env file (config file). Run the release
+8. Port binding
+9. Disposability: Dispose of the resources when not required (Scale down instances)
+10. Dev prod parity : Continuous integration
+11. Logs : Use centralized logging solutions for eg Fuentd, splunk, ELK
+12. Admin Processes: Administrative tasks such as DB migration, server restarts should be kept separate from Application processes
