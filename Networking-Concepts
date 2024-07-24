@@ -1,0 +1,36 @@
+Common network errors:-
+1.Packet loss
+ping -c 5 google.com
+mtr
+2. Latency
+3. DNS issue
+nslookup google.com
+4. Network Interface error : problems with NICs (network interface cards)
+
+Network error codes:
+4xx client errors, 
+401: Unauthorized
+403: Forbidden
+404: Not found
+5xx server errors
+500: Internal server error
+502: Bad Gateway
+503: Service Unavialable
+504: Gateway timeout
+Note:- 1xx informational response, 2xx success, 3xx redirection
+
+
+Application level network errors:
+1. Time out errors
+2. Connection refused
+3. I/O timeout
+4. Broken pipe
+5. Network could not be establish
+6. DNS resolution failed
+
+Troubleshooting tools:
+ping and traceroute
+netsat
+tcpdump
+nslookup and dig
+wireshark tool -> *.pcap files, statistics->conversations, DynamiteLab open source tool to visualize pcap files.
