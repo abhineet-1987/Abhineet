@@ -1,0 +1,10 @@
+sudo yum install -y sqlite
+Navigate to the directory where your clicks.db file is located and run:
+sqlite3 clicks.db
+You’ll see a prompt like:
+>sqlite
+sqlite> SELECT * FROM click_counter;
+1|7
+To exit, run:
+sqlite>.quit
+To reset the clicks count run : sqlite3 clicks.db "UPDATE click_counter SET count = 0 WHERE id = 1;"
