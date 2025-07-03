@@ -1,0 +1,27 @@
+Amazon Linux Ec2 instance:
+
+sudo yum update -y
+sudo yum install -y python3
+sudo python3 -m ensurepip
+sudo python3 -m pip install --upgrade pip
+pip3 --version
+pip3 install Flask
+
+cat t.py
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return "<h1>Hello from Flask Web Server!</h1>"
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+
+
+Run web server in background:
+nohup python3 t.py > t.log 2>&1 &
+
+On your laptop open web browser and type http://<public-ip-ec2>:5000 , hello world web page opens up !!!!!!
+
