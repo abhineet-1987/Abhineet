@@ -31,3 +31,6 @@ acl {
     agent  = "189be838-4b4c-3671-95e3-dfc57b433e6b"
   }
 }
+connect = {
+  enabled = true
+}
