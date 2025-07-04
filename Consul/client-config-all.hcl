@@ -27,6 +27,7 @@ auto_encrypt {
 }
 acl {
   enabled = true
+  default_policy = "deny"
   tokens {
     agent  = "189be838-4b4c-3671-95e3-dfc57b433e6b"
   }
