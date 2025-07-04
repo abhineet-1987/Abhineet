@@ -38,3 +38,6 @@ acl = {
   down_policy    = "extend-cache"
   enable_token_persistence = true
 }
+connect = {
+  enabled = true
+}
