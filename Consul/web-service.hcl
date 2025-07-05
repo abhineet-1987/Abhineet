@@ -18,4 +18,11 @@ service {
       }
     }
   }
+check = {
+        id = "web-healthcheck"
+        name = "Check web on port 5000"
+        tcp = "localhost:5000"
+        interval = "10s"
+        timeout = "1s"
+    }
 }
