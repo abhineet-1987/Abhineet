@@ -1,3 +1,6 @@
 consul connect proxy -sidecar-for client1        #client1 is the id of the service defined in service definition file
 nohup consul connect proxy -sidecar-for client1 > web-sidecar.log 2>&1 &      #to run sidecar proxy in backend
 #Please note that if you run above command with output file redirected in /etc/consul.d folder, you may get issue and proxy may not start, hence you may chnage the path
+
+To register services:
+consul services register service-file.hcl
