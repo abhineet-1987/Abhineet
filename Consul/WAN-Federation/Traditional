@@ -1,3 +1,4 @@
+If ACLs are enabled or you are using Consul Enterprise, you must set the primary_datacenter in the server's configuration in both datacenters.
 ####################  DC1 #####################
 [ec2-user@ip-172-31-2-135 consul.d]$ cat consul.hcl
 datacenter = "dc1"
