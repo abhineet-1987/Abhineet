@@ -12,6 +12,26 @@ bind_addr = "0.0.0.0"
 advertise_addr = "172.31.2.135"
 bootstrap_expect = 1
 retry_join_wan = ["172.31.11.196"]
+
+-------
+With ACLs enabled:
+[ec2-user@ip-172-31-2-135 consul.d]$ cat consul.hcl
+datacenter = "dc1"
+primary_datacenter = "dc1"
+data_dir = "/opt/consul"
+ui_config{
+  enabled = true
+}
+server = true
+client_addr = "0.0.0.0"
+bind_addr = "0.0.0.0"
+advertise_addr = "172.31.2.135"
+bootstrap_expect = 1
+retry_join_wan = ["172.31.11.196"]
+acl = {
+  enabled        = true
+  default_policy = "allow"
+}
 ################# DC2 ###########################
 [ec2-user@ip-172-31-11-196 consul.d]$ cat consul.hcl
 datacenter = "dc2"
@@ -25,5 +45,25 @@ bind_addr = "0.0.0.0"
 advertise_addr = "172.31.11.196"
 bootstrap_expect = 1
 retry_join_wan = ["172.31.2.135"]
+
+-----------
+With ACLs enabled:
+[ec2-user@ip-172-31-11-196 consul.d]$ cat consul.hcl
+datacenter = "dc2"
+primary_datacenter = "dc1"
+data_dir = "/opt/consul"
+ui_config{
+  enabled = true
+}
+server = true
+client_addr = "0.0.0.0"
+bind_addr = "0.0.0.0"
+advertise_addr = "172.31.11.196"
+bootstrap_expect = 1
+retry_join_wan = ["172.31.2.135"]
+acl = {
+  enabled        = true
+  default_policy = "allow"
+}
 ##############################################
 consul members -wan
