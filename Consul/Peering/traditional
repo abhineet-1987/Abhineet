@@ -1,0 +1,76 @@
+https://developer.hashicorp.com/consul/docs/east-west/cluster-peering/establish/vm
+
+1. Create a peering token in one cluster i.e Cluster1
+consul peering generate-token -name cluster2    # run on cluster1
+consul services register -name=web    #Create service web on Cluster1 for testing
+consul catalog services
+
+2. Use the peering token to establish peering with a second cluster i.e Cluster2
+consul peering establish -name cluster1 -peering-token <peering-token-value>   # Run on cluster2
+consul services register -name=web2    #Create service web2 on Cluster2 for testing
+
+3. Export services between clusters.
+[ec2-user@ip-172-31-2-207 consul.d]$ cat peering-config.hcl           # create on cluster1
+
+Kind = "exported-services"
+Name = "default"
+Services = [
+  {
+    ## The name and namespace of the service to export.
+    Name      = "web"
+    Namespace = "default"
+
+    ## The list of peer clusters to export the service to.
+    Consumers = [
+      {
+        ## The peer name to reference in config is the one set
+        ## during the peering process.
+        Peer = "cluster2"
+      }
+    ]
+  }
+]
+
+consul config write peering-config.hcl   # execute on cluster 1
+
+4. Create intentions to authorize services for peers.
+[ec2-user@ip-172-31-2-207 consul.d]$ cat peering-intentions.hcl       # create on cluster1
+
+Kind      = "service-intentions"
+Name      = "web"
+
+Sources = [
+  {
+    Name   = "web2"
+    Peer   = "cluster2"
+    Action = "allow"
+  }
+]
+
+consul config write peering-intentions.hcl   # execute on cluster 1
+
+
+####### Cluster 1 #########
+[ec2-user@ip-172-31-2-207 consul.d]$ cat consul.hcl
+datacenter = "cluster1"
+data_dir = "/opt/consul"
+ui_config{
+  enabled = true
+}
+server = true
+client_addr = "0.0.0.0"
+bind_addr = "0.0.0.0"
+advertise_addr = "172.31.2.207"
+bootstrap_expect = 1
+######### Cluster 2 #########
+[ec2-user@ip-172-31-0-14 consul.d]$ cat consul.hcl
+datacenter = "cluster2"
+data_dir = "/opt/consul"
+ui_config{
+  enabled = true
+}
+server = true
+client_addr = "0.0.0.0"
+bind_addr = "0.0.0.0"
+advertise_addr = "172.31.0.14"
+bootstrap_expect = 1
