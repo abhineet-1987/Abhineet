@@ -1,5 +1,6 @@
 If ACLs are enabled or you are using Consul Enterprise, you must set the primary_datacenter in the server's configuration in both datacenters.
 The primary_datacenter parameter sets the primary datacenter to have authority for all ACL information. You should also set this parameter on the Consul clients, so that the they can forward API requests to the servers.
+The retry_join_wan addresses are only used for the traditional federation process. They must be omitted when federating Consul servers via gateways.
 ####################  DC1 #####################
 Without ACLs enabled:
 [ec2-user@ip-172-31-2-135 consul.d]$ cat consul.hcl
