@@ -1,0 +1,15 @@
+To configure and start any of the Gateways :-
+
+1. Create configuration entry in .hcl file and apply it using "consul config write" command.
+2. Start and register the gateway as a service using single command for eg:-
+consul connect envoy -gateway=ingress -register -service ingress-service -address '{{ GetInterfaceIP "eth0" }}:8888'
+
+Explanation of the command:-
+This command is used to start an Envoy process as a Consul ingress gateway, and register it with Consul automatically.
+"consul connect envoy"	-> Starts an Envoy proxy that integrates with Consul Connect (service mesh).
+"-gateway=ingress"  -> 	Tells Consul this Envoy proxy will act as an ingress gateway. This allows external traffic to enter the mesh.
+"-register" ->	Automatically registers the gateway as a service in Consul. You don’t need a separate service definition file.
+"-service ingress-service" ->	The name of the Consul service under which this gateway is registered. Consul will create this service entry.
+"-address '{{ GetInterfaceIP "eth0" }}:8888'" ->	Sets the IP address and port the gateway listens on. This uses a Go template to get the IP of the eth0 interface dynamically, and listens on port 8888.
+
+In Consul, every gateway type — whether it's ingress, egress (API), terminating, or mesh — must be registered as a service in Consul.
