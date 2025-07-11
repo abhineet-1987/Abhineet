@@ -1,0 +1,16 @@
+#https://developer.hashicorp.com/consul/docs/east-west/mesh-gateway/cluster-peer#configuration
+
+Enable control plane traffic between cluster peers with Mesh Gateways.
+Set the PeerThroughMeshGateways parameter to true to route peering control plane traffic through mesh gateways.
+Connect proxy configuration Modes are not applicable to peering control plane traffic. 
+The flow of control plane traffic through the gateway is implied by the presence of a Mesh config entry with PeerThroughMeshGateways = true.
+------------
+Kind = "mesh"
+Peering {
+   PeerThroughMeshGateways = true
+}
+--------------
+By setting this mesh config on a cluster before creating a peering token, inbound control plane traffic will be sent through the mesh gateway registered this cluster, also known the accepting cluster. 
+As mesh gateway instances are registered at the accepting cluster, their addresses will be exposed to the dialing cluster over the bi-directional peering stream.
+Setting this mesh config on a cluster before establishing a connection will cause the outbound control plane traffic to flow through the mesh gateway.
+To route all peering control plane traffic though mesh gateways, both the accepting and dialing cluster must have the mesh config entry applied.
