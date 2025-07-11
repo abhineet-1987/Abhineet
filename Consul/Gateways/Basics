@@ -13,3 +13,4 @@ This command is used to start an Envoy process as a Consul ingress gateway, and 
 "-address '{{ GetInterfaceIP "eth0" }}:8888'" ->	Sets the IP address and port the gateway listens on. This uses a Go template to get the IP of the eth0 interface dynamically, and listens on port 8888.
 
 In Consul, every gateway type — whether it's ingress, egress (API), terminating, or mesh — must be registered as a service in Consul.
+Envoy is the only proxy with mesh gateway capabilities in Consul.
