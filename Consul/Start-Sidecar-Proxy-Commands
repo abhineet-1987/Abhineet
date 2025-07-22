@@ -3,7 +3,11 @@ nohup consul connect proxy -sidecar-for client1 > web-sidecar.log 2>&1 &      #t
 #Please note that if you run above command with output file redirected in /etc/consul.d folder, you may get issue and proxy may not start, hence you may change the path
 
 #To start Envoy sidecar proxy:
-/usr/bin/consul connect envoy -token=${CONSUL_HTTP_TOKEN} -envoy-binary /usr/bin/envoy -sidecar-for hashicups-frontend-0 > /tmp/sidecar-proxy.log 2>&1 &
+consul connect envoy -token=${CONSUL_HTTP_TOKEN} -envoy-binary /usr/local/bin/envoy -sidecar-for client1 > /tmp/sidecar-proxy.log 2>&1 &
+consul connect envoy \
+   -token=${CONSUL_HTTP_TOKEN} \
+  -envoy-binary /usr/local/bin/envoy \
+  -sidecar-for client1 > /tmp/sidecar-proxy.log 2>&1 &
 
 
 #To register services:
