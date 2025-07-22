@@ -8,3 +8,11 @@ nohup consul connect proxy -sidecar-for client1 > web-sidecar.log 2>&1 &      #t
 
 #To register services:
 consul services register service-file.hcl
+
+######## Important Concepts ############
+How does Consul know to use Envoy instead of the built-in proxy?
+Consul determines the proxy type based on how you launch the sidecar.
+
+For eg :-
+consul connect proxy -sidecar-for client1     # You use Consul built in proxy to run the sidecar service.
+consul connect envoy -sidecar-for client1     # You run the Envoy proxy manually to run the sidecar service.
