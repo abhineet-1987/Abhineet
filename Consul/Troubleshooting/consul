@@ -1,0 +1,18 @@
+# https://developer.hashicorp.com/consul/commands/debug#examples
+
+consul members
+consul operator raft list-peers
+consul monitor
+consul validate /etc/consul.d/counting.json(.hcl)
+consul debug
+
+tar -xvf consul-debug-2025-07-23T05-15-46Z.tar.gz
+
+Health Checks of Services:
+curl "http://127.0.0.1:8500/v1/agent/services"
+curl 'http://localhost:8500/v1/health/service/web?passing'
+
+dig @127.0.0.1 -p 8600 web.service.consul
+dig @127.0.0.1 -p 8600 db.service.consul
+dig @127.0.0.1 -p 8600 web.service.consul SRV   #we can get port on which service is listening using SRV 
+dig @127.0.0.1 -p 8600 db.service.consul  SRV
