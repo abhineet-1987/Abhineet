@@ -1,0 +1,3 @@
+# https://support.hashicorp.com/hc/en-us/articles/4409691756563-Accessing-and-Setting-Envoy-Logs-for-Consul
+# To run envoy sidecar proxy in debug mode
+consul connect envoy -token=${CONSUL_HTTP_TOKEN} -envoy-binary /usr/local/bin/envoy -sidecar-for client1 -- -l debug > /tmp/sidecar-proxy.log 2>&1 &
