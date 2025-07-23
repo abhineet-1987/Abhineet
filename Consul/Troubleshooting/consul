@@ -17,3 +17,5 @@ dig @127.0.0.1 -p 8600 web.service.consul
 dig @127.0.0.1 -p 8600 db.service.consul
 dig @127.0.0.1 -p 8600 web.service.consul SRV   #we can get port on which service is listening using SRV 
 dig @127.0.0.1 -p 8600 db.service.consul  SRV
+
+# Enable audit logs -> Consul ENTERPRISE feature, refer https://developer.hashicorp.com/consul/docs/monitor/log/audit
