@@ -1,0 +1,57 @@
+# https://developer.hashicorp.com/consul/docs/north-south/ingress-gateway/vm
+# https://developer.hashicorp.com/consul/docs/north-south/ingress-gateway/vm#register-an-ingress-service-on-envoy-startup
+# https://developer.hashicorp.com/consul/docs/reference/config-entry/ingress-gateway#examples
+
+[ec2-user@ip-172-31-9-104 consul.d]$ cat consul.hcl
+node_name = "ingress-server"
+datacenter = "ingress-dc1"
+data_dir = "/opt/consul"
+ui_config{
+  enabled = true
+}
+server = true
+client_addr = "0.0.0.0"
+bind_addr = "0.0.0.0"
+advertise_addr = "172.31.9.104"
+bootstrap_expect=1
+acl = {
+  enabled        = true
+}
+connect = {
+  enabled = true
+}
+ports = {
+  grpc = 8502
+}
+--------------------------------------------
+consul acl bootstrap
+export CONSUL_HTTP_TOKEN=xxxxxxxxxxx
+
+###################  configuration entry for ingress gateway - public-ingress.hcl   ##########
+Kind = "ingress-gateway"
+Name = "us-east-ingress"
+
+Listeners = [
+  {
+    Port     = 3456
+    Protocol = "tcp"
+    Services = [
+      {
+        Name = "db"
+      }
+    ]
+  }
+]
+###########################
+consul config write public-ingress.hcl
+consul config read -kind ingress-gateway -name us-east-ingress
+consul services register -name=db
+consul catalog services
+
+consul connect envoy -gateway=ingress -register  -service us-east-ingress  -address "172.31.9.104:8888"  # Note: Keep ingress gateway name same as given in configuration entry for ge here it is us-east-ingress 
+
+
+
+
+
+
