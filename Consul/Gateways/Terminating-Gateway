@@ -1,2 +1,28 @@
 # https://developer.hashicorp.com/consul/docs/reference/config-entry/terminating-gateway
 # https://developer.hashicorp.com/consul/tutorials/connect-services/terminating-gateway
+# https://developer.hashicorp.com/consul/commands/connect/envoy
+
+Create service definition for external service "billing"
+############# billing.hcl ######
+service {
+    id = "client1"
+    name = "billing"
+  }
+#################
+consul services register billing.hcl
+############# terminating.hcl  #########
+Kind = "terminating-gateway"
+Name = "us-west-gateway"
+
+Services = [
+  {
+    Name = "billing"
+  }
+]
+###############################
+consul config write terminating.hcl
+# Assuming fake "db" service already created
+
+consul connect envoy -gateway=terminating -register -service us-west-gateway -address "172.31.9.104:8443"     # Note- name of terminating gateway service should match with name of terminating gateway configuration entry eg in this case "us-west-gateway"
+
+Create intention from fake "db" service to "billing" service
