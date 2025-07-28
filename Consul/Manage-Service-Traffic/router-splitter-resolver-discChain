@@ -1,2 +1,101 @@
 # https://developer.hashicorp.com/consul/api-docs/discovery-chain
 # https://developer.hashicorp.com/consul/docs/reference/config-entry/service-router#examples
+# https://developer.hashicorp.com/consul/docs/reference/config-entry/service-resolver#examples
+# https://developer.hashicorp.com/consul/docs/reference/config-entry/service-splitter#examples
+
+Create dummy service "web" with 2 versions v1 and v2 as and "admin" service  :-
+###############
+[ec2-user@ip-172-31-9-104 consul.d]$ cat web-v1.hcl
+service {
+    id = "web-v1"
+    name = "web"
+    meta = {
+    version = "v1"
+  }
+  }
+[ec2-user@ip-172-31-9-104 consul.d]$ cat web-v2.hcl
+service {
+    id = "web-v2"
+    name = "web"
+    meta = {
+    version = "v2"
+  }
+  }
+#######################
+consul services register web-v1.hcl
+consul services register web-v2.hcl
+consul services register -name admin
+consul catalog services
+
+Create Service default configuration entry for "web" and "admin" to define protocol to be used for eg http , beacuse by default tcp is used which does not support advanced service routing.
+###############
+[ec2-user@ip-172-31-9-104 consul.d]$ cat service-default-web.hcl
+Kind = "service-defaults"
+Name = "web"
+
+Protocol = "http"
+
+[ec2-user@ip-172-31-9-104 consul.d]$ cat service-default-admin.hcl
+Kind = "service-defaults"
+Name = "admin"
+
+Protocol = "http"
+#######################
+consul config write service-default-web.hcl
+consul config write service-default-admin.hcl
+
+Create Service router 
+##################
+[ec2-user@ip-172-31-9-104 consul.d]$ cat service-router.hcl
+Kind = "service-router"
+Name = "web"
+Routes = [
+  {
+    Match {
+      HTTP {
+        PathPrefix = "/admin"
+      }
+    }
+
+    Destination {
+      Service = "admin"
+    }
+  },
+]
+############################
+consul config write service-router.hcl
+
+Create service resolver config entry:-
+################################
+[ec2-user@ip-172-31-9-104 consul.d]$ cat service-resolver.hcl
+Kind          = "service-resolver"
+Name          = "web"
+DefaultSubset = "v1"
+Subsets = {
+  v1 = {
+    Filter = "Service.Meta.version == v1"
+  }
+  v2 = {
+    Filter = "Service.Meta.version == v2"
+  }
+}
+###################################
+consul config write service-resolver.hcl
+
+Create service splitter config entry:-
+################################
+[ec2-user@ip-172-31-9-104 consul.d]$ cat service-splitter.hcl
+Kind = "service-splitter"
+Name = "web"
+Splits = [
+  {
+    Weight        = 90
+    ServiceSubset = "v1"
+  },
+  {
+    Weight        = 10
+    ServiceSubset = "v2"
+  },
+]
+###############################
+consul config write service-splitter.hcl
