@@ -12,3 +12,14 @@ curl http://localhost:19000/clusters
 curl http://localhost:19000/listeners
 curl http://localhost:19000/certs
 
+# To generate bootstrap.config for given envoy setup, for eg:-
+
+consul connect envoy -gateway=terminating -register -service us-west-gateway -address "172.31.9.104:8443" -bootstrap  
+
+# this will output the bootstrap config for given envoy setup, you may save it to some file say bootstrap.json
+# and then start envoy using "envoy --config-path bootstrap.json"
+
+sudo consul connect envoy -gateway=terminating -register -service us-west-gateway -address "172.31.9.104:8443" -bootstrap -token "c5679db5-b59e-97e1-7460-59273bde4931" > /home/ec2-user/bootstrap.json
+
+
+
