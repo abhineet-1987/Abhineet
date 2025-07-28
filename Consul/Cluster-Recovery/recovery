@@ -1,0 +1,64 @@
+# https://developer.hashicorp.com/consul/tutorials/operate-consul/recovery-outage
+
+Useful commands:-
+consul operator autopilot state | grep Failure
+consul snapshot inspect backup.snap
+consul snapshot inspect /opt/consul/raft/snapshots/3-221-1753688788557/state.bin
+consul operator raft transfer-leader server1
+
+Scenario 1:
+3 servers with server 3 as leader
+consul was stopped on server3 
+when executed "consul operator raft list-peers" on server1 or server2, we got
+Error getting peers: Failed to retrieve raft configuration: Unexpected response code: 500 (Raft leader not found in server lookup mapping)
+
+But after some seconds we got:-
+[ec2-user@ip-172-31-9-104 consul.d]$ consul operator raft list-peers
+Node     ID                                    Address            State     Voter  RaftProtocol  Commit Index  Trails Leader By
+server1  4d9070c2-8902-86c0-f7e9-62aca1c44b5b  172.31.9.104:8300  leader    true   3             66            -
+server2  77cd2df3-ef7d-4e62-e209-c0fde3d9e2af  172.31.1.149:8300  follower  true   3             66            0 commits
+[ec2-user@ip-172-31-9-104 consul.d]$ consul members
+Node     Address            Status  Type    Build   Protocol  DC       Partition  Segment
+server1  172.31.9.104:8301  alive   server  1.21.3  2         rcv-dc1  default    <all>
+server2  172.31.1.149:8301  alive   server  1.21.2  2         rcv-dc1  default    <all>
+server3  172.31.7.53:8301   left    server  1.21.2  2         rcv-dc1  default    <all>
+
+server1 now became the leader and server3 showing as left
+Now we started consul on server3, server3 again joined the cluster with server1 as the leader:-
+[ec2-user@ip-172-31-7-53 consul.d]$ consul operator raft list-peers
+Node     ID                                    Address            State     Voter  RaftProtocol  Commit Index  Trails Leader By
+server1  4d9070c2-8902-86c0-f7e9-62aca1c44b5b  172.31.9.104:8300  leader    true   3             107           -
+server2  77cd2df3-ef7d-4e62-e209-c0fde3d9e2af  172.31.1.149:8300  follower  true   3             107           0 commits
+server3  0758cc81-be83-0cf5-7cd3-2d60b17151e5  172.31.7.53:8300   follower  true   3             107           0 commits
+[ec2-user@ip-172-31-7-53 consul.d]$ consul members
+Node     Address            Status  Type    Build   Protocol  DC       Partition  Segment
+server1  172.31.9.104:8301  alive   server  1.21.3  2         rcv-dc1  default    <all>
+server2  172.31.1.149:8301  alive   server  1.21.2  2         rcv-dc1  default    <all>
+server3  172.31.7.53:8301   alive   server  1.21.2  2         rcv-dc1  default    <all>
+
+
+Scenario2:
+Server1 was leader and server2 and 3 were stopped (consul):
+[ec2-user@ip-172-31-9-104 3-221-1753688788557]$ consul members
+Node     Address            Status  Type    Build   Protocol  DC       Partition  Segment
+server1  172.31.9.104:8301  alive   server  1.21.3  2         rcv-dc1  default    <all>
+server2  172.31.1.149:8301  failed  server  1.21.2  2         rcv-dc1  default    <all>
+server3  172.31.7.53:8301   failed  server  1.21.2  2         rcv-dc1  default    <all>
+[ec2-user@ip-172-31-9-104 3-221-1753688788557]$ consul operator raft list-peers
+Error getting peers: Failed to retrieve raft configuration: Unexpected response code: 500 (No cluster leader)
+
+I tried to make server1 as leader by setting bootstrap=true in server1 config file, but still it did not got elected as leader. When I brought consul up on server2 , quorum was established and server1 again got elected as leader
+and later I  brought consul up on server3 as well, server1 became the leader.
+
+Scenario3:
+Restoring from backup, complete outage:
+All the consul data got deleted from all 3 servers. Then on server1 I used bootstrap=true, the server got elected as leader. Then I restored the snapshot by bootstrapping new ACL and then post snapshot restore previous ACLs were restored.
+Then I started consul on server2 and 3 and they joined the cluster and leader i.e server1 replicated the data to the followers.
+
+Note: Till now I have not used peers.json recovery, just in case the leader is not elected with bootstrap=true, I'll go with the peers.json recovery.
+
+Summary:
+To make node as a leader to restore snapshot on it:-
+1) bootstrap=true in server config file
+OR 2) If above is not working then use peers.json recovery
+
