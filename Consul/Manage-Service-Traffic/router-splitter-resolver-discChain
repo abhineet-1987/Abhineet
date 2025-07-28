@@ -3,6 +3,30 @@
 # https://developer.hashicorp.com/consul/docs/reference/config-entry/service-resolver#examples
 # https://developer.hashicorp.com/consul/docs/reference/config-entry/service-splitter#examples
 
+Consul server config used for testing :-
+######################
+[ec2-user@ip-172-31-9-104 consul.d]$ cat consul.hcl
+node_name = "server"
+datacenter = "dc1"
+data_dir = "/opt/consul"
+ui_config{
+  enabled = true
+}
+server = true
+client_addr = "0.0.0.0"
+bind_addr = "0.0.0.0"
+advertise_addr = "172.31.9.104"
+bootstrap_expect=1
+acl = {
+  enabled        = true
+}
+connect = {
+  enabled = true
+}
+ports = {
+  grpc = 8502
+}
+##########################
 Create dummy service "web" with 2 versions v1 and v2 as and "admin" service  :-
 ###############
 [ec2-user@ip-172-31-9-104 consul.d]$ cat web-v1.hcl
@@ -32,13 +56,11 @@ Create Service default configuration entry for "web" and "admin" to define proto
 [ec2-user@ip-172-31-9-104 consul.d]$ cat service-default-web.hcl
 Kind = "service-defaults"
 Name = "web"
-
 Protocol = "http"
 
 [ec2-user@ip-172-31-9-104 consul.d]$ cat service-default-admin.hcl
 Kind = "service-defaults"
 Name = "admin"
-
 Protocol = "http"
 #######################
 consul config write service-default-web.hcl
@@ -99,3 +121,6 @@ Splits = [
 ]
 ###############################
 consul config write service-splitter.hcl
+-------------------------------
+View Service Discovery Chain:-
+curl http://127.0.0.1:8500/v1/discovery-chain/web | jq
