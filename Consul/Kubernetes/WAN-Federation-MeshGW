@@ -15,11 +15,13 @@ kubectl config current-context
 kubectl config get-contexts
 
 kubectl config use-context kind-dc1 # To switch contexts
-
+------------------------------------------- PRIMARY DC------------------------------------------------
 ########################
 abhineet@abhineet-M17KGYKQHL Consul-K8 % cat primary-values.yaml
 global:
+  enabled: true
   name: consul
+  image: hashicorp/consul:1.21.0
   datacenter: dc1
   tls:
     enabled: true
@@ -31,9 +33,64 @@ global:
     createReplicationToken: true
   gossipEncryption:
     autoGenerate: true
+  server:
+    enabled: true
+    replicas: 3
 connectInject:
   enabled: true
 meshGateway:
   enabled: true
+ui:
+  enabled: true
+  service:
+    type: NodePort
 ###################################
+helm install consul hashicorp/consul --create-namespace --namespace consul --values primary-values.yaml
+
+You'll see that Mesh gateway pod is in 0/1 init state. Post analyzing init container logs of this pod, it seems there is service consul-mesh-gateway which is of LoadBalancer type and external-ip column showing in pending state.
+Hence post editing this service to NodePort and deleting the mesh gateway pod that was in init state a new pod is created successfully.
+
+abhineet@abhineet-M17KGYKQHL ~ % k get svc -n consul
+NAME                      TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                                                                            AGE
+consul-connect-injector   ClusterIP      10.96.46.140    <none>        443/TCP                                                                            2m55s
+consul-dns                ClusterIP      10.96.235.144   <none>        53/TCP,53/UDP                                                                      2m55s
+consul-mesh-gateway       LoadBalancer   10.96.134.192   <pending>     443:30368/TCP                                                                      2m55s
+consul-server             ClusterIP      None            <none>        8501/TCP,8502/TCP,8301/TCP,8301/UDP,8302/TCP,8302/UDP,8300/TCP,8600/TCP,8600/UDP   2m55s
+consul-ui                 NodePort       10.96.116.201   <none>        443:30423/TCP                                                                      2m55s
+abhineet@abhineet-M17KGYKQHL ~ % k edit svc -n consul consul-mesh-gateway
+service/consul-mesh-gateway edited
+abhineet@abhineet-M17KGYKQHL ~ % k get svc -n consul
+NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                                                                            AGE
+consul-connect-injector   ClusterIP   10.96.46.140    <none>        443/TCP                                                                            3m25s
+consul-dns                ClusterIP   10.96.235.144   <none>        53/TCP,53/UDP                                                                      3m25s
+consul-mesh-gateway       NodePort    10.96.134.192   <none>        443:30368/TCP                                                                      3m25s
+consul-server             ClusterIP   None            <none>        8501/TCP,8502/TCP,8301/TCP,8301/UDP,8302/TCP,8302/UDP,8300/TCP,8600/TCP,8600/UDP   3m25s
+consul-ui                 NodePort    10.96.116.201   <none>        443:30423/TCP                                                                      3m25s
+abhineet@abhineet-M17KGYKQHL Consul-K8 % k get po -n consul
+NAME                                           READY   STATUS    RESTARTS   AGE
+consul-connect-injector-5f4d756bf7-stxhw       1/1     Running   0          17m
+consul-mesh-gateway-cd6776f87-t7zg6            1/1     Running   0          13m
+consul-server-0                                1/1     Running   0          17m
+consul-webhook-cert-manager-56d6d7dd49-q69d7   1/1     Running   0          17m
+#############################
+abhineet@abhineet-M17KGYKQHL Consul-K8 % cat proxy-default.yaml
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ProxyDefaults
+metadata:
+  name: global
+spec:
+  meshGateway:
+    mode: 'local'
+###########################
+kubectl apply -f proxy-default.yaml
+
+abhineet@abhineet-M17KGYKQHL Consul-K8 % kubectl get proxydefaults global
+NAME     SYNCED   LAST SYNCED   AGE
+global   True     58s           58s
+
+Export the federation secret to the file:
+kubectl get secret consul-federation --namespace consul --output yaml > consul-federation-secret.yaml
+
+------------------------------------------- SECONDARY DC------------------------------------------------
+
 
