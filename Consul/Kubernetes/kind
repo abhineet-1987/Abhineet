@@ -1,0 +1,5 @@
+# https://developer.hashicorp.com/consul/docs/deploy/server/k8s/platform/kind
+# Create kubernetes cluster using kind
+kind create cluster --name dc1
+kind get clusters
+kind delete cluster --name kind
