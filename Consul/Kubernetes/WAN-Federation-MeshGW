@@ -92,5 +92,20 @@ Export the federation secret to the file:
 kubectl get secret consul-federation --namespace consul --output yaml > consul-federation-secret.yaml
 
 ------------------------------------------- SECONDARY DC------------------------------------------------
+kubectl config use-context kind-dc2
+k create namespace consul
+kubectl apply --filename consul-federation-secret.yaml
+
+abhineet@abhineet-M17KGYKQHL Consul-K8 % k get secret -n consul
+NAME                TYPE     DATA   AGE
+consul-federation   Opaque   5      16s
+
+export CLUSTER=$(kubectl config view -o jsonpath="{.contexts[?(@.name == \"$(kubectl config current-context)\")].context.cluster}")
+echo $CLUSTER
+kind-dc2
+kubectl config view -o jsonpath="{.clusters[?(@.name == \"$CLUSTER\")].cluster.server}"
+https://127.0.0.1:53100
+
+With the primary cluster up and running, and the federation secret imported into the secondary cluster, we can now install Consul into the secondary cluster.
 
 
