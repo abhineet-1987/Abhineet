@@ -8,3 +8,6 @@ Kind
 Minikube
 Openshift
 Self-hosted
+
+#On mac OS, delete lines having # or are empty from a given file:
+sed -i '' '/#/d;/^$/d' primary-values.yaml
