@@ -2,4 +2,11 @@
 # Create kubernetes cluster using kind
 kind create cluster --name dc1
 kind get clusters
-kind delete cluster --name kind
+kubectl config current-context
+kubectl cluster-info --context kind-dc1    # To get general information about the cluster dc1
+kind delete cluster --name kind        # To delete the kind cluster
+
+#Install Consul using helm:-
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm search repo hashicorp/consul     # list the latest available versions for consul chart
+helm search repo hashicorp/consul --versions  # list all the available versions for consul chart
