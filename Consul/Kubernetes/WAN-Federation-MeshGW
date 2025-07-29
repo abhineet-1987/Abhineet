@@ -15,3 +15,25 @@ kubectl config current-context
 kubectl config get-contexts
 
 kubectl config use-context kind-dc1 # To switch contexts
+
+########################
+abhineet@abhineet-M17KGYKQHL Consul-K8 % cat primary-values.yaml
+global:
+  name: consul
+  datacenter: dc1
+  tls:
+    enabled: true
+  federation:
+    enabled: true
+    createFederationSecret: true
+  acls:
+    manageSystemACLs: true
+    createReplicationToken: true
+  gossipEncryption:
+    autoGenerate: true
+connectInject:
+  enabled: true
+meshGateway:
+  enabled: true
+###################################
+
