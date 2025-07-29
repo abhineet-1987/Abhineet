@@ -34,7 +34,14 @@ export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
 export CONSUL_HTTP_SSL_VERIFY=false
 export CONSUL_HTTP_TOKEN=eaaf06a0-4754-0d96-6dc3-bca459e5b8a7
 
+####### When TLS is enabled ########
 kubectl port-forward svc/consul-ui --namespace consul 8501:443  # In another terminal
+OR
+kubectl port-forward service/consul-server --namespace consul 8501:8501
+####### When TLS is disabled ########
+kubectl port-forward service/consul-server --namespace consul 8500:8500
+##########################
+and then access the Consul UI from your laptop browser by hitting https://localhost:8501 (if TLS enabled) OR http://localhost:8500 (if TLS disabled) 
 
 abhineet@abhineet-M17KGYKQHL Consul-K8 % kubectl get statefulset -n consul
 NAME            READY   AGE
