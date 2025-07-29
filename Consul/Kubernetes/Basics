@@ -1,0 +1,10 @@
+# https://developer.hashicorp.com/consul/docs/deploy/server/k8s:-
+Below are some of kubernetes platform that are used by customers:
+
+Azure Kubernetes Service (AKS)
+AWS Elastic Kubernetes Service (EKS)
+Google Kubernetes Engine (GKE)
+Kind
+Minikube
+Openshift
+Self-hosted
