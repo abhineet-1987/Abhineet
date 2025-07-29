@@ -10,3 +10,5 @@ kind delete cluster --name kind        # To delete the kind cluster
 helm repo add hashicorp https://helm.releases.hashicorp.com
 helm search repo hashicorp/consul     # list the latest available versions for consul chart
 helm search repo hashicorp/consul --versions  # list all the available versions for consul chart
+
+helm install --values values.yaml consul hashicorp/consul --create-namespace --namespace consul --version "1.1.0"
