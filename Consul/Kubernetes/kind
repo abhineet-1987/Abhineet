@@ -62,4 +62,8 @@ consul-server-0  69d51410-5e7f-e303-fbe1-0b0771091b61  10.244.0.18:8300  followe
 consul-server-1  5796b90b-c5ae-324f-b79a-8303342cd63f  10.244.0.17:8300  leader    true   3             187           -
 consul-server-2  07021717-abe0-1813-56ae-6454b22ea4a1  10.244.0.19:8300  follower  true   3             187           0 commits
 
+You may login to the pods using:-
+exec -it consul-server-1 -n consul -- sh
+
+and run the consul CLI commands post exporting export CONSUL_HTTP_TOKEN=eaaf06a0-4754-0d96-6dc3-bca459e5b8a7
 
