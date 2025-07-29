@@ -12,3 +12,7 @@ helm search repo hashicorp/consul     # list the latest available versions for c
 helm search repo hashicorp/consul --versions  # list all the available versions for consul chart
 
 helm install --values values.yaml consul hashicorp/consul --create-namespace --namespace consul --version "1.1.0"
+OR
+helm install --values values.yaml consul hashicorp/consul --create-namespace --namespace consul   # to install latest version.
+
+Note: Refer to basic-values.yaml kept at 
