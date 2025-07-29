@@ -3,8 +3,8 @@ kind create cluster --name dc1
 kind create cluster --name dc2
 
 abhineet@abhineet-M17KGYKQHL Consul-K8 % kubectl cluster-info --context kind-dc1
-Kubernetes control plane is running at https://127.0.0.1:53093
-CoreDNS is running at https://127.0.0.1:53093/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+Kubernetes control plane is running at https://127.0.0.1:55386
+CoreDNS is running at https://127.0.0.1:55386/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
 
 To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 abhineet@abhineet-M17KGYKQHL Consul-K8 % kubectl cluster-info --context kind-dc2
