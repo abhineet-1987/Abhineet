@@ -1,0 +1,17 @@
+# https://developer.hashicorp.com/consul/docs/east-west/wan-federation/k8s#wan-federation-between-multiple-kubernetes-clusters-through-mesh-gateways
+kind create cluster --name dc1
+kind create cluster --name dc2
+
+abhineet@abhineet-M17KGYKQHL Consul-K8 % kubectl cluster-info --context kind-dc1
+Kubernetes control plane is running at https://127.0.0.1:53093
+CoreDNS is running at https://127.0.0.1:53093/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+abhineet@abhineet-M17KGYKQHL Consul-K8 % kubectl cluster-info --context kind-dc2
+Kubernetes control plane is running at https://127.0.0.1:53100
+CoreDNS is running at https://127.0.0.1:53100/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+kubectl config current-context
+kubectl config get-contexts
+
+kubectl config use-context kind-dc1 # To switch contexts
