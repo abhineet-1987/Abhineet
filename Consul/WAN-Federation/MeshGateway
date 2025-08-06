@@ -5,4 +5,6 @@
 
 consul tls ca create
 sudo consul tls cert create -server -dc dc1 -additional-dnsname="*.dc2.consul" -node server-dc1      (for wan federation)
+consul tls cert create -server -dc dc1 -node server1-dc1 -additional-dnsname="*.dc2.consul" -additional-ipaddress 172.31.9.104
 sudo consul tls cert create -server -dc dc2 -additional-dnsname="*.dc1.consul" -node server-dc2
+consul tls cert create -server -dc dc2 -node server1-dc2 -additional-dnsname="*.dc1.consul" -additional-ipaddress 172.31.1.149
