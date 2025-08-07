@@ -8,3 +8,7 @@ sudo consul tls cert create -server -dc dc1 -additional-dnsname="*.dc2.consul" -
 consul tls cert create -server -dc dc1 -node server1-dc1 -additional-dnsname="*.dc2.consul" -additional-ipaddress 172.31.9.104
 sudo consul tls cert create -server -dc dc2 -additional-dnsname="*.dc1.consul" -node server-dc2
 consul tls cert create -server -dc dc2 -node server1-dc2 -additional-dnsname="*.dc1.consul" -additional-ipaddress 172.31.1.149
+
+
+For multiple datacenters ACL replication, use below HTTP API in secondary datacenter to check the replication status.
+curl http://localhost:8500/v1/acl/replication?pretty
