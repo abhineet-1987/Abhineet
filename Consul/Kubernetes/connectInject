@@ -77,6 +77,11 @@ spec:
       ports:
         - containerPort: 80
 ####################################################
+Note1: Service Account is required and must be different from what other apps are using that are being registered in consul.
+Note2: Optionally, if you want all pods to be injected by default (without needing annotations), you can also add:
+connectInject:
+  default: true
+
 Scenario	Sidecar Injected?	Service Registered?
 values.yaml = true + pod annotated	✅ Yes	✅ Yes
 values.yaml = false + pod annotated	❌ No	❌ No
