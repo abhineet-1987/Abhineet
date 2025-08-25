@@ -21,5 +21,12 @@ consul connect envoy -gateway=terminating -register -service us-west-gateway -ad
 
 sudo consul connect envoy -gateway=terminating -register -service us-west-gateway -address "172.31.9.104:8443" -bootstrap -token "c5679db5-b59e-97e1-7460-59273bde4931" > /home/ec2-user/bootstrap.json
 
+# To ssh into api gateway pod (we cannot ssh directly, hence use ephemeral container)
+kubectl debug -it -n consul api-gateway-54467cc49b-kc642 --target api-gateway --image=nicolaka/netshoot -- sh       # Container specific  
+kubectl debug -it -n consul api-gateway-54467cc49b-kc642 --image=nicolaka/netshoot -- sh               # Pod specific  
+
+Without --target → You just add a new debug container into the pod (general troubleshooting).
+With --target → You can inspect a specific container’s processes and state, which is critical when debugging multi-container pods
+
 
 
