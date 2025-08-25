@@ -1,0 +1,2 @@
+helm repo update
+helm search repo hashicorp/consul --versions
