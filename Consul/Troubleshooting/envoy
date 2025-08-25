@@ -28,5 +28,8 @@ kubectl debug -it -n consul api-gateway-54467cc49b-kc642 --image=nicolaka/netsho
 Without --target → You just add a new debug container into the pod (general troubleshooting).
 With --target → You can inspect a specific container’s processes and state, which is critical when debugging multi-container pods
 
+# To know the envoy version used in the Api gateway:-
+kubectl exec -it <api-gateway-pod-name> -n consul -c api-gateway -- envoy --version
+
 
 
