@@ -1,0 +1,84 @@
+######## values.yaml #########
+global:
+  enabled: true
+  name: consul
+  image: hashicorp/consul:1.21.0
+  datacenter: dc1
+  tls:
+    enabled: true
+  acls:
+    manageSystemACLs: true
+server:
+  enabled: true
+  replicas: 1
+ui:
+  enabled: true
+  service:
+    type: NodePort
+connectInject:
+  enabled: true
+  default: true
+  #####################################   To register app as service automatically in consul ##################
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  selector:
+    app: nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+    spec:
+      serviceAccountName: nginx
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+--------
+  OR POD Definition instead of deployment as:
+--------
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+  annotations:
+    consul.hashicorp.com/connect-inject: "true"  # Optional: for Consul Connect sidecar injection
+spec:
+  serviceAccountName: nginx  # Optional: if you're using Consul ACLs or mTLS
+  containers:
+    - name: nginx
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+####################################################
+Scenario	Sidecar Injected?	Service Registered?
+values.yaml = true + pod annotated	✅ Yes	✅ Yes
+values.yaml = false + pod annotated	❌ No	❌ No
+values.yaml = true + no annotation	❌ No (unless default=true)	❌ No
+values.yaml = true + default=true	✅ Yes (all pods)	✅ Yes
