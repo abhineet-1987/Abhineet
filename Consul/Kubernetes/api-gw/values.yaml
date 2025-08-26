@@ -1,0 +1,22 @@
+global:
+  enabled: true
+  name: consul
+  image: hashicorp/consul:1.21.0
+  datacenter: dc1
+  tls:
+    enabled: true
+  acls:
+    manageSystemACLs: true
+server:
+  enabled: true
+  replicas: 1
+ui:
+  enabled: true
+  service:
+    type: NodePort
+connectInject:
+  enabled: true
+  default: true
+  apiGateway:
+    managedGatewayClass:
+      serviceType: LoadBalancer
