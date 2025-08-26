@@ -1,0 +1,2 @@
+https://developer.hashicorp.com/consul/tutorials/control-network-traffic/kubernetes-api-gateway?variants=consul-deploy%3Aself-managed
+git clone https://github.com/hashicorp-education/learn-consul-api-gateway
