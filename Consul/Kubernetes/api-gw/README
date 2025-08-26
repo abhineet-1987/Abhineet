@@ -1,3 +1,7 @@
+######### API Gateway Implementation using Kind to create kubernetes cluster ############
+Create kubernetes cluster using kind with config as kind-config.yaml. 
+Command: kind create cluster --config kind-config.yaml
+
 https://developer.hashicorp.com/consul/tutorials/control-network-traffic/kubernetes-api-gateway?variants=consul-deploy%3Aself-managed
 git clone https://github.com/hashicorp-education/learn-consul-api-gateway
 cd learn-consul-api-gateway/self-managed/
