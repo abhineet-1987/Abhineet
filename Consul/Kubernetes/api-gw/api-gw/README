@@ -1,4 +1,7 @@
 kubectl apply --filename consul-api-gateway.yaml
+
+# Edit the api-gateway service nodePort to the value defined in kind config kind-config.yaml extraPortMappings: section
+
 kubectl apply --filename ingress-hashicups-frontend.yaml
 kubectl apply --filename ingress-hashicups-api.yaml
 kubectl apply --filename ingress-echo-loadbalance.yaml
