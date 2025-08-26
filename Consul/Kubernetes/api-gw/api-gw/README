@@ -1,0 +1,11 @@
+kubectl apply --filename consul-api-gateway.yaml
+kubectl apply --filename ingress-hashicups-frontend.yaml
+kubectl apply --filename ingress-hashicups-api.yaml
+kubectl apply --filename ingress-echo-loadbalance.yaml
+
+for i in `seq 1 10`; do echo -n "$i. " && curl -s "http://localhost:32339/echo" | grep 'Request served by'; done
+
+CLI: curl http://localhost:32339    
+UI:  http://localhost:32339
+
+API Gateway URL: http://localhost:32339
