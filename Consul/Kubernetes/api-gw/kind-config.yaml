@@ -5,7 +5,7 @@ name: dc1
 nodes:
   - role: control-plane
     extraPortMappings:
-      - containerPort: 32339
+      - containerPort: 32339       #Node port for api gateway service
         hostPort: 32339
         protocol: TCP
 
