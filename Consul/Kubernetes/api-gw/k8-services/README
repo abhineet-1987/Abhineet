@@ -1,6 +1,6 @@
 kubectl apply -f .
 
 Note:-
-1. Make sure the service account name is unique for each of the services registered.
-2. Make sure the service account name matches the Consul service name, else you'll get the below error:
+1. Make sure the service account name is unique for each of the services that you want to register with Consul.
+2. Make sure the service account name matches the service name you want to register with consul, else you'll get the below error:
    service account name nginx1 doesn't match Consul service name nginx2
