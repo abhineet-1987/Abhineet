@@ -9,6 +9,8 @@ nomad node status 8c7e3b79
 # Jobs related
 nomad job status 
 nomad job status tetris
+nomad job plan job.hcl
+nomad job run job.hcl
 
 
 
