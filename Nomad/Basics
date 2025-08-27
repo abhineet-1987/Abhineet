@@ -6,6 +6,10 @@ nomad operator raft list-peers
 nomad node status
 nomad node status 8c7e3b79
 
+# To check nomad client details
+nomad node status
+nomad node status 8c7e3b79
+
 # Jobs related
 nomad job status 
 nomad job status tetris
