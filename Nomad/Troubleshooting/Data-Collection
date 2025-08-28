@@ -18,7 +18,16 @@ Job spec (Helpful for reproduction)
 allocation log (Needed for troubleshooting Autoscaler and CSI)
 audit log (optional) -> Enterprise feature
 
+# Nomad debug bundle
+nomad operator debug -duration=10m -log-level=TRACE -server-id=all -node-id=all 2>&1 > t.txt
+nomad operator debug -duration=10m -log-level=TRACE -server-id=all -node-id=all 2>&1 | tee debug_output.txt
+HCdiag
 
+# Other general command for Metrics around CPU and memory utilization:-
+CPU - vmstat, cloud provider metrics for "CPU %"
+Memory - free -h, cloud provider metrics for “memory”
+IO - iostat, sar -d, cloud provider metrics for "volume write/read ops" and "burst balance"
+Network - sar -n, netstat -s, cloud provider metrics for interface "allowance"
 
 
 
@@ -37,6 +46,6 @@ nomad alloc logs -f <alloc-id>
 nomad eval list -job hello-world
 nomad eval status dc95313f
 
-
+# Container logs
 sudo docker ps -a
 sudo docker logs -f <ctr-id> -t
