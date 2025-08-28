@@ -21,14 +21,31 @@ audit log (optional) -> Enterprise feature
 # Nomad debug bundle
 nomad operator debug -duration=10m -log-level=TRACE -server-id=all -node-id=all 2>&1 > t.txt
 nomad operator debug -duration=10m -log-level=TRACE -server-id=all -node-id=all 2>&1 | tee debug_output.txt
-HCdiag
+
+# HCdiag ------------------------------------------------------
+curl https://releases.hashicorp.com/hcdiag/0.5.2/hcdiag_0.5.2_linux_amd64.zip -o hcdiag.zip
+unzip hcdiag.zip
+export PATH=$PWD:$PATH
+
+Set environment variables:
+Before running hcdiag make sure all needed environment variables are set.
+
+export CONSUL_HTTP_ADDR=  - set to the address to the local Consul agent.
+export CONSUL_HTTP_TOKEN= - must be set to the API access token if ACLs are enabled.
+export NOMAD_ADDR=        - set to the address of the Nomad server.
+export NOMAD_TOKEN=       - must be set if ACLs are enabled.
+export VAULT_ADDR=        - set to the address of the Vault server.
+export VAULT_TOKEN=       - must be set to the Vault authentication token.
+
+Running the hcdiag:
+hcdiag run -consul -nomad -vault 2>&1 | tee hcdiag_output.txt
+-----------------------------------------------------------
 
 # Other general command for Metrics around CPU and memory utilization:-
 CPU - vmstat, cloud provider metrics for "CPU %"
 Memory - free -h, cloud provider metrics for “memory”
 IO - iostat, sar -d, cloud provider metrics for "volume write/read ops" and "burst balance"
 Network - sar -n, netstat -s, cloud provider metrics for interface "allowance"
-
 
 
 # Jobs related
