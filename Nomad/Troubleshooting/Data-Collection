@@ -1,4 +1,42 @@
+# To check nomad server details
+nomad server members
+nomad operator raft list-peers
+
+# To check nomad client details
+nomad node status
+nomad node status 8c7e3b79
+
+# To check nommad agent details
 nomad agent-info
 nomad agent-info -json
+
+
+# You can ask for below configuration
+Server Config
+Client Config
+Job spec (Helpful for reproduction)
+allocation log (Needed for troubleshooting Autoscaler and CSI)
+audit log (optional) -> Enterprise feature
+
+
+
+
+
+# Jobs related
+nomad job status 
+nomad job status tetris
+nomad job plan job.hcl
+nomad job run job.hcl
+
+# Alloc related
+nomad alloc status dc571f50  (you'll get alloc id from "nomad job status hello-world" )
+nomad alloc logs -f <alloc-id>
+
+
+# Evaluation related
+nomad eval list -job hello-world
+nomad eval status dc95313f
+
+
 sudo docker ps -a
 sudo docker logs -f <ctr-id> -t
