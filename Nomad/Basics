@@ -17,7 +17,6 @@ nomad job plan job.hcl
 nomad job run job.hcl
 
 
-
 ############ Driver and Nomad Installation on Amazon Linux #########
 
 # Install dependencies
