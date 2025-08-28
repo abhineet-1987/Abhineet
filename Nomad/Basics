@@ -1,21 +1,3 @@
-# To check nomad server details
-nomad server members
-nomad operator raft list-peers
-
-# To check nomad client details
-nomad node status
-nomad node status 8c7e3b79
-
-# To check nomad client details
-nomad node status
-nomad node status 8c7e3b79
-
-# Jobs related
-nomad job status 
-nomad job status tetris
-nomad job plan job.hcl
-nomad job run job.hcl
-
 
 ############ Driver and Nomad Installation on Amazon Linux #########
 
