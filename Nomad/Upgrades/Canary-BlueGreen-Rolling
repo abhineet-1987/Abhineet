@@ -36,3 +36,5 @@ This example uses a serial upgrade strategy, meaning exactly one task group will
 update {
   max_parallel = 1
 }
+##############
+Note: If conflict, group section gets precedence over job.
