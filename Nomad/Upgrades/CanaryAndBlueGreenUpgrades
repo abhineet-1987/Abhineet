@@ -29,3 +29,10 @@ Once the operator is satisfied that the new version of the group is stable, the 
 
 # Promote the canaries for the job.
 $ nomad job promote <job-id
+
+####### Serial or Rolling upgrades
+This example uses a serial upgrade strategy, meaning exactly one task group will be updated at a time. The allocation must be healthy for the default min_healthy_time of 10 seconds.
+
+update {
+  max_parallel = 1
+}
