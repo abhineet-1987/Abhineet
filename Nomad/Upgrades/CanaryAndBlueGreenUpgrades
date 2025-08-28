@@ -1,0 +1,31 @@
+####### Canary upgrades
+This example creates a canary allocation when the job is updated. 
+The canary is created without stopping any previous allocations from the job and allows operators to determine if the new version of the job should be rolled out.
+
+update {
+  canary       = 1
+  max_parallel = 3
+}
+
+Once the operator has determined the new job should be deployed, the deployment can be promoted and a rolling update will occur performing 3 updates at a time until the remainder of the groups allocations have been rolled to the new version.
+
+# Promote the canaries for the job.
+$ nomad job promote <job-id>
+
+######### Blue/Green upgrades
+By setting the canary count equal to that of the task group, blue/green deployments can be achieved. When a new version of the job is submitted, instead of doing a rolling upgrade of the existing allocations, the new version of the group is deployed along side the existing set. While this duplicates the resources required during the upgrade process, it allows very safe deployments as the original version of the group is untouched.
+
+group "api-server" {
+    count = 3
+
+    update {
+      canary       = 3
+      max_parallel = 3
+    }
+    ...
+}
+
+Once the operator is satisfied that the new version of the group is stable, the group can be promoted which will result in all allocations for the old versions of the group to be shutdown. This completes the upgrade from blue to green, or old to new version.
+
+# Promote the canaries for the job.
+$ nomad job promote <job-id
