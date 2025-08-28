@@ -66,3 +66,6 @@ nomad eval status dc95313f
 # Container logs
 sudo docker ps -a
 sudo docker logs -f <ctr-id> -t
+
+# Nomad event stream
+curl -s -v -N http://127.0.0.1:4646/v1/event/stream | jq
