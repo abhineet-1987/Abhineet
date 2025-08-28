@@ -1,0 +1,4 @@
+nomad agent-info
+nomad agent-info -json
+sudo docker ps -a
+sudo docker logs -f <ctr-id> -t
