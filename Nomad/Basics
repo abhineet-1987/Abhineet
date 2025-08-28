@@ -38,4 +38,7 @@ sudo yum -y install nomad
 # Adds the nomad user to the docker group otherwise you may get error "* Constraint "missing drivers": 1 nodes excluded by filter"
 sudo usermod -aG docker nomad
 
+#Execute below command at data dir of nomad i.e /opt, else the nomad service wont start
+sudo chown -R nomad:nomad nomad   
+
 
