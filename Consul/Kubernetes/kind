@@ -32,7 +32,7 @@ Set env variables to interact with consul cluster:-
 export CONSUL_HTTP_TOKEN=$(kubectl get --namespace consul secrets/consul-bootstrap-acl-token --template={{.data.token}} | base64 -d)
 export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
 export CONSUL_HTTP_SSL_VERIFY=false
-export CONSUL_HTTP_TOKEN=a7e2e945-0035-aaf0-59d9-ae87ee9c606d
+export CONSUL_HTTP_TOKEN=2d1e4c0f-d384-4881-6fb4-f36a344e2fd7
 
 ####### When TLS is enabled ########
 kubectl port-forward svc/consul-ui --namespace consul 8501:443  # In another terminal
