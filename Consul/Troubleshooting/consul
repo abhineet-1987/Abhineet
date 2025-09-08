@@ -5,6 +5,7 @@ consul members
 consul operator raft list-peers
 consul operator autopilot state
 consul operator autopilot get-config
+consul info
 
 # Consul server logs:-
 consul monitor
