@@ -30,6 +30,8 @@ dc1-control-plane   Ready    control-plane   37m   v1.33.1
 
 Set env variables to interact with consul cluster:-
 export CONSUL_HTTP_TOKEN=$(kubectl get --namespace consul secrets/consul-bootstrap-acl-token --template={{.data.token}} | base64 -d)
+[Note: Other way to fetch: k get secret -n consul consul-bootstrap-acl-token -o yaml  , copy the token value and then run:
+echo <token-copied> | base64 -d ]
 export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
 export CONSUL_HTTP_SSL_VERIFY=false
 export CONSUL_HTTP_TOKEN=2d1e4c0f-d384-4881-6fb4-f36a344e2fd7
