@@ -58,6 +58,41 @@ echo <token-copied-from-above> | base64 -d
 export CONSUL_HTTP_TOKEN=xxxxxxxxxxxx
 kubectl port-forward svc/consul-server 8501:8501    (on other terminal)
 
+#Service Discovery Chain setup:-
+consul namespace create -name "sandbox-dev"
+
+curl --insecure --request PUT --data @ext-inst1.json --header "X-Consul-Namespace: sandbox-dev" --header "X-Consul-Token: dbd7f971-0538-dfd9-af52-44a2f2ed1a71" \
+https://127.0.0.1:8501/v1/catalog/register
+curl --insecure --request PUT --data @ext-inst2.json --header "X-Consul-Namespace: sandbox-dev" --header "X-Consul-Token: dbd7f971-0538-dfd9-af52-44a2f2ed1a71" \
+https://127.0.0.1:8501/v1/catalog/register
+curl --insecure --request PUT --data @ext-inst3.json --header "X-Consul-Namespace: sandbox-dev" --header "X-Consul-Token: dbd7f971-0538-dfd9-af52-44a2f2ed1a71" \
+https://127.0.0.1:8501/v1/catalog/register
+
+consul config write proxy-default.yaml
+consul config write svc-router.json
+consul config write service-resolver.json
+
+kubectl apply -f terminating_gw.yaml
+kubectl apply -f custom_obj.yaml
+
+kubectl create ns consul
+kubectl apply -f consul-api-gateway_woTLS.yaml
+
+Create namespaces defined in namespace_create.txt
+kubectl apply -f many_http.yaml
+kubectl apply -f custom_http.yaml  (to create httproute for static server)
+
+kubectl edit svc -n consul api-gateway   (change nodeport to 32339 as per config in kind's config)
+When you'll hit the API gateway as curl -kv http://localhost:32339 you'll get below error:-
+RBAC: access denied
+
+Open Consul ui:
+kubectl port-forward svc/consul-ui 8501:443
+In browser open https://localhost:8501 and create intention from api gateway service in consul namespace to all other services.
+Run "curl -kv http://localhost:32339" on your terminal and you can see hell world message
+
+Go to ext-jsontest service in sandbox-dev namespace in consul ui and go to topology, there you'll see x, click on it, it will ask to create intention from static-server service to this service. Create it.
+
 
 
 
