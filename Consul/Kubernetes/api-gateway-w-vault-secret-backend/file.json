@@ -1,0 +1,106 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "gateway.networking.k8s.io/v1beta1",
+      "kind": "HTTPRoute",
+      "metadata": {
+        "annotations": {
+          "meta.helm.sh/release-name": "amlservice",
+          "meta.helm.sh/release-namespace": "coakvb-5556"
+        },
+        "creationTimestamp": "2025-08-28T10:36:18Z",
+        "finalizers": [
+          "gateway-finalizer.consul.hashicorp.com"
+        ],
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/instance": "amlservice",
+          "app.kubernetes.io/managed-by": "Helm",
+          "app.kubernetes.io/name": "amlservice",
+          "app.kubernetes.io/version": "v1.21.0-4-f489798",
+          "helm.sh/chart": "amlservice-v1.21.0-4-f489798"
+        },
+        "name": "amlservice",
+        "namespace": "coakvb-5556",
+        "resourceVersion": "245656557",
+        "uid": "ce3fde18-fc9c-4514-97c5-006fbafc638c"
+      },
+      "spec": {
+        "hostnames": [
+          "coakvb-5556.amlservice.virtual.compliance.ns.dev.consul.local",
+          "amlservice.virtual.compliance.ns.dev.consul.local"
+        ],
+        "parentRefs": [
+          {
+            "group": "gateway.networking.k8s.io",
+            "kind": "Gateway",
+            "name": "api-gateway",
+            "namespace": "consul"
+          }
+        ],
+        "rules": [
+          {
+            "backendRefs": [
+              {
+                "filters": [
+                  {
+                    "requestHeaderModifier": {
+                      "add": [
+                        {
+                          "name": "x-forwarded-for",
+                          "value": "%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%"
+                        }
+                      ]
+                    },
+                    "type": "RequestHeaderModifier"
+                  }
+                ],
+                "group": "consul.hashicorp.com",
+                "kind": "MeshService",
+                "name": "amlservice",
+                "namespace": "coakvb-5556",
+                "port": 80,
+                "weight": 1
+              }
+            ],
+            "matches": [
+              {
+                "headers": [
+                  {
+                    "name": "x-pod-namespace",
+                    "type": "Exact",
+                    "value": "coakvb-5556"
+                  },
+                  {
+                    "name": "host",
+                    "type": "Exact",
+                    "value": "amlservice.virtual.compliance.ns.dev.consul.local"
+                  }
+                ],
+                "path": {
+                  "type": "PathPrefix",
+                  "value": "/"
+                }
+              },
+              {
+                "headers": [
+                  {
+                    "name": "host",
+                    "type": "Exact",
+                    "value": "coakvb-5556.amlservice.virtual.compliance.ns.dev.consul.local"
+                  }
+                ],
+                "path": {
+                  "type": "PathPrefix",
+                  "value": "/"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+

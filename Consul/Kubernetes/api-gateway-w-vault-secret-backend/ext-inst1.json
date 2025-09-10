@@ -1,0 +1,40 @@
+{
+	"ID": "",
+	"Node": "ext-sandbox-does.not.exist.example.com",
+	"Address": "does.not.exist.example.com",
+	"Datacenter": "dc1",
+	"TaggedAddresses": null,
+	"NodeMeta": {
+		"external-node": "true",
+		"external-probe": "false",
+		"ls_namespace": "sandbox"
+	},
+	"Service": {
+		"ID": "ext-jsontest-98e27464",
+		"Service": "ext-jsontest",
+		"Tags": [],
+		"Address": "does.not.exist.example.com",
+		"Weights": {
+			"Passing": 1,
+			"Warning": 1
+		},
+		"Meta": {
+			"external-source": "terraform",
+			"ls_associated_ids": "",
+			"ls_namespace": "sandbox",
+			"ls_traffic_group": "site-b"
+		},
+	   	"Port": 80,
+		"SocketPath": "",
+		"EnableTagOverride": false,
+		"Proxy": {
+			"Mode": "",
+			"MeshGateway": {},
+			"Expose": {}
+		},
+		"Connect": {},
+		"Locality": null
+	},
+	"Partition": "default",
+	"Namespace": "sandbox-dev"
+}

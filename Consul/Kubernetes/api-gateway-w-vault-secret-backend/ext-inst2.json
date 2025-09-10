@@ -1,0 +1,41 @@
+{
+	"ID": "",
+	"Node": "ext-sandbox-echo.free.beeceptor.com",
+	"Address": "echo.free.beeceptor.com",
+	"Datacenter": "dc1",
+	"TaggedAddresses": null,
+	"NodeMeta": {
+		"external-node": "true",
+		"external-probe": "false",
+		"ls_namespace": "sandbox"
+	},
+	"Service": {
+	    "ID": "ext-jsontest-6d8cc0cf",
+		"Service": "ext-jsontest",
+		"Tags": [],
+		"Address": "echo.free.beeceptor.com",
+		"Weights": {
+			"Passing": 1,
+			"Warning": 1
+		},
+		"Meta": {
+			"external-source": "terraform",
+			"ls_associated_ids": "",
+			"ls_namespace": "sandbox",
+			"ls_traffic_group": "site-a"
+		},
+		"Port": 80,
+		"SocketPath": "",
+		"EnableTagOverride": false,
+		"Proxy": {
+			"Mode": "",
+			"MeshGateway": {},
+			"Expose": {}
+		},
+		"Connect": {},
+		"Locality": null
+	},
+		"Partition": "default",
+		"Namespace": "sandbox-dev"
+}
+

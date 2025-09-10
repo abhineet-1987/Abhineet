@@ -1,0 +1,38 @@
+{
+	"Kind": "service-splitter",
+	"Name": "ext-jsontest",
+	"Splits": [
+		{
+			"Weight": 50,
+			"Service": "ext-jsontest",
+			"ServiceSubset": "site-a",
+			"RequestHeaders": {
+				"Set": {
+					"x-ls-traffic-group": "site-a"
+				}
+			},
+			"ResponseHeaders": {
+				"Set": {
+					"x-ls-traffic-group": "site-a"
+				}
+			}
+		},
+		{
+			"Weight": 50,
+			"Service": "ext-jsontest",
+			"ServiceSubset": "site-b",
+			"RequestHeaders": {
+				"Set": {
+					"x-ls-traffic-group": "site-b"
+				}
+			},
+			"ResponseHeaders": {
+				"Set": {
+					"x-ls-traffic-group": "site-b"
+				}
+			}
+		}
+	],
+	"Partition": "default",
+	"Namespace": "sandbox-dev"
+}

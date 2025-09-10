@@ -1,0 +1,23 @@
+{
+	"Kind": "service-router",
+	"Name": "ext-jsontest",
+	"Routes": [
+		{
+			"Destination": {
+				"Namespace": "sandbox-dev",
+				"Partition": "default",
+				"NumRetries": 3,
+				"RetryOnConnectFailure": true,
+				"RetryOn": [
+					"gateway-error",
+					"reset"
+				],
+				"RetryOnStatusCodes": [
+					503
+				]
+			}
+		}
+	],
+	"Partition": "default",
+	"Namespace": "sandbox-dev"
+}

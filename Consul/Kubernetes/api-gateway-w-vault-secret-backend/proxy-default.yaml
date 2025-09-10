@@ -1,0 +1,7 @@
+Kind      = "proxy-defaults"
+Name      = "global"
+Namespace = "default" # Can only be set to "default".
+Config {
+  protocol = "http"
+  envoy_dns_discovery_type = "STRICT_DNS"
+}

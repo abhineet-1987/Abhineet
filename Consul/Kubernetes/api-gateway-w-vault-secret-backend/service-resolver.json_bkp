@@ -1,0 +1,33 @@
+{
+	"ConnectTimeout": "15s",
+	"RequestTimeout": "15s",
+	"Kind": "service-resolver",
+	"Name": "ext-jsontest",
+	"DefaultSubset": "default",
+	"Subsets": {
+		"default": {
+			"Filter": "Service.Meta.ls_traffic_group != \"\""
+		},
+		"site-a": {
+			"Filter": "Service.Meta.ls_traffic_group == \"site-a\"",
+			"OnlyPassing": true
+		},
+		"site-b": {
+			"Filter": "Service.Meta.ls_traffic_group == \"site-b\"",
+			"OnlyPassing": true
+		}
+	},
+	"Failover": {
+		"*": {
+			"Targets": [
+				{
+					"Service": "ext-jsontest",
+					"ServiceSubset": "default",
+					"Namespace": "sandbox-dev"
+				}
+			]
+		}
+	},
+	"Partition": "default",
+	"Namespace": "sandbox-dev"
+}

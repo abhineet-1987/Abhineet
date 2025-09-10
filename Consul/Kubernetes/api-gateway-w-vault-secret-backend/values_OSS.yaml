@@ -1,0 +1,35 @@
+global:
+  enabled: true
+  name: consul
+  image: hashicorp/consul:1.21.1
+  imageK8S: hashicorp/consul-k8s-control-plane:1.7.0
+  imageConsulDataplane: hashicorp/consul-dataplane:1.7.0
+  datacenter: dc1
+  tls:
+    enabled: true
+  acls:
+    manageSystemACLs: true
+server:
+  enabled: true
+  replicas: 1
+ui:
+  enabled: true
+  service:
+    type: NodePort
+connectInject:
+  enabled: true
+  #default: true
+  apiGateway:
+    managedGatewayClass:
+      serviceType: LoadBalancer
+      resources:
+          requests:
+            memory: 100Mi
+            cpu: 100m
+          limits:
+            memory: 200Mi
+            cpu: 200m
+      deployment:
+          defaultInstances: 3
+          maxInstances: 8
+          minInstances: 3
