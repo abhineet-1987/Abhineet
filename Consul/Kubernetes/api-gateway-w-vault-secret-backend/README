@@ -51,6 +51,13 @@ kubectl create secret generic consul-ent-license --from-literal="key=${secret}"
 
 helm install consul hashicorp/consul --values=consul_values.yaml
 
+export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
+export CONSUL_HTTP_SSL_VERIFY=false
+kubectl get secret consul-bootstrap-acl-token -o yaml
+echo <token-copied-from-above> | base64 -d
+export CONSUL_HTTP_TOKEN=xxxxxxxxxxxx
+kubectl port-forward svc/consul-server 8501:8501    (on other terminal)
+
 
 
 
