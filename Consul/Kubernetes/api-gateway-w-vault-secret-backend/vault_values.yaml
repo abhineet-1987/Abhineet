@@ -1,0 +1,17 @@
+global:
+  enabled: true
+  tlsDisable: true
+
+server:
+  standalone:
+    enabled: true
+    config: |
+      listener "tcp" {
+        address = "[::]:8200"
+        tls_disable = "true"
+        cluster_address = "[::]:8201"
+      }
+
+      storage "raft" {
+        path = "/vault/data"
+      }
