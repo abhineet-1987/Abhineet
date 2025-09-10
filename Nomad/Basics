@@ -22,4 +22,6 @@ sudo usermod -aG docker nomad
 #Execute below command at data dir of nomad i.e /opt, else the nomad service wont start
 sudo chown -R nomad:nomad nomad   
 
+# In Nomad we have concept of multi-cluster and multi-region(+Ent feature)
+
 
