@@ -1,0 +1,7 @@
+# To know public ip of my system
+curl ifconfig.me
+
+#To know ip of my laptop
+ifconfig   (en0)
+
+hostname -I  # to know private ip address of amazon linux
