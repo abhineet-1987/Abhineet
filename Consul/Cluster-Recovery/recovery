@@ -6,6 +6,10 @@ consul snapshot inspect backup.snap
 consul snapshot inspect /opt/consul/raft/snapshots/3-221-1753688788557/state.bin
 consul operator raft transfer-leader server1
 
+# Without leader it will give you output
+consul operator autopilot get-config -stale
+
+
 Scenario 1:
 3 servers with server 3 as leader
 consul was stopped on server3 
