@@ -5,6 +5,8 @@ consul members
 consul operator raft list-peers
 consul operator autopilot state
 consul operator autopilot get-config
+# Without leader it will give you output
+consul operator autopilot get-config -stale
 consul info
 
 # Consul server logs:-
