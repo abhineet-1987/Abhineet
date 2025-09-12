@@ -1,0 +1,8 @@
+Error observed Consul on kubernetes:
+----------------
+Error from server (InternalError): error when creating "proxy-default-mesh-gw-dc1.yaml": Internal error occurred: failed calling webhook "mutate-proxydefaults.consul.hashicorp.com": 
+failed to call webhook: Post "https://consul-connect-injector.default.svc:443/mutate-v1alpha1-proxydefaults?timeout=10s": 
+tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2025-09-12T05:47:16Z is after 2025-09-11T15:26:25Z
+
+Fix: Restart deployment consul-webhook-cert-manager-586c666675-qc2zn
+--------------------
