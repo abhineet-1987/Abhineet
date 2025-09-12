@@ -93,6 +93,8 @@ Run "curl -kv http://localhost:32339" on your terminal and you can see hell worl
 
 Go to ext-jsontest service in sandbox-dev namespace in consul ui and go to topology, there you'll see x, click on it, it will ask to create intention from static-server service to this service. Create it.
 
+To validate the service dioscovery chain:
+curl -k --header "X-Consul-Namespace: sandbox-dev" https://127.0.0.1:8501/v1/discovery-chain/ext-jsontest  | jq
 
 
 
