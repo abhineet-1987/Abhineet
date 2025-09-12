@@ -6,3 +6,11 @@ tls: failed to verify certificate: x509: certificate has expired or is not yet v
 
 Fix: Restart deployment consul-webhook-cert-manager-586c666675-qc2zn
 --------------------
+consul-mesh-gateway-67c4775fcf-mg5v8 po in init state. Below error observed in mesh gateway init constainer:-
+2025-09-12T05:55:50.227Z [INFO]  Unable to find registered gateway; retrying
+2025-09-12T05:55:51.229Z [INFO]  Unable to find registered gateway; retrying
+2025-09-12T05:55:52.232Z [INFO]  Unable to find registered gateway; retrying
+2025-09-12T05:55:53.237Z [INFO]  Unable to find registered gateway; retrying
+
+Fix: Update the mesh gateway service from load balancer to node port
+-------------------------------------------
