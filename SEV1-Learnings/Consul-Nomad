@@ -4,3 +4,6 @@ ASG issue in AWS. Check whether nodes are being provisioned through ASG and if i
 Check/Increase cpu and memory of the nodes if resource crunch.
 Check for Security groups and whether server nodes can talk to each other. Sometimes if managed through terraform, ansible or some other tools can update the config and cause problems.
 Check whether IAM role to describe ec2 instances exist and is applied on the nodes for cloud auto join to work.
+
+If server nodes not joining in consensus even after using peers.json or some unusual behaviour seen then 
+surely there may be some issue related with cloud provider, networking issue, cpu or memory issue etc.
