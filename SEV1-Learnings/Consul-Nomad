@@ -7,3 +7,4 @@ Check whether IAM role to describe ec2 instances exist and is applied on the nod
 
 If server nodes not joining in consensus even after using peers.json or some unusual behaviour seen then 
 surely there may be some issue related with cloud provider, networking issue, cpu or memory issue etc.
+So its good to know at first hand only how the server nodes are getting provisioned in the customer's infrastructure, i.e whether using ASG, terraform, Ansible etc
