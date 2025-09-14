@@ -1,0 +1,15 @@
+# Access AKS from cloud shell:
+az aks get-credentials --resource-group <your-resource-group> --name <your-cluster-name>
+az aks get-credentials --resource-group api-test --name dc1
+
+$ kubectl get pods
+E0914 06:56:49.979980     519 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: 
+Get \"https://dc1-dns-2bgfx4zh.hcp.centralus.azmk8s.io:443/api?timeout=32s\": dial tcp 52.154.235.131:443: i/o timeout"
+E0914 06:57:19.981820     519 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: 
+Get \"https://dc1-dns-2bgfx4zh.hcp.centralus.azmk8s.io:443/api?timeout=32s\": dial tcp 52.154.235.131:443: i/o timeout"
+
+In Networking -> Resource Settings -> Authorised ip ranges -> set to 0.0.0.0/0
+This makes the API server accessible from anywhere on the internet. Only use for troubleshooting or non-production.
+AKS cluster is locked to only allow API access from 192.168.99.0/24, which is a private subnet. That’s why your Cloud Shell IP (74.225.207.63) is getting blocked.
+
+# Access AKS from laptop:
