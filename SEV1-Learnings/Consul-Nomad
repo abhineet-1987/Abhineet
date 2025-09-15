@@ -24,6 +24,11 @@ Fix: The current IOPs of 3,000 should be increased to 10,000 to improve disk thr
 Consul as storage backend for vault: vault pods getting in crashloopback. Issue was resolved when the changes were reverted back to addresses.http = 0.0.0.0 in consul server config and HTTP port to be bound to all interfaces (including the pod IP), allowing probes to succeed .
 Post this change, The vault cluster came back up and running.
 
+Consul DNS resolution error: Remove local domain search configuration for systemd-resolved to allow .consul domain routing.The configuration Domains=local ~consul introduces a global search domain (local) that conflicts with systemd-resolved's special handling of .local as an mDNS suffix.
+This interferes with correct stub domain routing for .consul lookups by causing the resolver to either append .local to short names or bypass the routing logic for .consul.  
+This results in failed service discovery for Consul-registered services. The fix is to use only Domains=~consul, which ensures .consul queries are properly routed to the local Consul DNS server (127.0.0.1:8600) without interference from search domains.
+(https://hashicorp.zendesk.com/agent/tickets/185695)
+
 
 Scenario 1:
 --------------
@@ -75,3 +80,10 @@ Inability to persist new state.
 Loss of quorum and leadership. 
 Overall cluster failure.
 ----------------------------------
+
+######### Important write up for customer during SEV1 ###########
+NOTE:-
+We strive to provide a thorough root cause analysis for any incidents that occur. However, it is important to note that a definitive root cause cannot always be guaranteed. To enhance our ability to diagnose and resolve issues effectively, we require debug-level logs from the server(s) and from any impacted services. These logs are crucial in giving us the best possible chance to pinpoint the underlying causes and implement appropriate solutions.
+We prefer to receive debug-level logs during the incident, though we understand that this is not always possible. In such cases, please provide any available system logs.
+
+ 
