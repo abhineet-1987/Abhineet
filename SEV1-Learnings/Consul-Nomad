@@ -1,6 +1,6 @@
 ########## Consul ################
 Check for MinQuorum value in "consul operator autopilot get-config"
-ASG issue in AWS. Check whether nodes are being provisioned through ASG and if it is working fine or not.
+ASG issue in AWS. Check whether nodes are being provisioned through ASG and if it is working fine or not. You may also get information on scaling policies set for ASG
 Check/Increase cpu and memory of the nodes if resource crunch.
 Check for Security groups and whether server nodes can talk to each other. Sometimes if managed through terraform, ansible or some other tools can update the config and cause problems.
 Check whether IAM role to describe ec2 instances exist and is applied on the nodes for cloud auto join to work.
