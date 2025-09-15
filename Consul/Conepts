@@ -1,0 +1,2 @@
+Now regarding min_quorum, it looks like that configuration wasn’t named properly.
+Ideally it should have been named something like min_servers as it is just an AutoPilot config that instructs when to stop pruning servers.
