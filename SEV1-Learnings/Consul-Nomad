@@ -88,7 +88,8 @@ Fix: Copied CA certificate to /etc/ssl/certs
 Ran update-ca-trust to update the trust for a RHEL system.
 Root cause:
 The certificates were not moved to the correct directory and because they're self-signed they were not trusted by the system. 
- 
+
+Customer certificate renewal introduced mismatched agent and file configurations resulting in RPC TLS bad certificate errors.
 
 
 Scenario 1:
