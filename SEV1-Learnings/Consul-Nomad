@@ -65,6 +65,10 @@ Fix: Blocked communication on port 8301 on client agents led to surf health fail
 Consul as Vault backend: The production Vault cluster's UI intermittently fails with HTTP 500 server error codes. Simultaneously, Vault agent containers experience repeated restarts, indicated by exit code 137, due to failing liveness probe checks related to backend storage health (Consul). This issue impacts system stability and the availability of the Vault service.
 Fix: AWS VPC CNI network policies were blocking required communication on ports 8300 and 8301 (both inbound and outbound) between Vault server agents (Consul clients) and the Consul server cluster. This network misconfiguration disrupted critical Consul-related operations, including Serf and Raft protocols necessary for cluster health and communication.
 
+Cannot access the service throught API Gateway but can be accessed via localhost internally. (https://hashicorp.zendesk.com/agent/tickets/168690)
+Fix: The root cause of the issue to be duplicate iptables rules that were pointing to port 8443. This was identified by running the following command
+iptables -L -t nat -n -v  | grep 8443
+This could have happened due to the unclean shutdown of the API Gateway allocation by Nomad, which resulted in the iptables rules not cleaned up properly.
 
 Scenario 1:
 -------------
