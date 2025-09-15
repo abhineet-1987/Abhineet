@@ -4,6 +4,7 @@ nomad operator raft list-peers
 
 # To check nomad client details
 nomad node status
+nomad node status -verbose
 nomad node status 8c7e3b79
 
 # To check nommad agent details
