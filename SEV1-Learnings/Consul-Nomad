@@ -105,6 +105,11 @@ consul.hashicorp.com/sidecar-proxy-lifecycle-startup-grace-period-seconds: "30"
 These annotations ensure the Consul sidecar proxy is injected and managed with a defined startup grace period, delaying traffic to the application until the proxy is fully ready. This change should first be validated in a non-production environment to confirm it resolves the issue without unintended side effects.
 (https://hashicorp.zendesk.com/agent/tickets/183542)
 
+Checked AWS Auto scaling groups for consul servers and noticed the restarts due to health check failures. (https://hashicorp.zendesk.com/agent/tickets/145412)
+Resources were suggested to be increased to m5.8xlarge => 32vCPU | 128Gi | 10Gbps | 6,800Mbps. This helped with the snapshot restore.
+It seems that the snapshot grew from 12GB to 25GB without increasing resources, and ASG possibly had a health check failure due to resource constrained ec2 instances. 
+
+
 Scenario 2:
 --------------
 Consul as storage backend for vault: 
