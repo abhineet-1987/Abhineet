@@ -62,6 +62,8 @@ block_query_wait = "0s"
 Request error: method=PUT url=/v1/session/renew/"session-id" from=127.0.0.1:55546 error="Session id' not found"
 Fix: Blocked communication on port 8301 on client agents led to surf health failure which in turn resulted in session loss. Ensure communication on port 8301 is open and remains open when defining security group rule. 
 
+Consul as Vault backend: The production Vault cluster's UI intermittently fails with HTTP 500 server error codes. Simultaneously, Vault agent containers experience repeated restarts, indicated by exit code 137, due to failing liveness probe checks related to backend storage health (Consul). This issue impacts system stability and the availability of the Vault service.
+Fix: AWS VPC CNI network policies were blocking required communication on ports 8300 and 8301 (both inbound and outbound) between Vault server agents (Consul clients) and the Consul server cluster. This network misconfiguration disrupted critical Consul-related operations, including Serf and Raft protocols necessary for cluster health and communication.
 
 
 Scenario 1:
