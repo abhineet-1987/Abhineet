@@ -83,6 +83,14 @@ The issue may be related to external services, such as the load balancer and oth
 TLS Certs have expired and consul nodes are going into unhealthy state. 
 Fix: https://support.hashicorp.com/hc/en-us/articles/360048494533-Rotating-Consul-TLS-Certificates
 
+Get "https://127.0.0.1:7501/v1/agent/members?segment=_all": x509: certificate signed by unknown authority. (https://hashicorp.zendesk.com/agent/tickets/158262)
+Fix: Copied CA certificate to /etc/ssl/certs
+Ran update-ca-trust to update the trust for a RHEL system.
+Root cause:
+The certificates were not moved to the correct directory and because they're self-signed they were not trusted by the system. 
+ 
+
+
 Scenario 1:
 -------------
 On 5/13 at market open, service autoscaling began, launching new pods but these pods were still initializing and hadn’t passed health checks. During this startup period, the API gateway began routing traffic to those not-yet-available pods, resulting in request failures and errors for the customer.
