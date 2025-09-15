@@ -13,6 +13,13 @@ So its good to know at first hand only how the server nodes are getting provisio
 Stale service instances can appear during upgrades for eg (consul,envoy and nomad). Fix - restart consul 
 If Consul cluster looses quorum after the PVC migration (storage migration). Fix - Scaled down Consul servers, deleted persistent volumes (PVs), and scaled back up to restore quorum.
 
+upstream connect error or disconnect/reset before headers. reset reason: remote connection failure, transport failure reason: TLS_error:|268436501:SSL routines:OPENSSL_internal:SSLV3_ALERT_CERTIFICATE_EXPIRED:TLS_error_end:TLS_error_end
+Fix: Deleted older replica set and the associated pod for the upstream deployment, which fixed the issue.
+
+For protocol mismatch with the target service. Fix - apply protocol configuration via ProxyDefaults, which resolved the mismatch.
+
+Consul Production | v1.17.1+env | Disk I/O usage 90%-100%. The core issue is most likely a high volume of synchronized writes to the Consul KV store, which is overwhelming the disk I/O capacity of the cluster
+Fix: The current IOPs of 3,000 should be increased to 10,000 to improve disk throughput and handle the high write volume as suggested in our document: https://developer.hashicorp.com/consul/tutorials/production-vms/reference-architecture#hardware-sizing-for-consul-servers
 
 
 Scenario 1:
