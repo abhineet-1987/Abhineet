@@ -39,9 +39,23 @@ probe_interval = "15s"
 probe_timeout = "10s"
 }
 
+check for the license expiry and make sure updated license is being used.
 
 
 Scenario 1:
+-------------
+On 5/13 at market open, service autoscaling began, launching new pods but these pods were still initializing and hadn’t passed health checks. During this startup period, the API gateway began routing traffic to those not-yet-available pods, resulting in request failures and errors for the customer.
+Actions taken to resolve/mitigate
+Since the issue would resolve after a couple of minutes, we weren't able to look at the logs from the time of the failure. Hence, no action was taken when the incident was reported. Therefore, we agreed to review the logs from the Consul server cluster and the Envoy logs from the failing pods as well as API gateway the next time the issue happens or if it is reproducible in your test environment. 
+Based on the observed symptoms from the time of the incident, it's recommended to test the following annotations in your cluster:
+annotations:
+consul.hashicorp.com/connect-inject: "true"
+consul.hashicorp.com/enable-sidecar-proxy-lifecycle: "true"
+consul.hashicorp.com/sidecar-proxy-lifecycle-startup-grace-period-seconds: "30"
+These annotations ensure the Consul sidecar proxy is injected and managed with a defined startup grace period, delaying traffic to the application until the proxy is fully ready. This change should first be validated in a non-production environment to confirm it resolves the issue without unintended side effects.
+(https://hashicorp.zendesk.com/agent/tickets/183542)
+
+Scenario 2:
 --------------
 Consul as storage backend for vault: 
  
@@ -61,7 +75,7 @@ When Consul has global.enableAutoEncrypt=true it uses its internal Connect CA in
 Hypothesis: there may be a bug or edge case where the Vault server or Consul agent held stale certificate information from the prior Consul cluster in memory during the reset/rebuild, causing a mismatch when the new CA was issued.
 
 
-Scenario 2:
+Scenario 3:
 ---------------
 Actions taken to resolve/mitigate :-
 Initially, the Consul cluster was recovered by setting bootstrap_expect = 1 on one of the server agents. 
