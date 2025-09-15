@@ -59,6 +59,10 @@ max_stale   = "60m"
 #disables blocking queries when set to 0
 block_query_wait = "0s"
 
+Request error: method=PUT url=/v1/session/renew/"session-id" from=127.0.0.1:55546 error="Session id' not found"
+Fix: Blocked communication on port 8301 on client agents led to surf health failure which in turn resulted in session loss. Ensure communication on port 8301 is open and remains open when defining security group rule. 
+
+
 
 Scenario 1:
 -------------
