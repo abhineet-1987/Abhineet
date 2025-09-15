@@ -45,6 +45,8 @@ Internal desc = Error adding/updating listener(s) svcn-dhs-csms-csca-miscservice
 Fix: The proxy configuration could not be updated due to insufficient permissions, as the binding to a port below 1024 requires root privileges. This led to a SAN mismatch because the certificates were not updated. After updating the port range to a value above 1024 by the customer, the configuration changes were applied successfully, and the TLS error was resolved. 
 (https://hashicorp.zendesk.com/agent/tickets/171195)
 
+In one case server and clients TLS certificates were signed by different intermediary CAs (while the Root CA is the same). Consul clearly does not like it, so certificates signed by a single CA should be issued for entire Consul cluster (servers and clients).
+
 Scenario 1:
 -------------
 On 5/13 at market open, service autoscaling began, launching new pods but these pods were still initializing and hadn’t passed health checks. During this startup period, the API gateway began routing traffic to those not-yet-available pods, resulting in request failures and errors for the customer.
