@@ -1,10 +1,42 @@
 ########## Consul ################
 Check for MinQuorum value in "consul operator autopilot get-config"
-ASG issue in AWS. Check whether nodes are being provisioned through ASG and if it is working fine or not. You may also get information on scaling policies set for ASG
-Check/Increase cpu and memory of the nodes if resource crunch.
-Check for Security groups and whether server nodes can talk to each other. Sometimes if managed through terraform, ansible or some other tools can update the config and cause problems.
+ASG issue in AWS. Check whether nodes are being provisioned through ASG and if it is working fine or not. You may also get information on scaling policies set for ASG.
+Check/Increase cpu,memory,disk space of the nodes if resource crunch.
+Check for Security groups and whether server nodes can talk to each other. 
+Sometimes if managed through terraform, ansible or some other tools can update the config and cause problems.
 Check whether IAM role to describe ec2 instances exist and is applied on the nodes for cloud auto join to work.
 
 If server nodes not joining in consensus even after using peers.json or some unusual behaviour seen then 
 surely there may be some issue related with cloud provider, networking issue, cpu or memory issue etc.
 So its good to know at first hand only how the server nodes are getting provisioned in the customer's infrastructure, i.e whether using ASG, terraform, Ansible etc
+
+Scenario 1:
+---------------
+Actions taken to resolve/mitigate :-
+Initially, the Consul cluster was recovered by setting bootstrap_expect = 1 on one of the server agents. 
+The remaining server agents were then able to join the cluster one by one, after clearing the contents of their respective data directories. 
+Once all agents had joined, Raft log entries were successfully replicated, and the cluster became stable. 
+However, starting Vault triggered a flood of requests, which overwhelmed the cluster and caused it to fail again. 
+It became clear that the EC2 instances were under-resourced and could not handle the load during Vault's startup process.
+A similar recovery process was performed once more to bring the cluster back online.
+To prevent further failures, a new Consul cluster was created, and a snapshot was restored to it.
+Each EC2 instance was stopped and its instance type was upgraded from m5.2xlarge to m5.4xlarge.
+The additional CPU and memory resources provided by the larger instance type allowed Consul to handle the surge in requests from Vault during startup.
+ 
+Root Cause :-
+Prior to the outage, the cluster was experiencing ongoing issues, including:
+Missing or invalid agent tokens required for coordinate updates.
+An expired Consul license.
+The upgrade version tag not being set.
+However, these issues do not appear to have directly caused the cluster failure.
+The actual root cause was that the EC2 instances hosting the Consul server agents ran out of disk space.
+This disk exhaustion eventually led to the loss of cluster leadership.
+Logs from 09/03 indicate a networking issue between the existing leader node (10.1.2.216) and the rest of the cluster.
+During the incident, a follower node (10.1.2.221) transitioned to the candidate state, triggering a new leader election while the previous leader remained unreachable.
+The suspected network disruption prevented proper communication between the leader and follower nodes.
+As a result, Raft log entries could not be appended and began accumulating in temporary files.
+These temporary files continued to grow until they filled the disk, causing:
+Inability to persist new state.
+Loss of quorum and leadership. 
+Overall cluster failure.
+----------------------------------
