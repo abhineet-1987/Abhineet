@@ -47,6 +47,10 @@ Fix: The proxy configuration could not be updated due to insufficient permission
 
 In one case server and clients TLS certificates were signed by different intermediary CAs (while the Root CA is the same). Consul clearly does not like it, so certificates signed by a single CA should be issued for entire Consul cluster (servers and clients).
 
+tls: bad certificate errors: Inspect the certificates, if server certificate is expired then do helm upgrade to regenerate the new server certificate.
+https://developer.hashicorp.com/consul/docs/secure/encryption/tls/rotate/k8s  (https://hashicorp.zendesk.com/agent/tickets/172809)
+
+
 Scenario 1:
 -------------
 On 5/13 at market open, service autoscaling began, launching new pods but these pods were still initializing and hadn’t passed health checks. During this startup period, the API gateway began routing traffic to those not-yet-available pods, resulting in request failures and errors for the customer.
