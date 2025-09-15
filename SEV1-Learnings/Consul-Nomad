@@ -70,6 +70,9 @@ Fix: The root cause of the issue to be duplicate iptables rules that were pointi
 iptables -L -t nat -n -v  | grep 8443
 This could have happened due to the unclean shutdown of the API Gateway allocation by Nomad, which resulted in the iptables rules not cleaned up properly.
 
+At some point encryption keys were added to each agent, but each agent wasn't restarted to enable it. So when the two clients were restarted yesterday for other reasons, encryption was enabled and they coudn't reach the other agents in the cluster.
+Once we disabled encryption on the two clients by setting encrypt_verify_incoming and encrypt_verify_outgoing to false, they were able to connect back to the cluster.
+
 Scenario 1:
 -------------
 On 5/13 at market open, service autoscaling began, launching new pods but these pods were still initializing and hadn’t passed health checks. During this startup period, the API gateway began routing traffic to those not-yet-available pods, resulting in request failures and errors for the customer.
