@@ -41,6 +41,9 @@ probe_timeout = "10s"
 
 check for the license expiry and make sure updated license is being used.
 
+Internal desc = Error adding/updating listener(s) svcn-dhs-csms-csca-miscservice-stg2:127.0.0.1:1020: cannot bind '127.0.0.1:1020': Permission denied.
+Fix: The proxy configuration could not be updated due to insufficient permissions, as the binding to a port below 1024 requires root privileges. This led to a SAN mismatch because the certificates were not updated. After updating the port range to a value above 1024 by the customer, the configuration changes were applied successfully, and the TLS error was resolved. 
+(https://hashicorp.zendesk.com/agent/tickets/171195)
 
 Scenario 1:
 -------------
