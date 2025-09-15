@@ -29,6 +29,8 @@ This interferes with correct stub domain routing for .consul lookups by causing 
 This results in failed service discovery for Consul-registered services. The fix is to use only Domains=~consul, which ensures .consul queries are properly routed to the local Consul DNS server (127.0.0.1:8600) without interference from search domains.
 (https://hashicorp.zendesk.com/agent/tickets/185695)
 
+For OOM errors collect heap.pprof. OOM issue arises in future, please provide us with the debug bundle (make sure it captures goroutine.pprof and heap.pprof).
+architectural changes and optimizations may help (https://hashicorp.zendesk.com/agent/tickets/189649)
 
 Scenario 1:
 --------------
