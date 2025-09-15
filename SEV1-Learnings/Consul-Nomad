@@ -32,6 +32,15 @@ This results in failed service discovery for Consul-registered services. The fix
 For OOM errors collect heap.pprof. OOM issue arises in future, please provide us with the debug bundle (make sure it captures goroutine.pprof and heap.pprof).
 architectural changes and optimizations may help (https://hashicorp.zendesk.com/agent/tickets/189649)
 
+Consul timeout occurs at additional startup of Consul client (post consul version upgrade)
+Fix: consul.hcl
+gossip_lan {
+probe_interval = "15s"
+probe_timeout = "10s"
+}
+
+
+
 Scenario 1:
 --------------
 Consul as storage backend for vault: 
