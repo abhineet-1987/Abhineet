@@ -50,6 +50,15 @@ In one case server and clients TLS certificates were signed by different interme
 tls: bad certificate errors: Inspect the certificates, if server certificate is expired then do helm upgrade to regenerate the new server certificate.
 https://developer.hashicorp.com/consul/docs/secure/encryption/tls/rotate/k8s  (https://hashicorp.zendesk.com/agent/tickets/172809)
 
+Optimize consul template queries for static configuration(using max_stale):
+Fix: consul {
+address = "127.0.0.1:8500"
+}
+# Allow stale reads up to 60 minutes to reduce leader load
+max_stale   = "60m"
+#disables blocking queries when set to 0
+block_query_wait = "0s"
+
 
 Scenario 1:
 -------------
