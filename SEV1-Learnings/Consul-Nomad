@@ -73,6 +73,13 @@ This could have happened due to the unclean shutdown of the API Gateway allocati
 At some point encryption keys were added to each agent, but each agent wasn't restarted to enable it. So when the two clients were restarted yesterday for other reasons, encryption was enabled and they coudn't reach the other agents in the cluster.
 Once we disabled encryption on the two clients by setting encrypt_verify_incoming and encrypt_verify_outgoing to false, they were able to connect back to the cluster.
 
+Consul as Vault's backend: Leader and follower logs showed runtime: out of memory errors. OOM error.
+Fix: backends for Vault, and is continuously having a hard time with handling the load(specifically memory). It's important to address by increasing the memory 2 to 4 times more than the working set size. So since your alloc_bytes is ~23GB, y
+
+Incorrect http/https ports configuration may cause 503 Service Unavailable Error
+
+The issue may be related to external services, such as the load balancer and other components interacting with the Consul. After fixing these components and restarting the Consul client agent, the issue may get resolved
+
 Scenario 1:
 -------------
 On 5/13 at market open, service autoscaling began, launching new pods but these pods were still initializing and hadn’t passed health checks. During this startup period, the API gateway began routing traffic to those not-yet-available pods, resulting in request failures and errors for the customer.
