@@ -10,7 +10,32 @@ If server nodes not joining in consensus even after using peers.json or some unu
 surely there may be some issue related with cloud provider, networking issue, cpu or memory issue etc.
 So its good to know at first hand only how the server nodes are getting provisioned in the customer's infrastructure, i.e whether using ASG, terraform, Ansible etc
 
+Stale service instances can appear during upgrades for eg (consul,envoy and nomad). Fix - restart consul 
+If Consul cluster looses quorum after the PVC migration (storage migration). Fix - Scaled down Consul servers, deleted persistent volumes (PVs), and scaled back up to restore quorum.
+
+
+
 Scenario 1:
+--------------
+Consul as storage backend for vault: 
+ 
+broken Consul cluster that lost quorum during a storage migration
+Confirmed Consul cluster had lost quorum after the PVC migration.
+Scaled down Consul servers, deleted persistent volumes (PVs), and scaled back up to restore quorum.
+Verified Consul came back online, but Vault failed startup with: certificate signed by unknonwn authority when connecting to Consul over https://<HOST_IP>:8501.
+Attempted to update Vault’s Consul CA secrets and restart pods; errors persisted.
+Applied tls_skip_verify = true in Vault’s Consul storage stanza to bypass bootstrap certificate validation.
+Vault successfully started.
+Reinitialized Vault on the DR secondary and successfully re-enabled DR replication.
+
+Fix:-
+The failure was caused by a TLS certificate validation error between Vault and Consul after the Consul cluster was reset during the storage migration
+Immediate Fix: Applied tls_skip_verify = true in Vault’s Consul storage stanza to bypass bootstrap certificate validation. (https://hashicorp.zendesk.com/agent/tickets/193938)
+When Consul has global.enableAutoEncrypt=true it uses its internal Connect CA in order to issue certificates for clients. 
+Hypothesis: there may be a bug or edge case where the Vault server or Consul agent held stale certificate information from the prior Consul cluster in memory during the reset/rebuild, causing a mismatch when the new CA was issued.
+
+
+Scenario 2:
 ---------------
 Actions taken to resolve/mitigate :-
 Initially, the Consul cluster was recovered by setting bootstrap_expect = 1 on one of the server agents. 
