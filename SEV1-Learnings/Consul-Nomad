@@ -91,6 +91,8 @@ The certificates were not moved to the correct directory and because they're sel
 
 Customer certificate renewal introduced mismatched agent and file configurations resulting in RPC TLS bad certificate errors.
 
+On identifying the expiration of the consul client certificate, we proceeded with its renewal, and subsequently, the system resumed normal functioning without any issues.
+
 
 Scenario 1:
 -------------
