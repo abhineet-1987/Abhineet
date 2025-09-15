@@ -21,6 +21,9 @@ For protocol mismatch with the target service. Fix - apply protocol configuratio
 Consul Production | v1.17.1+env | Disk I/O usage 90%-100%. The core issue is most likely a high volume of synchronized writes to the Consul KV store, which is overwhelming the disk I/O capacity of the cluster
 Fix: The current IOPs of 3,000 should be increased to 10,000 to improve disk throughput and handle the high write volume as suggested in our document: https://developer.hashicorp.com/consul/tutorials/production-vms/reference-architecture#hardware-sizing-for-consul-servers
 
+Consul as storage backend for vault: vault pods getting in crashloopback. Issue was resolved when the changes were reverted back to addresses.http = 0.0.0.0 in consul server config and HTTP port to be bound to all interfaces (including the pod IP), allowing probes to succeed .
+Post this change, The vault cluster came back up and running.
+
 
 Scenario 1:
 --------------
