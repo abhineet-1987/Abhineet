@@ -1,4 +1,32 @@
-########### Install Consul
+
+############ Driver and Nomad Installation on Amazon Linux #########
+
+# Install dependencies
+echo "Installing Dependencies"
+sudo yum update -y
+sudo yum install -y jq
+sudo yum install -y yum-utils
+
+# Install Docker
+sudo yum install -y docker
+sudo systemctl enable docker
+sudo systemctl start docker
+
+# Download and Install Nomad via Package Manager
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+sudo yum -y install nomad
+
+# Adds the nomad user to the docker group otherwise you may get error "* Constraint "missing drivers": 1 nodes excluded by filter"
+# sudo usermod -aG docker nomad
+
+#Execute below command at data dir of nomad i.e /opt, else the nomad service wont start
+cd /opt
+sudo chown -R nomad:nomad nomad   
+cd -
+
+# In Nomad we have concept of multi-cluster and multi-region(+Ent feature)
+
+# Install Consul
 sudo yum install -y yum-utils shadow-utils
 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
 sudo yum -y install consul
