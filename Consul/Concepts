@@ -2,4 +2,4 @@ Now regarding min_quorum, it looks like that configuration wasn’t named proper
 Ideally it should have been named something like min_servers as it is just an AutoPilot config that instructs when to stop pruning servers.
 
 Gossip encrption ket at data directory -> cat /opt/consul/serf/local.keyring
-consul join 172.31.8.233 (this can be executed from any of consul client or consul server)
+consul join 172.31.8.233 (this can be executed from any of consul client or consul server). In consul config file use retry_join
