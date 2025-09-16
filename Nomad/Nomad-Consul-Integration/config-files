@@ -5,7 +5,8 @@ bind_addr = "0.0.0.0"
 
 server {
   enabled          = true
-  bootstrap_expect = 1
+  bootstrap_expect = 3
+  retry_join = ["172.31.8.233","172.31.3.96","172.31.13.251","172.31.12.100"]
 }
 
 consul {
@@ -20,7 +21,7 @@ ui_config{
   enabled = true
 }
 server = true
-bootstrap_expect = 1
+bootstrap_expect = 3
 client_addr = "0.0.0.0"
 bind_addr = "0.0.0.0"
 advertise_addr = "<ec2-private-ip>"
