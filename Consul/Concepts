@@ -5,3 +5,4 @@ Gossip encrption ket at data directory -> cat /opt/consul/serf/local.keyring
 consul join 172.31.8.233 (this can be executed from any of consul client or consul server). In consul config file use retry_join
 
 By default value of MinQuorum = 0 in "consul operator autopilot get-config", you have to manually set it to some other value.
+retry_join = ["172.31.8.233","172.31.3.96","172.31.13.251","172.31.12.100"]
