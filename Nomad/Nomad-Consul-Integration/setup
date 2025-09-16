@@ -21,7 +21,7 @@ server = true
 bootstrap_expect = 1
 client_addr = "0.0.0.0"
 bind_addr = "0.0.0.0"
-advertise_addr = "172.31.8.233"
+advertise_addr = "<ec2-private-ip>"
 connect = {
   enabled = true
 }
