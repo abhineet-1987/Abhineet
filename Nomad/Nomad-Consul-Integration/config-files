@@ -6,7 +6,9 @@ bind_addr = "0.0.0.0"
 server {
   enabled          = true
   bootstrap_expect = 3
-  retry_join = ["172.31.8.233","172.31.3.96","172.31.13.251","172.31.12.100"]
+  server_join {
+    retry_join = ["172.31.8.233","172.31.3.96","172.31.13.251"]
+}
 }
 
 consul {
@@ -36,6 +38,9 @@ bind_addr = "0.0.0.0"
 
 client {
   enabled = true
+  server_join {
+    retry_join = ["172.31.8.233","172.31.3.96","172.31.13.251"]
+       }
 }
 
 consul {
