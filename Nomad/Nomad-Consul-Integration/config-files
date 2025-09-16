@@ -10,6 +10,7 @@ server {
 
 consul {
   address ="http://127.0.0.1:8500"
+  server_service_name = "nomad-server"
 }
 ######## consul server .hcl #############
 node_name = "consul-server"
