@@ -1,0 +1,28 @@
+########## nomad server .hcl ############
+data_dir  = "/opt/nomad/data"
+bind_addr = "0.0.0.0"
+
+server {
+  enabled          = true
+  bootstrap_expect = 1
+}
+
+consul {
+  address ="http://127.0.0.1:8500"
+}
+######## consul server .hcl #############
+node_name = "consul-server"
+datacenter = "my-dc-1"
+data_dir = "/opt/consul"
+ui_config{
+  enabled = true
+}
+server = true
+bootstrap_expect = 1
+client_addr = "0.0.0.0"
+bind_addr = "0.0.0.0"
+advertise_addr = "172.31.8.233"
+connect = {
+  enabled = true
+}
+
