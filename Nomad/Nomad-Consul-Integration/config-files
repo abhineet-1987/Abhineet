@@ -24,6 +24,32 @@ bootstrap_expect = 1
 client_addr = "0.0.0.0"
 bind_addr = "0.0.0.0"
 advertise_addr = "<ec2-private-ip>"
+retry_join = ["172.31.8.233","172.31.3.96","172.31.13.251","172.31.12.100"]
+connect = {
+  enabled = true
+}
+########### nomad client .hcl ###########
+name = "nomad-client-1"
+data_dir  = "/opt/nomad/data"
+bind_addr = "0.0.0.0"
+
+client {
+  enabled = true
+}
+
+consul {
+  address ="http://127.0.0.1:8500"
+  server_service_name = "nomad-client-1-service"
+}
+########### consul client .hcl ##########
+node_name = "consul-client-1"
+datacenter = "dc1"
+data_dir = "/opt/consul"
+server = false
+client_addr = "0.0.0.0"
+bind_addr = "0.0.0.0"
+advertise_addr = "172.31.12.100"
+retry_join = ["172.31.8.233","172.31.3.96","172.31.13.251","172.31.12.100"]
 connect = {
   enabled = true
 }
