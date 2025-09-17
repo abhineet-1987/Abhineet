@@ -1,0 +1,2 @@
+Constraint ${attr.plugins.cni.version.bridge} semver >= 0.4.0 filtered 1 node
+Fix: Install cni
