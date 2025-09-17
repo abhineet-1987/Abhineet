@@ -11,6 +11,10 @@ nomad node status 8c7e3b79
 nomad agent-info
 nomad agent-info -json
 
+nomad monitor -log-level=debug
+nomad monitor -log-level=DEBUG -node-id=6bdc70fe      # -node-id: Specifies the client node-id to stream logs from
+nomad monitor -log-level=DEBUG -server-id=nomad-server-1.global  # -server-id: Specifies the nomad server id to stream logs from
+
 
 # You can ask for below configuration
 Server Config
