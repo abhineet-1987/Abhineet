@@ -2,3 +2,16 @@ Error:- Constraint ${attr.plugins.cni.version.bridge} semver >= 0.4.0 filtered 1
 Fix: Install cni and consul cni plugin, refer https://developer.hashicorp.com/nomad/docs/deploy#linux-post-installation-steps
 
 Error:- Constraint ${attr.consul.grpc} > 0 filtered 1 node
+Fix: Add below block in consul config:
+ports = {
+  grpc = 8502
+}
+
+Error:- Setup Failure: failed to setup alloc: pre-run hook "consul_grpc_socket" failed: 1 error occurred: * error parsing Consul address "http://127.0.0.1:8500": address http://127.0.0.1:8500: too many colons in address
+Fix:- In consul block in nomad configuration add below:
+consul {
+  grpc_address = "127.0.0.1:8502"
+}
+
+Error:- Resources exhausted on 1 node
+Fix:- Increase the nomad client node resources
