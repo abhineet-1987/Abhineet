@@ -13,5 +13,6 @@ consul {
   grpc_address = "127.0.0.1:8502"
 }
 
-Error:- Resources exhausted on 1 node
-Fix:- Increase the nomad client node resources
+Error:- Resources exhausted on 1 node 
+Troubleshooting: free -h # on amazon linux, top command
+Fix:- Increase the nomad client node resources (stop ec2, change the instance type [Actions → Instance settings → Change instance type], start the instance)
