@@ -1,3 +1,10 @@
 For installing nomad as clients:-
 sudo ./script.sh # script.sh -> pre-setup scripts , run as root user
 
+# To access dashboard service in browser:
+http://<public-ip-ec2>:9002    
+
+# To access hello-world service in browser:
+http://<public-ip-ec2>:8001    
+
+
