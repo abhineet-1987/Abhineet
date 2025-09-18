@@ -19,4 +19,5 @@ Fix:- Increase the nomad client node resources (stop ec2, change the instance ty
 
 
 Error:- "Error bootstrapping: Unexpected response code: 400 (ACL support disabled)"
-Fix: For ACLs, all Nomad servers in the cluster must be restarted with acl { enabled = true }. If even one server is running with ACLs disabled, bootstrapping will fail with below error.
+Fix: For ACLs, all Nomad servers in the cluster must be restarted with acl { enabled = true }. If even one server is running with ACLs disabled, bootstrapping will fail with this error.
+export NOMAD_TOKEN=898e1cb3-0f55-3f0e-94e9-5609c7422817
