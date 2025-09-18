@@ -45,6 +45,7 @@ client {
 
 consul {
   address ="http://127.0.0.1:8500"
+  grpc_address = "127.0.0.1:8502"
   server_service_name = "nomad-client-1-service"
 }
 ########### consul client .hcl ##########
@@ -55,6 +56,9 @@ server = false
 client_addr = "0.0.0.0"
 bind_addr = "0.0.0.0"
 advertise_addr = "172.31.12.100"
+ports = {
+  grpc = 8502
+}
 retry_join = ["172.31.8.233","172.31.3.96","172.31.13.251","172.31.12.100"]
 connect = {
   enabled = true
