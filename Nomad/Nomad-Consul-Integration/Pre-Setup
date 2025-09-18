@@ -30,3 +30,14 @@ cd -
 sudo yum install -y yum-utils shadow-utils
 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
 sudo yum -y install consul
+
+# Install cni plugin on nomad client machine
+export ARCH_CNI=$( [ $(uname -m) = aarch64 ] && echo arm64 || echo amd64)
+export CNI_PLUGIN_VERSION=v1.6.2
+curl -L -o cni-plugins.tgz "https://github.com/containernetworking/plugins/releases/download/${CNI_PLUGIN_VERSION}/cni-plugins-linux-${ARCH_CNI}-${CNI_PLUGIN_VERSION}".tgz
+sudo mkdir -p /opt/cni/bin
+sudo tar -C /opt/cni/bin -xzf cni-plugins.tgz
+
+# Install consul cni plugin on nomad client machine
+# https://developer.hashicorp.com/nomad/docs/deploy#install-consul-cni-plugin
+sudo apt-get install -y consul-cni   # for amazon linux, for other systems refer above link
