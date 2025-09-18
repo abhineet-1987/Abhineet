@@ -6,3 +6,15 @@ For ACLs, all Nomad servers in the cluster must be restarted with acl { enabled 
 "Error bootstrapping: Unexpected response code: 400 (ACL support disabled)"
 
 export NOMAD_TOKEN=<token> post enabling acl on all servers and clients. You may create another token for nomad clients swith fewer privileges than master token.
+
+I have enabled acl with default policy as deny on all consul servers and clients and in the nomad config I have no wehere defined the consul token. When I run "consul catalog services" on nomad server I see below output:-
+[ec2-user@ip-172-31-8-233 consul.d]$ consul catalog services
+consul
+nomad-server-1-service
+nomad-server-2-service
+nomad-server-3-service
+Query: The nomad client service is not there, but not sure why nomad servers service is there ??
+when I run the same on nomad client I get:
+[ec2-user@ip-172-31-12-100 consul.d]$ consul catalog services
+No services match the given query - try expanding your search.
+
