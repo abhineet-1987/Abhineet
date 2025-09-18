@@ -4,3 +4,5 @@ Nomad is not secure-by-default. Like all security considerations, one must appro
 
 For ACLs, all Nomad servers in the cluster must be restarted with acl { enabled = true }. If even one server is running with ACLs disabled, bootstrapping will fail with below error.
 "Error bootstrapping: Unexpected response code: 400 (ACL support disabled)"
+
+export NOMAD_TOKEN=<token> post enabling acl on all servers and clients. You may create another token for nomad clients swith fewer privileges than master token.
