@@ -1,3 +1,6 @@
 # https://developer.hashicorp.com/nomad/docs/deploy/production/requirements#hardening-nomad
 
 Nomad is not secure-by-default. Like all security considerations, one must appropriately determine what concerns they have for their environment and adapt to these security recommendations accordingly.
+
+For ACLs, all Nomad servers in the cluster must be restarted with acl { enabled = true }. If even one server is running with ACLs disabled, bootstrapping will fail with below error.
+"Error bootstrapping: Unexpected response code: 400 (ACL support disabled)"
