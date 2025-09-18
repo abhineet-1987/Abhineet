@@ -14,3 +14,4 @@ consul-mesh-gateway-67c4775fcf-mg5v8 po in init state. Below error observed in m
 
 Fix: Update the mesh gateway service from load balancer to node port
 -------------------------------------------
+Error: Failed ACL bootstrapping: Unexpected response code: 500 (rpc error making call: ACL support disabled)
