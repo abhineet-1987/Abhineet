@@ -7,8 +7,9 @@ To Expose Kubernetes API to Your Laptop : kubectl proxy --address='0.0.0.0' --po
 Validate: curl http://localhost:8001/version
 
 Case2:
-
-
+Foe eg you have to use kubernetes host as env variable in your pods, you can use as below. For eg in while setting kubernetes auth method inside Vault pods
+KUBE_HOST="https://kubernetes.default.svc"  
+###############################################
 
 
 
