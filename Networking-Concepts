@@ -1,6 +1,15 @@
 curl ifconfig.me   # to check public ip of my laptop
 ipconfig getifaddr en0  # to check ip of my laptop, This is the IP your Mac uses within your home or office network.
 
+######## I am using kind on my laptop to create K8 clsuetr #######
+Case1:
+To Expose Kubernetes API to Your Laptop : kubectl proxy --address='0.0.0.0' --port=8001 --accept-hosts='.*'
+Validate: curl http://localhost:8001/version
+
+Case2:
+
+
+
 
 
 Common network errors:-
