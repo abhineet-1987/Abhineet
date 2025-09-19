@@ -1,3 +1,8 @@
+curl ifconfig.me   # to check public ip of my laptop
+ipconfig getifaddr en0  # to check ip of my laptop, This is the IP your Mac uses within your home or office network.
+
+
+
 Common network errors:-
 1.Packet loss
 ping -c 5 google.com
