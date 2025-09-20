@@ -2,3 +2,13 @@
 Consul running on VM, API gateway and httproute deployed as configuration entry on VM where Consul is running.
 Application running in Kubernetes
 SyncCatalog deployed in Kubernetes through helm chart so that the services gets registered in Consul.
+
+
+Install Consul enterprise specific Consul version:-
+https://releases.hashicorp.com/consul
+wget https://releases.hashicorp.com/consul/1.21.4+ent/consul_1.21.4+ent_linux_amd64.zip
+unzip consul_1.21.4+ent_linux_amd64.zip
+echo $PATH 
+sudo mv consul /usr/bin
+consul version
+
