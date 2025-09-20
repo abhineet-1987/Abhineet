@@ -5,6 +5,8 @@ SyncCatalog deployed in Kubernetes through helm chart so that the services gets 
 
 
 Install Consul enterprise specific Consul version:-
+Install Consul using https://developer.hashicorp.com/consul/install (this is to ensure that all the required user, group, folders are created for Consul)
+Now manually download and move consul enterprise binary to the path
 https://releases.hashicorp.com/consul
 wget https://releases.hashicorp.com/consul/1.21.4+ent/consul_1.21.4+ent_linux_amd64.zip
 unzip consul_1.21.4+ent_linux_amd64.zip
