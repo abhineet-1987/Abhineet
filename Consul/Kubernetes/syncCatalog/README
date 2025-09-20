@@ -1,0 +1,4 @@
+#### Use case: 
+Consul running on VM, API gateway and httproute deployed as configuration entry on VM where Consul is running.
+Application running in Kubernetes
+SyncCatalog deployed in Kubernetes through helm chart so that the services gets registered in Consul.
