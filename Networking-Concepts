@@ -11,6 +11,10 @@ Foe eg you have to use kubernetes host as env variable in your pods, you can use
 KUBE_HOST="https://kubernetes.default.svc"  
 ###############################################
 
+To check OS details Linux:
+cat /etc/os-release
+
+
 
 
 Common network errors:-
