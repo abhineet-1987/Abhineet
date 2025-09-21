@@ -45,5 +45,30 @@ helm repo add hashicorp https://helm.releases.hashicorp.com
 helm search repo hashicorp/consul
 consul -n consul-sm hashicorp/consul --values=values.yaml
 
+To Expose Kubernetes API to Your Laptop : kubectl proxy --address='0.0.0.0' --port=8001 --accept-hosts='.*'
+Validate: curl http://localhost:8001/version
+
+Very important Note: 
+In Amazon Linux use in helm values.yaml :
+externalServers:
+  enabled: true
+  httpsPort: 8500
+  hosts:
+    - "172.31.1.40"
+  k8sAuthMethodHost: "http://localhost:8001"
+
+In MacOs use:
+externalServers:
+  enabled: true
+  httpsPort: 8500
+  hosts:
+    - host.docker.internal
+  k8sAuthMethodHost: "http://localhost:8001"
+
+
+
+
+
+
 
 
