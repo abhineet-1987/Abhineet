@@ -30,4 +30,7 @@ docker --version
 
 sudo kind create cluster --config kind-config.hcl
 
+#### Install kubectl #######
+https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+
 
