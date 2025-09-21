@@ -38,4 +38,12 @@ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scrip
 chmod 700 get_helm.sh
 ./get_helm.sh
 
+k create ns consul-sm
+k create ns consul-sm-app
+
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm search repo hashicorp/consul
+consul -n consul-sm hashicorp/consul --values=values.yaml
+
+
 
