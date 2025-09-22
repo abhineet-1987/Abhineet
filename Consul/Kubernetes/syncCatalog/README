@@ -65,6 +65,8 @@ externalServers:
     - host.docker.internal
   k8sAuthMethodHost: "http://localhost:8001"
 
+consul connect envoy -gateway api -register -service my-api-gateway
+
 
 
 
