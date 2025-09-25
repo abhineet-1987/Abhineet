@@ -11,6 +11,13 @@ Foe eg you have to use kubernetes host as env variable in your pods, you can use
 KUBE_HOST="https://kubernetes.default.svc"  
 ###############################################
 
+###### Some useful networking commands ###############
+ip addr   : Lists all network interfaces and their assigned IP addresses on the host.
+ip route   : Displays the routing table, showing how the host directs traffic to different networks.
+docker network ls   : Shows all Docker networks currently defined on the system.
+docker network inspect <kind-network-name>   : Provides detailed configuration and connected containers for a specific Docker network (like the one KIND uses).
+
+
 To check OS details Linux:
 cat /etc/os-release
 
