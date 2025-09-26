@@ -93,6 +93,11 @@ Customer certificate renewal introduced mismatched agent and file configurations
 
 On identifying the expiration of the consul client certificate, we proceeded with its renewal, and subsequently, the system resumed normal functioning without any issues.
 
+Consul service not starting and below errors observed in logs:
+ERROR] agent.server.rpc: TLS handshake failed: conn=>
+Sep 25 21:50:57 xx-xxx-001.xxxx consul[4314]: 2025-09-25T21:50:57.711-0400 [ERROR] agent.server.raft.snapshot: failed to make sn>
+Sep 25 21:50:57 xx-xxxx-001.xxxxxconsul[4314]: 2025-09-25T21:50:57.713-0400 [ERROR] agent.server.raft: failed to take snapshot: e>
+Fix: Post running "journalctl -xeu consul -f" command it showed disk was 100% full, post clearing the space and restarting consul the issue got fixed.
 
 Scenario 1:
 -------------
