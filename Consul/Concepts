@@ -6,3 +6,8 @@ consul join 172.31.8.233 (this can be executed from any of consul client or cons
 
 By default value of MinQuorum = 0 in "consul operator autopilot get-config", you have to manually set it to some other value.
 retry_join = ["172.31.8.233","172.31.3.96","172.31.13.251","172.31.12.100"]
+
+The Consul API Gateway backends should be part of service-mesh (connect-injected pods) and cannot make use of catalog-synced instances. 
+Consul catalog-sync can only be used for service-discovery use-cases. Enabling both Service Mesh and Service Sync on the same Kubernetes services is not supported, as Service Mesh also registers Kubernetes service instances to Consul. 
+Ensure that Service Sync is only enabled for namespaces and services that are not injected with the Consul sidecar for Service Mesh as described in Sync Enable/Disable.
+Reference: https://developer.hashicorp.com/consul/docs/register/service/k8s/service-sync#installation-and-configuration
