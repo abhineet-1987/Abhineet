@@ -33,3 +33,5 @@ Fix: Restart nomad agent on all server nodes.
 Error: All jobs started failing after changing instance type from c6id.32xl to i7ie.48xl
 Fix: Windows environment-specific issue rather than a Nomad defect. The errors (exit status 0xc0000142, plugin startup failures) originate from the Windows OS—specifically from failures in the Windows process startup sequence
 
+Error: Not ready to serve consistent reads
+Fix: Stopping the Nomad agent on the previous leader triggered a new leader to be elected and cluster quorum to form.
