@@ -74,3 +74,10 @@ sudo docker logs -f <ctr-id> -t
 
 # Nomad event stream
 curl -s -v -N http://127.0.0.1:4646/v1/event/stream | jq
+
+#### From ticket ######
+Please share job definition file. 
+Share the output of nomad job status <job_name> 
+Output of nomad node status <node_name>, choose the node where allocation for the job got placed.
+Need nomad "DEBUG" level logs (for duration ~15 mins) from the leader node as well as the node (where allocation got placed).
+ 
