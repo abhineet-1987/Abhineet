@@ -1,3 +1,4 @@
+VVV IMP: https://developer.hashicorp.com/nomad/tutorials/archive
 # https://developer.hashicorp.com/nomad/docs/deploy/production/requirements#hardening-nomad
 
 Nomad is not secure-by-default. Like all security considerations, one must appropriately determine what concerns they have for their environment and adapt to these security recommendations accordingly.
