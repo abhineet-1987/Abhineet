@@ -80,4 +80,10 @@ Please share job definition file.
 Share the output of nomad job status <job_name> 
 Output of nomad node status <node_name>, choose the node where allocation for the job got placed.
 Need nomad "DEBUG" level logs (for duration ~15 mins) from the leader node as well as the node (where allocation got placed).
+
+### Nomad Debug Bundle from all servers with -stale argument
+nomad debug -stale
+ 
+##### The output of the following command from all server agents
+nomad operator api /v1/agent/pprof/goroutine\?debug=1
  
