@@ -1,4 +1,4 @@
-Error: port not up
+Error: 1) port not up 2) Cannot access the service through API Gateway
 Fix: Stale IPtables rules, The issue seems to have happened after Node heartbeat miss alerts from nomad client to nomad server. We have identified a potential bug with Nomad not removing stale iptable rules when static ports have been assigned to job and  when nomad client loses connectivity with nomad server.
 Checked the health of API gateways and upstreams, both appeared healthy.
 Since this is a repeated incident, we discovered a stale API gateway IP address and port entry which was unreachable via curl on port 8443.
@@ -9,7 +9,7 @@ Took note of target in offending rules , identified the bad IP address, cleaned 
 Flushed the offending IPtables CHAIN relevant to target captured: iptables -t nat -F <chain-name>
 Deleted the Iptables CHAIN as well: iptables -t nat -X <chain-name>
 Later verified that all the offending iptables rules containing stale IP address dont exist anymore using : iptables -L -t nat -n -v  | grep 8443
-(Ticket: 187557)
+(Ticket: 187557, 176128)
 
 Error: Closer look at the failing jobs logs revealed that Nomad is not able to pull a configured Envoy image. The private registry returns 404 "not found"
 Fix: It was established that the private registry was reconfigured recently, so now it requires authentication. Unauthenticated requests get rejected.
@@ -29,3 +29,7 @@ he application was exiting with status 0, leading to perpetual restarts by Nomad
 
 Error: nomad: error reloading server TLS configuration: error="listen tcp 0.0.0.0:4647: bind: address already in use"
 Fix: Restart nomad agent on all server nodes.
+
+Error: All jobs started failing after changing instance type from c6id.32xl to i7ie.48xl
+Fix: Windows environment-specific issue rather than a Nomad defect. The errors (exit status 0xc0000142, plugin startup failures) originate from the Windows OS—specifically from failures in the Windows process startup sequence
+
