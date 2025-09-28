@@ -11,3 +11,7 @@ Deleted the Iptables CHAIN as well: iptables -t nat -X <chain-name>
 Later verified that all the offending iptables rules containing stale IP address dont exist anymore using : iptables -L -t nat -n -v  | grep 8443
 (Ticket: 187557)
 
+Error: Closer look at the failing jobs logs revealed that Nomad is not able to pull a configured Envoy image. The private registry returns 404 "not found"
+Fix: It was established that the private registry was reconfigured recently, so now it requires authentication. Unauthenticated requests get rejected.
+No abnormalities in Nomad or Consul behaviour were noticed.
+The customer team decided to proceed with manual distribution of the target image and reconfiguring jobs to use it locally instead of pulling it from the registry.
