@@ -1,0 +1,13 @@
+Error: port not up
+Fix: Stale IPtables rules, The issue seems to have happened after Node heartbeat miss alerts from nomad client to nomad server. We have identified a potential bug with Nomad not removing stale iptable rules when static ports have been assigned to job and  when nomad client loses connectivity with nomad server.
+Checked the health of API gateways and upstreams, both appeared healthy.
+Since this is a repeated incident, we discovered a stale API gateway IP address and port entry which was unreachable via curl on port 8443.
+We identified the node that duplicate API gateway IP table entry
+We cleaned up the IPtables rules containing stale IP address entries:
+Listed IPtables rules for port 8443 : iptables -L -t nat -n -v  | grep 8443
+Took note of target in offending rules , identified the bad IP address, cleaned its references by deleting the each such rule from all Chains: iptables -t nat -D <chain-name> <rule-num>
+Flushed the offending IPtables CHAIN relevant to target captured: iptables -t nat -F <chain-name>
+Deleted the Iptables CHAIN as well: iptables -t nat -X <chain-name>
+Later verified that all the offending iptables rules containing stale IP address dont exist anymore using : iptables -L -t nat -n -v  | grep 8443
+(Ticket: 187557)
+
