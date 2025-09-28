@@ -18,3 +18,5 @@ when I run the same on nomad client I get:
 [ec2-user@ip-172-31-12-100 consul.d]$ consul catalog services
 No services match the given query - try expanding your search.
 
+nomad system gc # Initializes a garbage collection of jobs, evaluations, allocations, and nodes. This is an asynchronous operation.
+
