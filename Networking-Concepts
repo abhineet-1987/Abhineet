@@ -17,6 +17,14 @@ ip route   : Displays the routing table, showing how the host directs traffic to
 docker network ls   : Shows all Docker networks currently defined on the system.
 docker network inspect <kind-network-name>   : Provides detailed configuration and connected containers for a specific Docker network (like the one KIND uses).
 
+iptables,iptable rules, chain, NAT    ### Need to read more on this
+
+###### How to clean up the IPtables rules containing stale IP address entries #########
+Listed IPtables rules for port 8443 : iptables -L -t nat -n -v  | grep 8443
+Took note of target in offending rules , identified the bad IP address, cleaned its references by deleting the each such rule from all Chains: iptables -t nat -D <chain-name> <rule-num>
+Flushed the offending IPtables CHAIN relevant to target captured: iptables -t nat -F <chain-name>
+Deleted the Iptables CHAIN as well: iptables -t nat -X <chain-name>
+Later verified that all the offending iptables rules containing stale IP address dont exist anymore using : iptables -L -t nat -n -v  | grep 8443
 
 To check OS details Linux:
 cat /etc/os-release
