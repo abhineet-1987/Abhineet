@@ -35,3 +35,8 @@ Fix: Windows environment-specific issue rather than a Nomad defect. The errors (
 
 Error: Not ready to serve consistent reads
 Fix: Stopping the Nomad agent on the previous leader triggered a new leader to be elected and cluster quorum to form.
+For RCA ask customer for:
+Nomad Debug Bundle from all servers with -stale argument
+nomad debug -stale
+The output of the following command from all server agents
+nomad operator api /v1/agent/pprof/goroutine\?debug=1
