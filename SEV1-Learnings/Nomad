@@ -15,3 +15,9 @@ Error: Closer look at the failing jobs logs revealed that Nomad is not able to p
 Fix: It was established that the private registry was reconfigured recently, so now it requires authentication. Unauthenticated requests get rejected.
 No abnormalities in Nomad or Consul behaviour were noticed.
 The customer team decided to proceed with manual distribution of the target image and reconfiguring jobs to use it locally instead of pulling it from the registry.
+
+Error: When deploying a new service with Nomad, the existing Nomad containers do not terminate and remain in a pending state, resulting in 502 page errors. 
+Fix: task “web”
+config {
+  init = true
+}
