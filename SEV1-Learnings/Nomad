@@ -27,3 +27,5 @@ Fix: Verified that stopping and purging jobs did not resolve the issue.
 Restarted the affected Nomad client, which resolved the immediate issue and allowed jobs to start running.
 he application was exiting with status 0, leading to perpetual restarts by Nomad.  The exit code indicates the application was terminating as expected and nomad was just re-schedule per the jobspec. 
 
+Error: nomad: error reloading server TLS configuration: error="listen tcp 0.0.0.0:4647: bind: address already in use"
+Fix: Restart nomad agent on all server nodes.
