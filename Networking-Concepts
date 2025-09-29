@@ -29,7 +29,7 @@ Later verified that all the offending iptables rules containing stale IP address
 To check OS details Linux:
 cat /etc/os-release
 
-
+netstat -antp # The command netstat -antp is used to display active network connections and listening ports
 
 
 Common network errors:-
