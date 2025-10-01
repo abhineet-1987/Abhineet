@@ -1,0 +1,4 @@
+Usecase: Consul deployed on VM (ec2 instance)
+Api gateway, http route and applications deployed on Kubernetes (Kind is used here on the same ec2 instance to spin up K8 cluster)
+
+To Expose Kubernetes API to the ec2 instance : kubectl proxy --address='0.0.0.0' --port=8001 --accept-hosts='.*'   (run this on seperate terminal of ec2 instance)
