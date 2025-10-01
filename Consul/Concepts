@@ -11,3 +11,6 @@ The Consul API Gateway backends should be part of service-mesh (connect-injected
 Consul catalog-sync can only be used for service-discovery use-cases. Enabling both Service Mesh and Service Sync on the same Kubernetes services is not supported, as Service Mesh also registers Kubernetes service instances to Consul. 
 Ensure that Service Sync is only enabled for namespaces and services that are not injected with the Consul sidecar for Service Mesh as described in Sync Enable/Disable.
 Reference: https://developer.hashicorp.com/consul/docs/register/service/k8s/service-sync#installation-and-configuration
+
+# Consul Cheat sheet:-
+https://github.com/devops-cheat-sheets/consul-cheat-sheet/blob/main/README.md#consul-cheat-sheet
