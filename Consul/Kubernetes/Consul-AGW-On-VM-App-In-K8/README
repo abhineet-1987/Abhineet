@@ -1,0 +1,14 @@
+Usecase: Consul, Api gateway, http-route deployed on VM i.e on one of ec2 instance with private ip as 172.31.1.40
+Applications and Consul connect inject (deployed through helm) deployed on EKS.
+Note : EKS worker node has connectivity with the VM where Consul is deployed. You may validate by running "ip route" command to check whether route exists.
+
+consul config write api-gw.hcl
+consul config write http-route.hcl
+consul connect envoy -gateway api -register -service agw-manual -address=172.31.1.40:8085
+
+helm install consul hashicorp/consul --values=Values.yaml
+
+Validate:
+On VM (ec2 instance) where Consul is deployed, execute :-
+# curl http://172.31.1.40:8085
+"hello world"
