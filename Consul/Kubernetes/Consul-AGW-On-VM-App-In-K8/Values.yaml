@@ -1,0 +1,36 @@
+global:
+  image: hashicorp/consul-enterprise:1.21.1-ent
+  enabled: false
+  #datacenter: xyz
+  enableConsulNamespaces: true
+  name: consul
+  imageK8S: hashicorp/consul-k8s-control-plane:1.8.1
+  imageConsulDataplane: hashicorp/consul-dataplane:1.8.1
+
+enterpriseLicense:
+  secretName: consul-ent-license
+  secretKey: key
+
+externalServers:
+  enabled: true
+  httpsPort: 8500
+  grpcPort: 8502
+  hosts:
+    - "172.31.1.40"
+  k8sAuthMethodHost: "https://46228EBB371C0B53D76C4D7FA577654D.gr7.us-west-2.eks.amazonaws.com"
+
+server:
+  enabled: false
+
+client:
+  enabled: false
+
+dns:
+  enabled: false
+
+ui:
+  enabled: false
+
+
+connectInject:
+  enabled: true
