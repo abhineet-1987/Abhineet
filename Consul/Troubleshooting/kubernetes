@@ -1,0 +1,2 @@
+# To take cluster dump of the kubernetes cluster using :-
+kubectl cluster-info dump --all-namespaces --output-directory=/tmp/cluster-dump-$(date +%Y-%m-%d_%H-%M)
