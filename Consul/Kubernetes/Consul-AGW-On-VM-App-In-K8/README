@@ -4,6 +4,7 @@ Note : EKS worker node has connectivity with the VM where Consul is deployed. Yo
 
 consul config write api-gw.hcl
 consul config write http-route.hcl
+consul config write proxy-default.hcl
 consul connect envoy -gateway api -register -service agw-manual -address=172.31.1.40:8085
 
 helm install consul hashicorp/consul --values=Values.yaml
