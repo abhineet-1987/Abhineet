@@ -1,0 +1,33 @@
+global:
+  enabled: true
+  name: consul
+  image: hashicorp/consul-enterprise:1.21.1-ent
+  peering:
+    enabled: true
+  enterpriseLicense:
+    secretName: "consul-ent-license"
+    secretKey: "key"
+    enableLicenseAutoload: true
+  imageK8S: hashicorp/consul-k8s-control-plane:1.7.0
+  imageConsulDataplane: hashicorp/consul-dataplane:1.7.0
+  datacenter: dc2
+  tls:
+    enabled: true
+server:
+  enabled: true
+  replicas: 1
+ui:
+  enabled: true
+  service:
+    type: NodePort
+connectInject:
+  enabled: true
+meshGateway:
+  enabled: true
+  wanAddress:
+    source: NodeIP
+    port: 32111
+    static: ""
+  service:
+    type: NodePort
+    nodePort: 32111
