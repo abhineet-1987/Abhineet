@@ -1,0 +1,38 @@
+Reference Documents:-
+https://developer.hashicorp.com/consul/docs/deploy/server/k8s/enterprise#create-kubernetes-secret
+https://developer.hashicorp.com/consul/docs/east-west/cluster-peering/tech-specs/k8s
+https://developer.hashicorp.com/consul/docs/east-west/mesh-gateway/cluster-peer#configuration
+https://developer.hashicorp.com/consul/docs/east-west/cluster-peering/establish/k8s
+https://developer.hashicorp.com/consul/docs/reference/k8s/helm#h-meshgateway
+https://developer.hashicorp.com/consul/docs/east-west/cluster-peering/establish/k8s?page=k8s&page=connect&page=cluster-peering&page=usage&page=establish-peering
+
+USE CASE:
+Control Plane peering using mesh gateway
+
+STEPS:-
+Create 2 kubernetes cluster using kind :-
+kind create cluster --name=dc1
+kind create cluster --name=dc2
+
+On cluster dc1:
+secret=$(cat license.hclic)
+kubectl create secret generic consul-ent-license --from-literal="key=${secret}"
+helm install consul hashicorp/consul --values=values-dc1.yaml
+kubectl apply -f mesh.yaml
+kubectl apply -f acceptor.yaml        # Post this step peering-token secret will be created
+kubectl get secret peering-token --output yaml > peering-token.yaml      # Save your peering token so that you can export it to the other cluster
+
+On cluster dc2:
+Switch context "kubectl config use-context kind-dc2"
+kubectl create secret generic consul-ent-license --from-literal="key=${secret}"
+helm install consul hashicorp/consul --values=values-dc2.yaml
+kubectl apply -f mesh.yaml
+kubectl apply -f peering-token.yaml     # Apply the peering token to the second cluster
+kubectl apply -f dialer.yaml        # Post this step, the peering connection will be established
+
+Validation:-
+SSH into the consul server pods "kubectl exec -it consul-server-0 -- sh" and execute :-
+consul peering list
+curl -k https://127.0.0.1:8501/v1/peering/cluster-01 | jq       (execute from cluster 2)
+curl -k https://127.0.0.1:8501/v1/peering/cluster-02 | jq       (execute from cluster 1)     # You'll see the peering state as ACTIVE,  "State": "ACTIVE"
+
