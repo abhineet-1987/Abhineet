@@ -12,6 +12,12 @@ curl -X POST http://localhost:19000/logging\?level\=debug
 Note: Make sure to revert it to info once you have captured the debug logs from the envoy. 
 curl -X POST http://localhost:19000/logging\?level\=info
 
+kubectl exec pod/pod-name -c envoy-sidecar -- curl -X POST http://localhost:19000/logging?upstream=trace
+kubectl exec pod/pod-name -c envoy-sidecar -- curl -X POST http://localhost:19000/logging?router=trace
+kubectl exec pod/pod-name -c envoy-sidecar -- curl -X POST http://localhost:19000/logging?http=trace
+
+
+
 # Envoy Dataplane Diagnostic Data for Technical Support
 ---------------------------------------
 https://support.hashicorp.com/hc/en-us/articles/40750522337171-Envoy-Dataplane-Diagnostic-Data-for-Technical-Support
