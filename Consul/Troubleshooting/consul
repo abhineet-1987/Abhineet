@@ -7,7 +7,7 @@ consul operator autopilot state
 consul operator autopilot get-config
 # Without leader it will give you output
 consul operator autopilot get-config -stale
-consul info
+consul info   # per consul agent
 
 # Consul server logs:-
 consul monitor
