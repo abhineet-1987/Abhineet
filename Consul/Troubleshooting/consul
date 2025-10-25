@@ -46,3 +46,11 @@ netstat -anup
 # To check the both the tcp and udp ports i.e Show all connections (both listening and established)
 netstat -antup
 
+# Shows disk usage for all mounted filesystems.
+df -h
+# Shows disk usage only for the filesystem that contains the current directory
+df -h .
+# Shows how much space a specific folder or file is using.
+du -hs /var/log
+
+
