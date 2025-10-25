@@ -74,6 +74,16 @@ journalctl -xeu consul -f
 journalctl -xeu consul --since "5 hour ago" -f
 journalctl -xeu consul --since "2025-10-24 09:00" --until "2025-10-24 12:00"
 
+################################################## SYSTEM DETAILS ###############################################################################
+# To know detailed information about your Linux operating system
+cat /etc/os-release
+# To know kernel version and architecture details
+uname -a
+
+# Linux distribution Vs Pacakge manager used
+RHEL, CentOS, Fedora, Amazon Linux 2, Amazon Linux 2023  -  "yum"
+Ubuntu, Debian  - "apt"
+
 # To check when system was rebooted last time:-
 who -b
 uptime -s
