@@ -89,6 +89,13 @@ who -b
 uptime -s
 last reboot
 
+# To check DNS server details on a host:
+cat /etc/resolv.conf
+
+# To check Router/Gateway details on a host:
+ip route
+Note: Refer to the entry with pattern "default via X.X.X.X"
+
 # To check the tcp ports i.e Show all connections (both listening and established)
 netstat -antp
 # To check the udp ports i.e Show all connections (both listening and established)
