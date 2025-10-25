@@ -120,11 +120,25 @@ cat /etc/resolv.conf
 nslookup www.google.com
 dig www.google.com
 
-# Shows routing path to a host
+# Shows routing path to a host but does not confirms whether the ip is reachable or not, for that you have to use ping, telnet commands etc
 ip route get 142.250.73.132
 
 # Show all routes on a host
 ip route
+
+################################################## PERFORMANCE RELATED ###############################################################################
+
+# To check IOPS usage on host:
+iostat
+iostat -dx
+Note: If iostat not available then run:
+sudo yum install sysstat   # RHEL/CentOS
+sudo apt install sysstat   # Debian/Ubuntu
+
+# To check actual IOPS supported, ec2 ui -> Storage -> Click EBS Volumes -> There you'll see size,IOPS (operations per second) ,throughput (MB of data transferred in 1 second).
+
+#To check cpu and memory:
+top
 
 
 
