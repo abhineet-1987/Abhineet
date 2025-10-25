@@ -68,3 +68,27 @@ netsat
 tcpdump
 nslookup and dig
 wireshark tool -> *.pcap files, statistics->conversations, DynamiteLab open source tool to visualize pcap files.
+
+# To view consul service logs:-
+journalctl -xeu consul -f
+journalctl -xeu consul --since "5 hour ago" -f
+journalctl -xeu consul --since "2025-10-24 09:00" --until "2025-10-24 12:00"
+
+# To check when system was rebooted last time:-
+who -b
+uptime -s
+last reboot
+
+# To check the tcp ports i.e Show all connections (both listening and established)
+netstat -antp
+# To check the udp ports i.e Show all connections (both listening and established)
+netstat -anup
+# To check the both the tcp and udp ports i.e Show all connections (both listening and established)
+netstat -antup
+
+# Shows disk usage for all mounted filesystems.
+df -h
+# Shows disk usage only for the filesystem that contains the current directory
+df -h .
+# Shows how much space a specific folder or file is using.
+du -hs /var/log
