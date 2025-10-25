@@ -92,3 +92,39 @@ df -h
 df -h .
 # Shows how much space a specific folder or file is using.
 du -hs /var/log
+
+################################################## CONNECTIVITY RELATED ###############################################################################
+# To check connectivity to the server, whether server is reachable or not:
+ping <ip-address>
+ping <hostname>
+
+# Tests TCP connectivity to a specific port
+telnet <ip-address-or-hostname> <port>
+telnet www.google.com 443
+
+# Tests TCP and UDP connectivity to a specific port
+nc -zv <ip-address-or-hostname> <port>
+nc -zv www.google.com 443
+
+# Scans open ports
+nmap www.google.com
+nmap 142.250.73.100
+
+# Tests HTTP/HTTPS endpoints and APIs
+curl http(s)://<hostname-or-url>:<port>/<endpoint>
+
+# To check DNS server details on a host:
+cat /etc/resolv.conf
+
+# DNS resolution
+nslookup www.google.com
+dig www.google.com
+
+# Shows routing path to a host
+ip route get 142.250.73.132
+
+# Show all routes on a host
+ip route
+
+
+
