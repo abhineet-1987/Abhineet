@@ -29,7 +29,20 @@ dig @127.0.0.1 -p 8600 db.service.consul  SRV
 
 # Enable audit logs -> Consul ENTERPRISE feature, refer https://developer.hashicorp.com/consul/docs/monitor/log/audit
 
-To view consul service logs:-
+# To view consul service logs:-
 journalctl -xeu consul -f
 journalctl -xeu consul --since "5 hour ago" -f
 journalctl -xeu consul --since "2025-10-24 09:00" --until "2025-10-24 12:00"
+
+# To check when system was rebooted last time:-
+who -b
+uptime -s
+last reboot
+
+# To check the tcp ports i.e Show all connections (both listening and established)
+netstat -antp
+# To check the udp ports i.e Show all connections (both listening and established)
+netstat -anup
+# To check the both the tcp and udp ports i.e Show all connections (both listening and established)
+netstat -antup
+
