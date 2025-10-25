@@ -86,13 +86,6 @@ netstat -anup
 # To check the both the tcp and udp ports i.e Show all connections (both listening and established)
 netstat -antup
 
-# Shows disk usage for all mounted filesystems.
-df -h
-# Shows disk usage only for the filesystem that contains the current directory
-df -h .
-# Shows how much space a specific folder or file is using.
-du -hs /var/log
-
 ################################################## CONNECTIVITY RELATED ###############################################################################
 # To check connectivity to the server, whether server is reachable or not:
 ping <ip-address>
@@ -128,6 +121,16 @@ ip route
 
 ################################################## PERFORMANCE RELATED ###############################################################################
 
+# To check CPU and MEMORY:
+top
+
+# Shows DISK usage for all mounted filesystems.
+df -h
+# Shows disk usage only for the filesystem that contains the current directory
+df -h .
+# Shows how much space a specific folder or file is using.
+du -hs /var/log
+
 # To check IOPS usage on host:
 iostat
 iostat -dx
@@ -137,8 +140,7 @@ sudo apt install sysstat   # Debian/Ubuntu
 
 # To check actual IOPS supported, ec2 ui -> Storage -> Click EBS Volumes -> There you'll see size,IOPS (operations per second) ,throughput (MB of data transferred in 1 second).
 
-#To check cpu and memory:
-top
+
 
 
 
