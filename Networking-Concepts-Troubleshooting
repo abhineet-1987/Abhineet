@@ -72,7 +72,9 @@ wireshark tool -> *.pcap files, statistics->conversations, DynamiteLab open sour
 # To view consul service logs:-
 journalctl -xeu consul -f
 journalctl -xeu consul --since "5 hour ago" -f
+journalctl -xeu consul --since "10 minute ago" -f
 journalctl -xeu consul --since "2025-10-24 09:00" --until "2025-10-24 12:00"
+journalctl -xeu consul --since "2025-10-24"
 
 ################################################## SYSTEM DETAILS ###############################################################################
 # To know detailed information about your Linux operating system
@@ -102,6 +104,7 @@ netstat -antp
 netstat -anup
 # To check the both the tcp and udp ports i.e Show all connections (both listening and established)
 netstat -antup
+ss -tuln
 
 ################################################## CONNECTIVITY RELATED ###############################################################################
 # To check connectivity to the server, whether server is reachable or not:
@@ -140,6 +143,12 @@ ip route
 
 # To check CPU and MEMORY:
 top
+vmstat -w 1
+
+# To check free memory
+free -h
+Note: free - Memory that is completely unused — not touched by apps, buffers, or cache.
+      available - Memory that is available for new applications — includes free + reclaimable cache/buffers.
 
 # Shows DISK usage for all mounted filesystems.
 df -h
@@ -157,6 +166,8 @@ sudo apt install sysstat   # Debian/Ubuntu
 
 # To check actual IOPS supported, ec2 ui -> Storage -> Click EBS Volumes -> There you'll see size,IOPS (operations per second) ,throughput (MB of data transferred in 1 second).
 
+# Real-time network bandwidth monitoring for Linux.
+iftop -n -P
 
 
 
