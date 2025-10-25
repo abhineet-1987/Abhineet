@@ -15,9 +15,12 @@ eksctl create cluster --name demo-cluster --region us-east-1 --fargate     ## us
 eksctl create cluster --name demo-cluster --region us-east-1  ## using node groups (ec2 instances)
                                             OR
 eksctl create cluster --name demo --region us-east-1 --nodegroup-name ec2-nodes --node-type t3.medium --nodes 2 --managed
+
 ###### Delete EKS cluster 
 eksctl delete cluster --name demo-cluster --region us-east-1
 
 ###### Update your local kubeconfig file (usually located at ~/.kube/config) with the connection details for the specified EKS cluster.
 aws eks update-kubeconfig --region us-west-2 --name my-EKS-cluster 
+
+Note: In EKS, each pod gets its own private IP address from the VPC subnet.
 
