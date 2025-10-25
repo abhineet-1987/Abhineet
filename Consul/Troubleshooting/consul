@@ -28,3 +28,8 @@ dig @127.0.0.1 -p 8600 web.service.consul SRV   #we can get port on which servic
 dig @127.0.0.1 -p 8600 db.service.consul  SRV
 
 # Enable audit logs -> Consul ENTERPRISE feature, refer https://developer.hashicorp.com/consul/docs/monitor/log/audit
+
+To view consul service logs:-
+journalctl -xeu consul -f
+journalctl -xeu consul --since "5 hour ago" -f
+journalctl -xeu consul --since "2025-10-24 09:00" --until "2025-10-24 12:00"
