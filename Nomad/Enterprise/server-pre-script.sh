@@ -22,7 +22,7 @@ sudo touch /etc/nomad.d/server.hcl
 sudo touch /etc/nomad.d/license.hclic
 sudo chmod -R 755 /etc/nomad.d
 
-# Create files nomad.hcl, server.hcl and license.hclic at /etc/nomad.d as per your requirement and then execute
+# Create files nomad.hcl, server.hcl and license.hclic at /etc/nomad.d as per your requirement and file nomad.service at /etc/systemd/system and then execute
 # sudo systemctl enable nomad
 # sudo systemctl start nomad
 # sudo systemctl status nomad
