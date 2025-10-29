@@ -34,6 +34,6 @@ sudo rm -rf cni-plugins.tgz
 
 # Install consul cni plugin on nomad client machine
 # https://developer.hashicorp.com/nomad/docs/deploy#install-consul-cni-plugin
-sudo apt-get install -y consul-cni   # for amazon linux, for other systems refer above link
+sudo yum install -y consul-cni   # for amazon linux, for other systems refer above link
 
 
