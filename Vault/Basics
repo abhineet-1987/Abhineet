@@ -1,0 +1,2 @@
+# Run vault in dev mode in background
+nohup vault server -dev > vault.log 2>&1 &
