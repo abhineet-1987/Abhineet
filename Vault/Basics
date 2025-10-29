@@ -3,3 +3,7 @@ nohup vault server -dev > vault.log 2>&1 &
 cat vault.log
 export VAULT_ADDR='http://127.0.0.1:8200'
 vault status
+
+Note: Lets say I am running it on ec2 instance and if I want to open Vault in ui, then run below command and on your laptop open vault ui as http://<ec2-public-ip>:8200/
+nohup vault server -dev -dev-listen-address="0.0.0.0:8200" > vault.log 2>&1 &
+
