@@ -86,4 +86,20 @@ nomad debug -stale
  
 ##### The output of the following command from all server agents
 nomad operator api /v1/agent/pprof/goroutine\?debug=1
+
+################################################### RAFT DETAILS ########################################
+nomad operator raft logs /opt/nomad
+nomad operator raft info /opt/nomad
+nomad operator raft state /opt/nomad
+Note: These commands will run when nomad is stopped. /opt/nomad is Nomad data directory.
+
+# To Dump the nomad client state
+nomad operator client-state /opt/nomad
+
+# To retrieve Nomad metrics
+nomad operator metrics | jq
+
+# To retrieve Nomad billable client nodes i.e client nodes registered with Noamd and last snapshot taken time.
+nomad operator utilization
+at nomad-utilization-1761712915.json | jq
  
