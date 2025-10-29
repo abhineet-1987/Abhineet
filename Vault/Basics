@@ -1,2 +1,5 @@
 # Run vault in dev mode in background
 nohup vault server -dev > vault.log 2>&1 &
+cat vault.log
+export VAULT_ADDR='http://127.0.0.1:8200'
+vault status
