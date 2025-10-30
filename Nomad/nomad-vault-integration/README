@@ -1,0 +1,14 @@
+#### Use cases of Nomad Vault integration:
+
+1. Nomad secrets Engine: The Nomad secrets engine for Vault generates Nomad ACL tokens dynamically based on pre-existing Nomad ACL policies.
+https://developer.hashicorp.com/vault/docs/secrets/nomad 
+
+2. Use workload identities with Vault: Nomad integrates with Vault to retrieve static and dynamic secrets for workloads.
+https://developer.hashicorp.com/nomad/docs/secure/workload-identity/vault
+https://developer.hashicorp.com/nomad/docs/concepts/workload-identity
+https://developer.hashicorp.com/nomad/docs/configuration/vault#create_from_role
+
+3. Generate mTLS certificates for Nomad using Vault: 
+https://developer.hashicorp.com/nomad/tutorials/integrate-vault/vault-pki-nomad
+
+
