@@ -66,3 +66,12 @@ To make node as a leader to restore snapshot on it:-
 1) bootstrap=true in server config file
 OR 2) If above is not working then use peers.json recovery
 
+######## For cluster recovery scenarios check for :-
+high cpu
+high memory
+high iops
+network latency
+connectivity lost between the nodes
+disk full where Consul data is written
+(check for large snapshot + raft db size) - last step
+
