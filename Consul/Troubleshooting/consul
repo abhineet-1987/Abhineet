@@ -53,4 +53,6 @@ df -h .
 # Shows how much space a specific folder or file is using.
 du -hs /var/log
 
+# Check for the snapshot and raft db size as well
+
 
