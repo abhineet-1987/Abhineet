@@ -5,3 +5,13 @@ curl ifconfig.me
 ifconfig   (en0)
 
 hostname -I  # to know private ip address of amazon linux
+
+# Here’s the full tcpdump command that captures verbose UDP traffic on port 8301 for a specific host IP and saves it to a .pcap file:
+sudo tcpdump -vvv -X -n udp port 8301 and host 172.31.30.205 -w serf_8301_capture.pcap
+
+# For all traffic
+sudo tcpdump -vvv -X -n host <HOST_IP> -w all_traffic_capture.pcap
+
+# For tcp traffic 
+sudo tcpdump -vvv -X -n tcp and host <HOST_IP> -w tcp_traffic_capture.pcap
+
