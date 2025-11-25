@@ -156,6 +156,8 @@ df -h
 df -h .
 # Shows how much space a specific folder or file is using.
 du -hs /var/log
+# This shows the disk usage of each top-level directory on the root filesystem.
+sudo du -sh /* 2>/dev/null
 
 # To check IOPS usage on host:
 iostat
