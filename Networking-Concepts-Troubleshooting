@@ -158,6 +158,9 @@ df -h .
 du -hs /var/log
 # This shows the disk usage of each top-level directory on the root filesystem.
 sudo du -sh /* 2>/dev/null
+# To know size of all directories under /var directory
+sudo du -sh /var/* 2>/dev/null
+
 
 # To check IOPS usage on host:
 iostat
