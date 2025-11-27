@@ -1,0 +1,271 @@
+References:-
+
+https://hashicorp.atlassian.net/wiki/spaces/CSE/pages/4317085753/Job+Specification+Secrets
+https://developer.hashicorp.com/nomad/docs/secure/workload-identity/vault#create-a-role
+https://hashicorp.atlassian.net/wiki/spaces/CSE/pages/3800432835/SOP+-+Nomad+and+Vault+Integration
+https://hashicorp.atlassian.net/browse/NMD-1003
+
+
+Steps :-
+ 
+On AWS ec2 instance, run Vault in dev mode:-
+nohup vault server -dev &
+ 
+export VAULT_ADDR='http://127.0.0.1:8200'
+export VAULT_TOKEN=XXXXXXXXXXXXXXXXXXX
+ 
+######### nomad.hcl ##########
+ 
+datacenter = "dc1"
+data_dir = "/opt/nomad"
+acl {
+  enabled = true
+}
+vault {
+  enabled = true
+  address = "http://127.0.0.1:8200"
+  default_identity {
+    aud = ["vault.io"]
+    ttl = "10h"
+  }
+}
+server {
+  license_path = "/etc/nomad.d/license.hclic"
+  enabled = true
+  bootstrap_expect = 1
+}
+client {
+  enabled = true
+  servers = ["127.0.0.1"]
+}
+
+############# nomad.service ################
+ 
+[Unit]
+Description=Nomad
+Documentation=https://www.nomadproject.io/docs/
+Wants=network-online.target
+After=network-online.target
+
+# When using Nomad with Consul it is not necessary to start Consul first. These
+# lines start Consul before Nomad as an optimization to avoid Nomad logging
+# that Consul is unavailable at startup.
+#Wants=consul.service
+#After=consul.service
+
+[Service]
+
+# Nomad server should be run as the nomad user. Nomad clients
+# should be run as root
+User=root
+Group=root
+
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStart=/usr/local/bin/nomad agent -config /etc/nomad.d
+KillMode=process
+KillSignal=SIGINT
+LimitNOFILE=65536
+LimitNPROC=infinity
+Restart=on-failure
+RestartSec=2
+
+## Configure unit start rate limiting. Units which are started more than
+## *burst* times within an *interval* time span are not permitted to start any
+## more. Use `StartLimitIntervalSec` or `StartLimitInterval` (depending on
+## systemd version) to configure the checking interval and `StartLimitBurst`
+## to configure how many starts per interval are allowed. The values in the
+## commented lines are defaults.
+
+# StartLimitBurst = 5
+
+## StartLimitIntervalSec is used for systemd versions >= 230
+# StartLimitIntervalSec = 10s
+
+## StartLimitInterval is used for systemd versions < 230
+# StartLimitInterval = 10s
+
+TasksMax=infinity
+OOMScoreAdjust=-1000
+
+[Install]
+WantedBy=multi-user.target
+################################################ 
+systemctl start nomad
+ 
+nomad acl bootstrap
+ 
+export NOMAD_TOKEN=xxxxxxxxxxxxxx
+ 
+#########  Enable the PKI secrets engine and configure a CA: ########
+ 
+$ vault secrets enable pki
+Success! Enabled the pki secrets engine at: pki/
+
+$ vault write pki/root/generate/internal \
+    common_name=service.consul \
+    ttl=8760h
+
+$ vault write pki/config/urls \
+    issuing_certificates="http://127.0.0.1:8200/v1/pki/ca" \
+    crl_distribution_points="http://127.0.0.1:8200/v1/pki/crl"
+
+$ vault write pki/roles/test1 \
+    allowed_domains=service.consul \
+    allow_subdomains=true \
+    max_ttl=72h
+ 
+Run nomad setup vault -y to create the appropriate auth methods, binding rules, etc. Then create the following policy document: (Refer this )
+ 
+path "pki/*" {
+   capabilities =  ["create", "update", "patch", "read", "delete"]
+}
+ 
+Overwrite the nomad-workloads policy with this: vault policy write nomad-workloads ./policy.hcl
+ 
+##########   Create job.hcl   #############
+ 
+job "example" {
+
+  group "group" {
+
+    task "task" {
+
+      driver = "docker"
+
+      vault {}
+
+      config {
+        image   = "busybox:1"
+        command = "httpd"
+        args    = ["-vv", "-f", "-p", "8001", "-h", "/local"]
+      }
+
+      identity {
+        env = true
+      }
+
+      template {
+        destination = "secrets/cert-1.pem"
+        change_mode   = "noop"
+        data    = <<-EOF
+    {{- with secret "pki/issue/test1" "common_name=test1.service.consul" "ttl=2m" -}}
+    {{ .Data.certificate }}
+    {{ .Data.ca_chain | sprig_join "\n" }}
+    {{- end }}
+    EOF
+      }
+
+      template {
+        destination = "secrets/key-1.pem"
+        change_mode   = "noop"
+        data    = <<-EOF
+    {{- with secret "pki/issue/test1" "common_name=test1.service.consul" "ttl=2m" -}}
+    {{ .Data.private_key }}
+    {{- end }}
+    EOF
+      }
+
+      template {
+        destination = "secrets/cert-2.pem"
+        change_mode   = "noop"
+        data    = <<-EOF
+    {{- with secret "pki/issue/test1" "common_name=test1.service.consul" "ttl=2m" -}}
+    {{ .Data.certificate }}
+    {{ .Data.ca_chain | sprig_join "\n" }}
+    {{- end }}
+    EOF
+      }
+
+      template {
+        destination = "secrets/key-2.pem"
+        change_mode   = "noop"
+        data    = <<-EOF
+    {{- with secret "pki/issue/test1" "common_name=test1.service.consul" "ttl=2m" -}}
+    {{ .Data.private_key }}
+    {{- end }}
+    EOF
+      }
+
+      template {
+        destination = "secrets/cert-3.pem"
+        change_mode   = "noop"
+        data    = <<-EOF
+    {{- with secret "pki/issue/test1" "common_name=test1.service.consul" "ttl=2m" -}}
+    {{ .Data.certificate }}
+    {{ .Data.ca_chain | sprig_join "\n" }}
+    {{- end }}
+    EOF
+      }
+
+      template {
+        destination = "secrets/key-3.pem"
+        change_mode   = "noop"
+        data    = <<-EOF
+    {{- with secret "pki/issue/test1" "common_name=test1.service.consul" "ttl=2m" -}}
+    {{ .Data.private_key }}
+    {{- end }}
+    EOF
+      }
+
+      resources {
+        cpu    = 100
+        memory = 100
+      }
+
+    }
+  }
+}
+###################
+and run the job as :-
+ 
+nomad job run job.hcl
+ 
+Take the hash of the generated secrets:
+ 
+cd /opt/nomad/alloc/b7b73782-f3ac-9e65-afbf-9b1e66383efd/task
+ 
+sha256sum secrets/*
+c5b5f82bb7896da90f3766a24a5311192514a5f1044a3bc37cb38e6b7e093e34  secrets/cert-1.pem
+c5b5f82bb7896da90f3766a24a5311192514a5f1044a3bc37cb38e6b7e093e34  secrets/cert-2.pem
+d3c64e7eb453d541baaadcaf4a503a12ed7390ccbe1cad66978fa5fa83cd7a40  secrets/cert-3.pem
+fd968a5c8a332ef0a197640e4e397b41a3d9726cb160e1e736b1198a7c4f62d3  secrets/key-1.pem
+fd968a5c8a332ef0a197640e4e397b41a3d9726cb160e1e736b1198a7c4f62d3  secrets/key-2.pem
+f1503883e7f7c1f9fd952f7b5934b96f5e0692c74537f23732d085339bd13350  secrets/key-3.pem
+37c996c6f314f97b06ef21cbc596ca3e9a78430a909fe4126346d76c43ac350c  secrets/vault_token
+ 
+Wait two minutes for certificates to get renewed (you can watch the debug logs for the template runner in the Nomad agent):
+ 
+sha256sum secrets/*
+c5b5f82bb7896da90f3766a24a5311192514a5f1044a3bc37cb38e6b7e093e34  secrets/cert-1.pem
+c5b5f82bb7896da90f3766a24a5311192514a5f1044a3bc37cb38e6b7e093e34  secrets/cert-2.pem
+6db7b83552d2583fcdb16aa8745f04cb0878a1e6b27e38485cdb328db0cc360c  secrets/cert-3.pem
+fd968a5c8a332ef0a197640e4e397b41a3d9726cb160e1e736b1198a7c4f62d3  secrets/key-1.pem
+fd968a5c8a332ef0a197640e4e397b41a3d9726cb160e1e736b1198a7c4f62d3  secrets/key-2.pem
+d401ed6ca050ab4a63d2802a78fd44f24c74fd926010865c60b0f1143b86d260  secrets/key-3.pem
+37c996c6f314f97b06ef21cbc596ca3e9a78430a909fe4126346d76c43ac350c  secrets/vault_token
+ 
+Note that in this case it happens to be that the *-3.pem files are updated and the others aren't.
+ 
+Post upgrading the nomad version to 1.8.18, we get 
+ 
+cd /opt/nomad/alloc/a0621942-93ef-eb9d-2d0f-b4aecce76611/task
+ 
+sha256sum secrets/*
+6fb532077bfb965e524f8f228dc064a1d4dac67ae427b6dbcfc9f884205db9b6  secrets/cert-1.pem
+6fb532077bfb965e524f8f228dc064a1d4dac67ae427b6dbcfc9f884205db9b6  secrets/cert-2.pem
+6fb532077bfb965e524f8f228dc064a1d4dac67ae427b6dbcfc9f884205db9b6  secrets/cert-3.pem
+21908476de9b8fa71bae24e5b0d4d1cec5db1193beb3c15e5f79d90b88fdad01  secrets/key-1.pem
+21908476de9b8fa71bae24e5b0d4d1cec5db1193beb3c15e5f79d90b88fdad01  secrets/key-2.pem
+21908476de9b8fa71bae24e5b0d4d1cec5db1193beb3c15e5f79d90b88fdad01  secrets/key-3.pem
+f3c878541d337a547b7cfc8abf4f0ff28ea266bc2c2b911b8150764795a469cb  secrets/vault_token
+ 
+sha256sum secrets/*
+d61dd9e7fb231d494dac6c5237b894e9708a015006ee8c69db279456886ecc29  secrets/cert-1.pem
+d61dd9e7fb231d494dac6c5237b894e9708a015006ee8c69db279456886ecc29  secrets/cert-2.pem
+d61dd9e7fb231d494dac6c5237b894e9708a015006ee8c69db279456886ecc29  secrets/cert-3.pem
+be24fd2213ed8a37d824edbb14e05c25ec47f6cad9dc029d7f338fa0512a24ee  secrets/key-1.pem
+be24fd2213ed8a37d824edbb14e05c25ec47f6cad9dc029d7f338fa0512a24ee  secrets/key-2.pem
+be24fd2213ed8a37d824edbb14e05c25ec47f6cad9dc029d7f338fa0512a24ee  secrets/key-3.pem
+f3c878541d337a547b7cfc8abf4f0ff28ea266bc2c2b911b8150764795a469cb  secrets/vault_token
+ 
+All of them gets updated.
