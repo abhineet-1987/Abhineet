@@ -1,0 +1,10 @@
+Whenever the cluster is broken, i.e leadership is lost or any node not being member of cluster (consul/nomad), check for :-
+
+cpu
+memory
+disk utilization
+iops
+check connectivity between nodes
+changes in firewall/routing rules, If in AWS check for security group inbound and outbound rules
+check for how nodes are provisioned for eg through ASG in AWS etc
+check required open ports
