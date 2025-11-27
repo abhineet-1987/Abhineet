@@ -106,6 +106,10 @@ netstat -anup
 netstat -antup
 ss -tuln
 
+# To check network interfaces details on the VM
+ip addr
+ip link
+
 ################################################## CONNECTIVITY RELATED ###############################################################################
 # To check connectivity to the server, whether server is reachable or not:
 ping <ip-address>
