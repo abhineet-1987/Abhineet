@@ -8,3 +8,16 @@ http://<public-ip-ec2>:9002
 http://<public-ip-ec2>:8001    
 
 
+[Nomad Client]
+   |
+   | (reports allocation status)
+   v
+[Nomad Server]
+   |
+   | (uses Consul ACL token)
+   v
+[Consul] <--- ACLs checked
+   |
+   | (registers/deregisters services & health checks)
+   v
+[Consul Catalog] --- provides service discovery to jobs & systems
