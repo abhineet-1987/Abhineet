@@ -1,0 +1,23 @@
+References: https://developer.hashicorp.com/nomad/tutorials/archive/variables-tasks 
+
+Create Nomad variables:
+nomad var put s1/foo u=1 p=p1
+
+####### Create policy.hcl
+namespace "default" {
+  variables {
+    path "*" {
+      capabilities = ["read"]
+    }
+  }
+}
+################
+Now, create the policy and associate it with the web task in the servers group of the hello-world job, specifying the appropriate flags on the nomad acl policy apply command.
+
+nomad acl policy apply -namespace default -job hello-world -group servers -task web web-policy ./policy.hcl
+
+To verify:
+nomad acl policy info web-policy
+
+#######
+nomad job run job.hcl
