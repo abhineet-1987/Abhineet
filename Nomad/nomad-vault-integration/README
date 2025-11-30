@@ -11,4 +11,20 @@ https://developer.hashicorp.com/nomad/docs/configuration/vault#create_from_role
 3. Generate mTLS certificates for Nomad using Vault: 
 https://developer.hashicorp.com/nomad/tutorials/integrate-vault/vault-pki-nomad
 
+Workflow:-
+[Nomad Server]
+   |
+   | (management token proves identity)
+   v
+[Vault] <--- ACLs checked
+   |
+   | (issues child token with requested policies)
+   v
+[Nomad Client] --- knows Vault address
+   |
+   | (injects VAULT_TOKEN into task env)
+   v
+[Task] --- uses VAULT_TOKEN to access secrets
+
+
 
