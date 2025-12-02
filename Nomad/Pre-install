@@ -7,10 +7,13 @@ sudo yum update -y
 sudo yum install -y jq
 sudo yum install -y yum-utils
 
-# Install Docker
+# Install Docker on Amazon Linux
 sudo yum install -y docker
 sudo systemctl enable docker
 sudo systemctl start docker
+
+# Install Docker on Ubuntu
+https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 
 # Download and Install Nomad via Package Manager
 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
