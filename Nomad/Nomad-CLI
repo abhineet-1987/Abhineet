@@ -1,0 +1,3 @@
+nomad job status <job-name>
+nomad job status example
+nomad job stop -purge example 
