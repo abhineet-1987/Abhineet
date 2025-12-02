@@ -1,0 +1,63 @@
+Reference: https://developer.hashicorp.com/nomad/tutorials/archive/security-enable-tls 
+
+multipass launch -n nomad-server-1
+multipass launch -n nomad-server-2
+multipass launch -n nomad-server-3
+multipass launch -n nomad-client
+
+multipass list
+
+# Use below command to login to shell:
+multipass shell nomad-server-1
+
+#To delete multipass VMs
+multipass delete old-vm-name
+multipass purge
+
+#To copy data from one mutipass VM to another
+Step1: Copy from multipass VM to local
+multipass transfer old-vm-name:/path/to/data ./local-backup
+Step2: Then copy from local to destination VM
+multipass transfer ./local-backup new-vm-name:/path/to/data
+
+On any one nomad server, run:-
+nomad tls ca create 
+# This will generate files nomad-agent-ca.pem  and nomad-agent-ca-key.pem. Copy these files to all other Nomad servers and clients to generate the server/client certificates for them using this ca.
+
+Then run:
+nomad tls cert create -server -region global
+nomad tls cert create -cli
+chmod 755 *
+
+Similary run below commands on other Nomad servers post copying nomad-agent-ca.pem  and nomad-agent-ca-key.pem to other servers:-
+nomad tls cert create -server -region global
+nomad tls cert create -cli
+chmod 755 *
+
+And, similary run below commands on other Nomad clients post copying nomad-agent-ca.pem  and nomad-agent-ca-key.pem to other nomad clients:-
+nomad tls cert create -client
+nomad tls cert create -cli
+chmod 755 *
+
+Start Nomad on all server and clients :-
+systemctl start nomad
+export NOMAD_ADDR=https://localhost:4646
+# To access CLI, as certs are enabled in Nomad
+export NOMAD_CACERT=/home/ubuntu/nomad-agent-ca.pem
+export NOMAD_CLIENT_CERT=/home/ubuntu/global-cli-nomad.pem
+export NOMAD_CLIENT_KEY=/home/ubuntu/global-cli-nomad-key.pem
+
+Submit test job in Noamd:
+# Note: Make sure you have docker installed. Refer this
+nomad node status
+nomad job init
+nomad job run example.nomad.hcl
+nomad job status example
+
+
+
+
+
+
+
+
