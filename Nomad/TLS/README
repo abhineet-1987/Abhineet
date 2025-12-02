@@ -21,11 +21,11 @@ Step2: Then copy from local to destination VM
 multipass transfer ./local-backup new-vm-name:/path/to/data
 
 On any one nomad server, run:-
+cd /home/ubuntu
 nomad tls ca create 
 # This will generate files nomad-agent-ca.pem  and nomad-agent-ca-key.pem. Copy these files to all other Nomad servers and clients to generate the server/client certificates for them using this ca.
 
 Then run:
-cd /home/ubuntu
 nomad tls cert create -server -region global
 nomad tls cert create -cli
 chmod 755 *
