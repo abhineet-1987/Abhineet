@@ -48,7 +48,7 @@ export NOMAD_CLIENT_CERT=/home/ubuntu/global-cli-nomad.pem
 export NOMAD_CLIENT_KEY=/home/ubuntu/global-cli-nomad-key.pem
 
 Submit test job in Noamd:
-# Note: Make sure you have docker installed. Refer this
+# Note: Make sure you have docker installed. Refer https://github.com/abhineet-1987/Abhineet/blob/main/Nomad/Pre-install
 nomad node status
 nomad job init
 nomad job run example.nomad.hcl
