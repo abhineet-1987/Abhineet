@@ -1,5 +1,8 @@
 Reference: https://developer.hashicorp.com/nomad/tutorials/archive/security-enable-tls 
 
+nomad -autocomplete-install
+exec $SHELL
+
 multipass launch -n nomad-server-1
 multipass launch -n nomad-server-2
 multipass launch -n nomad-server-3
