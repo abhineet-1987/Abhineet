@@ -1,0 +1,12 @@
+
+Reference: https://developer.hashicorp.com/nomad/tutorials/archive/access-control-bootstrap
+
+If all management tokens are lost, it is possible to reset the ACL bootstrap so that it can be performed again. 
+First, you need to determine the reset index with the bootstrap endpoint:
+
+nomad acl bootstrap
+Error: Error bootstrapping: Unexpected response code: 500 (ACL bootstrap already done (reset index: 7))
+
+echo 7 >> /nomad-data-dir/server/acl-bootstrap-reset
+
+nomad acl bootstrap  # this works now and generate bootstrap token
