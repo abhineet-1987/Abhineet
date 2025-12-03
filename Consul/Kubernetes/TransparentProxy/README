@@ -1,0 +1,30 @@
+References: https://hashicorp.atlassian.net/wiki/spaces/CSE/pages/2471002545/Understand+how+Transparent+Proxy+works 
+
+kind create cluster --name=dc1
+kubectl create ns consul
+helm install consul -n consul hashicorp/consul --values=values.yaml  
+kubectl apply -f static-server-dc1.yaml
+kubectl apply -f static-client.yaml
+
+kubectl exec -it static-client-74bc477bcd-skt65 -c static-client -- sh
+/ # curl static-server
+"hello world from dc1"
+
+####### Note: With ACLs enabled in Consul values.yaml:
+kubectl get secret -n consul consul-bootstrap-acl-token -o yaml
+echo "YmNiYjI3NjEtxxxxxxxxxxxxxxxxxxxzM2MzNDY3" | base64 -d
+kubectl exec -it consul-server-0 -n consul -- sh
+export CONSUL_HTTP_TOKEN=bcbb27xxxxxxxxxx33c3467
+consul catalog services
+consul intention list
+consul intention create static-client static-server
+consul intention list
+
+Then,
+kubectl exec -it static-client-74bc477bcd-skt65 -c static-client -- sh
+/ # curl static-server
+"hello world from dc1"
+
+Else, you would get error:-
+"Empty reply from the server"
+
