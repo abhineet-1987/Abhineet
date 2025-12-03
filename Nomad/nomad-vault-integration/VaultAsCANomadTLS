@@ -1,9 +1,212 @@
 Reference:-
 https://developer.hashicorp.com/nomad/tutorials/integrate-vault/vault-pki-nomad 
 
-
-
 nohup vault server -dev &
 export VAULT_ADDR='http://127.0.0.1:8200'
 export VAULT_TOKEN=hvs.xxxxxxxxxxxxURe3
 vault status
+
+vault secrets enable pki
+vault secrets tune -max-lease-ttl=87600h pki
+
+vault write -field=certificate pki/root/generate/internal \
+    common_name="global.nomad" ttl=87600h > CA_cert.crt
+
+vault secrets enable -path=pki_int pki
+vault secrets tune -max-lease-ttl=43800h pki_int
+
+vault write -format=json pki_int/intermediate/generate/internal \
+    common_name="global.nomad Intermediate Authority" \
+    ttl="43800h" | jq -r '.data.csr' > pki_intermediate.csr
+
+vault write -format=json pki/root/sign-intermediate \
+    csr=@pki_intermediate.csr format=pem_bundle \
+    ttl="43800h" | jq -r '.data.certificate' > intermediate.cert.pem
+
+vault write pki_int/intermediate/set-signed certificate=@intermediate.cert.pem
+
+vault auth enable approle
+
+vault write pki_int/roles/nomad-cluster \
+  allowed_domains="global.nomad" \
+  allow_subdomains=true \
+  generate_lease=true \
+  max_ttl="720h"
+
+tls-policy.hcl
+path "pki_int/issue/nomad-cluster" {
+  capabilities = ["update"]
+}
+
+vault policy write tls-policy tls-policy.hcl
+
+vault write auth/approle/role/nomad-cluster \
+  token_type=batch \
+  token_policies="tls-policy" \
+  secret_id_ttl=10m \
+  token_ttl=10m \
+  token_max_ttl=15m \
+  secret_id_num_uses=10
+
+sudo mkdir -p /opt/nomad/templates
+
+/opt/nomad/templates/server.agent.crt.tpl
+{{ with pkiCert "pki_int/issue/nomad-cluster" "common_name=server.global.nomad" "ttl=24h" "alt_names=localhost" "ip_sans=127.0.0.1"}}
+{{ .Data.Cert }}
+{{ .Data.Key  | writeToFile "/opt/nomad/rendered-cert-files/server.agent.key" "" "" "0644" }}
+{{ .Data.CA  | writeToFile "/opt/nomad/rendered-cert-files/server.ca.crt" "" "" "0644" }}
+{{ end }}
+
+/opt/nomad/templates/client.agent.crt.tpl
+{{ with pkiCert "pki_int/issue/nomad-cluster" "common_name=client.global.nomad" "ttl=24h" "alt_names=localhost" "ip_sans=127.0.0.1"}}
+{{ .Data.Cert }}
+{{ .Data.Key  | writeToFile "/opt/nomad/rendered-cert-files/client.agent.key" "" "" "0644" }}
+{{ .Data.CA  | writeToFile "/opt/nomad/rendered-cert-files/client.ca.crt" "" "" "0644" }}
+{{ end }}
+
+/opt/nomad/templates/cli.crt.tpl
+{{ with pkiCert "pki_int/issue/nomad-cluster" "common_name=cli.global.nomad" "ttl=24h"}}
+{{ .Data.Cert }}
+{{ .Data.Key  | writeToFile "/opt/nomad/rendered-cert-files/cli.key" "" "" "0644" }}
+{{ end }}
+
+sudo mkdir -p /opt/nomad/rendered-cert-files
+
+sudo mkdir -p /opt/vault/vault-agent 
+cd /opt/vault/vault-agent
+vault read -field="role_id" auth/approle/role/nomad-cluster/role-id > roleid
+vault write -field="secret_id" -force auth/approle/role/nomad-cluster/secret-id > secretid
+
+########### /opt/vault/vault-agent/vault_agent.conf ###########
+pid_file = "./pidfile"
+
+vault {
+  address = "https://127.0.0.1:8200"
+
+  # For demonstration purposes only. In a production environment,
+  # tls_skip_verify value should NOT be set to true.
+  tls_skip_verify = true
+}
+
+auto_auth {
+  method {
+    type      = "approle"
+
+    config = {
+      role_id_file_path = "/opt/vault/vault-agent/roleid"
+      secret_id_file_path = "/opt/vault/vault-agent/secretid"
+      remove_secret_id_file_after_reading = false
+    }
+  }
+
+  sink {
+    type = "file"
+    wrap_ttl = "30m"
+    config = {
+      path = "sink_file_wrapped_1.txt"
+    }
+  }
+
+  sink {
+    type = "file"
+    config = {
+      path = "sink_file_unwrapped_2.txt"
+    }
+  }
+}
+
+listener "tcp" {
+  address = "127.0.0.1:8100"
+  tls_disable = true
+}
+
+template_config {
+  static_secret_render_interval = "10m"
+  exit_on_retry_failure = true
+  max_connections_per_host = 20
+}
+
+# Server templates; remove if on client node
+
+template {
+  source       = "/opt/nomad/templates/server.agent.crt.tpl"
+  destination  = "/opt/nomad/rendered-cert-files/server.agent.crt"
+}
+
+# Client templates; remove if on server node
+
+template {
+  source       = "/opt/nomad/templates/client.agent.crt.tpl"
+  destination  = "/opt/nomad/rendered-cert-files/client.agent.crt"
+}
+
+# CLI templates
+
+template {
+  source       = "/opt/nomad/templates/cli.crt.tpl"
+  destination  = "/opt/nomad/rendered-cert-files/cli.crt"
+}
+#######################
+
+nohup sudo vault agent -config=/opt/vault/vault-agent/vault_agent.conf &
+
+######## tls stanza for server nodes ##########
+tls {
+  http = true
+  rpc  = true
+
+  ca_file   = "/opt/nomad/rendered-cert-files/server.ca.crt"
+  cert_file = "/opt/nomad/rendered-cert-files/server.agent.crt"
+  key_file  = "/opt/nomad/rendered-cert-files/server.agent.key"
+
+  verify_server_hostname = true
+  verify_https_client    = true
+}
+#####################################
+--------- nomad.hcl for nomad server -----------
+data_dir  = "/opt/nomad/data"
+bind_addr = "0.0.0.0"
+
+server {
+  enabled          = true
+  bootstrap_expect = 1
+}
+client {
+  enabled = true
+  servers = ["127.0.0.1"]
+}
+tls {
+  http = true
+  rpc  = true
+
+  ca_file   = "/opt/nomad/rendered-cert-files/server.ca.crt"
+  cert_file = "/opt/nomad/rendered-cert-files/server.agent.crt"
+  key_file  = "/opt/nomad/rendered-cert-files/server.agent.key"
+
+  verify_server_hostname = true
+  verify_https_client    = true
+}
+--------------------------------------
+
+######## tls stanza for client nodes ##########
+tls {
+  http = true
+  rpc  = true
+
+  ca_file   = "/opt/nomad/rendered-cert-files/client.ca.crt"
+  cert_file = "/opt/nomad/rendered-cert-files/client.agent.crt"
+  key_file  = "/opt/nomad/rendered-cert-files/client.agent.key"
+
+  verify_server_hostname = true
+  verify_https_client    = true
+}
+
+######################################
+export NOMAD_ADDR=https://localhost:4646
+export NOMAD_CACERT="/opt/nomad/rendered-cert-files/server.ca.crt"
+export NOMAD_CLIENT_CERT="/opt/nomad/rendered-cert-files/cli.crt"
+export NOMAD_CLIENT_KEY="/opt/nomad/rendered-cert-files/cli.key"
+
+
+
+
