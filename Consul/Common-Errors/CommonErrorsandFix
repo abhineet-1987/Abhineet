@@ -22,5 +22,6 @@ Error - "No healthy upstream"
 Fix - Network Connectivity problem. The destination host might not be reachable from source host.
 
 Error - "Empty reply from server" when using curl
-Fix - Protocol mismatch issue. Check for service default created with protocol set as http or in curl request wrong protocol being passed, for eg instead of https using http or vice versa
+Fix1 - Protocol mismatch issue. Check for service default created with protocol set as http or in curl request wrong protocol being passed, for eg instead of https using http or vice versa
+Fix2 - Intentions not created from one service to another
 --------------------------------
