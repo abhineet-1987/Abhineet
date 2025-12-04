@@ -27,4 +27,56 @@ kubectl exec -it static-client-74bc477bcd-skt65 -c static-client -- sh
 
 Else, you would get error:-
 "Empty reply from the server"
+------------------------------
+Service call analysis:-
+
+abhineet@abhineet-M17KGYKQHL static % k get svc
+NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+kubernetes      ClusterIP   10.96.0.1       <none>        443/TCP    3h52m
+static-client   ClusterIP   10.96.254.244   <none>        4321/TCP   3h49m
+static-server   ClusterIP   10.96.36.75     <none>        1234/TCP   3h49m
+
+abhineet@abhineet-M17KGYKQHL static % k get po -o wide
+NAME                             READY   STATUS    RESTARTS   AGE     IP            NODE                NOMINATED NODE   READINESS GATES
+static-client-74bc477bcd-skt65   2/2     Running   0          3h49m   10.244.0.14   dc1-control-plane   <none>           <none>
+static-server-74bd9c5d5b-p85bl   2/2     Running   0          3h49m   10.244.0.13   dc1-control-plane   <none>           <none>
+
+kubectl exec -it static-client-74bc477bcd-skt65 -c static-client -- sh
+
+/ # curl static-server
+"hello world from dc1"
+
+/ # curl  static-server.default
+"hello world from dc1"
+
+/ # curl  static-server.default.svc
+"hello world from dc1"
+
+/ # curl  static-server.default.svc.cluster
+curl: (6) Could not resolve host: static-server.default.svc.cluster
+
+/ # curl  static-server.default.svc.cluster.local
+"hello world from dc1"
+
+/ # curl 10.96.36.75
+"hello world from dc1"
+Note: 10.96.36.75 is ip of static-server service
+
+/ # curl 10.244.0.13
+curl: (52) Empty reply from server
+Note: 10.244.0.13 is ip of static-server pod (which is giving empty response as service mesh is enabled here, hence reachable only through service)
+However, it is pingable,
+
+/ # ping 10.244.0.13
+PING 10.244.0.13 (10.244.0.13): 56 data bytes
+64 bytes from 10.244.0.13: seq=0 ttl=63 time=0.221 ms
+64 bytes from 10.244.0.13: seq=1 ttl=63 time=0.118 ms
+64 bytes from 10.244.0.13: seq=2 ttl=63 time=0.126 ms
+......
+--- 10.244.0.13 ping statistics ---
+10 packets transmitted, 10 packets received, 0% packet loss
+round-trip min/avg/max = 0.094/0.228/0.525 ms
+
+
+
 
