@@ -1,0 +1,32 @@
+References:-
+https://developer.hashicorp.com/consul/docs/enterprise/license/reporting 
+https://hashicorp.atlassian.net/wiki/spaces/CSE/pages/4335665189/Support+Troubleshooting+Requirement+Manual+Census+Reporting
+
+####### consul.hcl ##########
+node_name = "consul-server"
+data_dir = "/opt/consul"
+datacenter = "dc9"
+ui_config = {
+  enabled = true
+}
+server = true
+log_level = "debug"
+client_addr = "0.0.0.0"
+bind_addr = "0.0.0.0"
+advertise_addr = "172.31.1.40"
+license_path = "/etc/consul.d/license.hclic"
+bootstrap_expect = 1
+reporting {
+    license {
+        enabled = false
+    }
+    snapshot_retention_time = "720h"
+}
+#############
+[root@ip-172-31-1-40 consul.d]# consul version
+Consul v1.22.0+ent
+
+consul operator utilization
+consul operator utilization -today-only
+cat consul-utilization-20251206-094522.json | jq
+##########
