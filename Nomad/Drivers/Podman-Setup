@@ -1,0 +1,85 @@
+References:
+https://support.hashicorp.com/hc/en-us/articles/20752437319955-Configuring-nomad-podman-driver-with-a-Nomad-Cluster-and-Running-a-Nomad-Job-Using-the-Podman-Driver 
+https://developer.hashicorp.com/nomad/plugins/drivers/podman#installation
+https://developer.hashicorp.com/nomad/plugins/drivers/podman#plugin-options
+https://podman.io/docs/installation#ubuntu
+
+I have used ubuntu multipass here:-
+Nomad Version: 1.9.13+ent
+Podman version: 4.9.3
+Noamd Client machine OS : Linux nomad-client 6.8.0-88-generic #89-Ubuntu SMP PREEMPT_DYNAMIC Sat Oct 11 00:59:18 UTC 2025 aarch64 aarch64 aarch64 GNU/Linux
+ 
+-- Install podman on Nomad client node --  Reference https://podman.io/docs/installation#ubuntu
+sudo apt-get update
+sudo apt-get -y install podman
+podman --version
+ 
+####### Install nomad-driver-podman on Nomad client node ###### Reference https://developer.hashicorp.com/nomad/plugins/drivers/podman#installation
+ 
+Install the required packages.
+$ sudo apt-get update && \
+  sudo apt-get install wget gpg coreutils
+Add the HashiCorp [GPG key][gpg-key].
+$ wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+Add the official HashiCorp Linux test repository.
+$ echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+Update and install.
+$ sudo apt-get update && sudo apt-get install -y nomad-driver-podman
+ 
+ 
+####### nomad-server.hcl ######
+data_dir  = "/opt/nomad/data"
+bind_addr = "0.0.0.0"
+
+server {
+  license_path = "/etc/nomad.d/license.hclic"
+  enabled          = true
+  bootstrap_expect = 1
+}
+ 
+######## nomad-client.hcl ########
+data_dir  = "/opt/nomad/data"
+bind_addr = "0.0.0.0"
+
+client {
+  enabled          = true
+  server_join {
+  retry_join = [ "<nomad-server-ip>" ]
+}
+}
+
+plugin_dir = "/opt/nomad/plugins"
+
+plugin "nomad-driver-podman" {
+  config {
+      socket_path = "unix:///run/podman/podman.sock"
+      # Customize other Podman driver plugin options here if needed
+  }
+}
+ 
+Note: Copy /usr/bin/nomad-driver-podman binary to /opt/nomad/plugins on Nomad client node and then start the nomad.
+ 
+######## job.hcl #############
+job "nginx-podman-job" {
+  datacenters = ["dc1"]
+  type = "service"
+
+  group "nginx-group" {
+    count = 1
+
+    task "nginx-task" {
+      driver = "podman"
+
+      config {
+        image = "docker.io/library/nginx:latest"
+      }
+
+      resources {
+        cpu = 500
+        memory = 256
+      }
+    }
+  }
+}
+ 
+nomad job run job.hcl
