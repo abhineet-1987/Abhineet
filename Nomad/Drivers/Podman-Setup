@@ -83,3 +83,94 @@ job "nginx-podman-job" {
 }
  
 nomad job run job.hcl
+
+############## Additional Context ############
+Even though when the container = true by default in block below:-
+ 
+plugin "nomad-driver-podman" {
+  config {
+    gc {
+      container = true
+    }
+  }
+}
+ 
+Ref https://developer.hashicorp.com/nomad/plugins/drivers/podman#container, but it seems that it is actually not being set to true.
+ 
+Below are the test results:-
+ 
+##### For below nomad-client.hcl file:-
+data_dir  = "/opt/nomad/data"
+bind_addr = "0.0.0.0"
+
+client {
+  enabled          = true
+  server_join {
+  retry_join = [ "192.168.64.5" ]
+}
+}
+
+plugin_dir = "/opt/nomad/plugins"
+
+plugin "nomad-driver-podman" {
+  config {
+      socket_path = "unix:///run/podman/podman.sock"
+      # Customize other Podman driver plugin options here if needed
+  }
+}
+###############
+When nomad agent config details are captured for plugin details, we get output as :-
+root@nomad-client:/etc/nomad.d# nomad agent-info -json  | grep -A15 Plugins
+        "Plugins": [
+            {
+                "Args": null,
+                "Config": {
+                    "socket_path": "unix:///run/podman/podman.sock"
+                },
+                "Name": "nomad-driver-podman"
+            }
+        ],
+ 
+####### But, when we explicitly enable container = true in plugin -> config -> gc block, as given below in nomad-client.hcl:-
+data_dir  = "/opt/nomad/data"
+bind_addr = "0.0.0.0"
+
+client {
+  enabled          = true
+  server_join {
+  retry_join = [ "192.168.64.5" ]
+}
+}
+
+plugin_dir = "/opt/nomad/plugins"
+
+plugin "nomad-driver-podman" {
+
+  config {
+    gc {
+      container = true
+    }
+      socket_path = "unix:///run/podman/podman.sock"
+      # Customize other Podman driver plugin options here if needed
+  }
+}
+###############
+Below is the output showing as container = true in the agent configuration, which was not showing earlier:
+root@nomad-client:/home/ubuntu# nomad agent-info -json  | grep -A15 Plugins
+        "Plugins": [
+            {
+                "Args": null,
+                "Config": {
+                    "gc": [
+                        {
+                            "container": true
+                        }
+                    ],
+                    "socket_path": "unix:///run/podman/podman.sock"
+                },
+                "Name": "nomad-driver-podman"
+            }
+        ],
+ 
+Considering this behaviour, the immediate workaround can be explicitly enabling container = true in plugin -> config -> gc block in nomad client configuration and in parallel raising a bug for the same to get this behaviour fixed.
+ 
