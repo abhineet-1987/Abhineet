@@ -10,6 +10,7 @@ nomad node status 8c7e3b79
 # To check nommad agent details
 nomad agent-info
 nomad agent-info -json
+curl http://localhost:4646/v1/agent/self | jq
 
 nomad monitor -log-level=debug
 nomad monitor -log-level=DEBUG -node-id=6bdc70fe      # -node-id: Specifies the client node-id to stream logs from
@@ -56,6 +57,7 @@ Network - sar -n, netstat -s, cloud provider metrics for interface "allowance"
 # Jobs related
 nomad job status 
 nomad job status tetris
+nomad job allocs nginx-podman-job
 nomad job plan job.hcl
 nomad job run job.hcl
 
