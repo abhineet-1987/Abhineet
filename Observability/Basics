@@ -1,0 +1,18 @@
+Method of metric collection:-
+  Push : In the push method, your applications or microservices will send the metrics to the time series database
+        via an endpoint that is provided by the time series database (eg graphite) and via protocols such as TCP, UDP, or HTTP.
+  Scrape : So your application or microservices must provide some API for the time series database to read the metrics. 
+        Example of a scrape method is when Prometheus scrapes the metrics from your, say, Python or dotnet or Java application.
+
+Types of telemetry data:-
+MELT
+Metrics : So a metric is an aggregated value representing events in a period of time.
+Events : action happenning at a given time
+Logs :  very detailed representation of an event
+Trace : Shows interactionof microservices to fulfill a request
+
+Install Prmetheus on Mac-OS:
+brew install prometheus
+Go to path /opt/homebrew/etc
+brew services start prometheus
+On web browser open http://localhost:9090
