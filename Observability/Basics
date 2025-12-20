@@ -11,7 +11,7 @@ Events : action happenning at a given time
 Logs :  very detailed representation of an event
 Trace : Shows interactionof microservices to fulfill a request
 
-Install Prmetheus on Mac-OS:
+### Install Prometheus on Mac-OS:
 brew install prometheus
 Go to path /opt/homebrew/etc
 brew services start prometheus
@@ -23,3 +23,10 @@ consul_exporter is a service that scrapes Consul’s HTTP API and exposes Consul
 It acts as a bridge between:
 Consul (source of data)
 Prometheus (metrics storage & alerting)
+
+#### Install Prometheus on Ubuntu 
+sudo su
+Go to https://prometheus.io/download/
+wget https://github.com/prometheus/prometheus/releases/download/v3.5.0/prometheus-3.5.0.linux-arm64.tar.gz
+tar xvf prometheus-3.5.0.linux-arm64.tar.gz
+nohup ./prometheus --config.file=prometheus.yml &
