@@ -167,6 +167,7 @@ Inability to persist new state.
 Loss of quorum and leadership. 
 Overall cluster failure.
 ----------------------------------
+In one of the case it was found that applying one of the service-defaults caused the Consul leadership to flap, and the Consul server pod readiness checks were failing. This was identified to be caused due to resource constraint and got fixed once we doubled the CPU and memory limits configured for Consul the Server Pods.
 
 ######### Important write up for customer during SEV1 ###########
 NOTE:-
