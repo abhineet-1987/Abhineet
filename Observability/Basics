@@ -145,5 +145,33 @@ docker compose down # To delete all the container stack deployed using docker co
 ####################
 Open Grafana Dashboard -> Connections  -> Data Sources -> Add new data source -> Add Prom, Loki, Tempo data sources -> Save and test -> Build a dashboard -> Click on Save Button (you may even click on settings to configure further settings for that dashboard)
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       LOCI OR GRAFANA LOCI            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Install Loci and Promtail on ubuntu
+Go to https://github.com/grafana/loki/releases
+wget https://github.com/grafana/loki/releases/download/v3.6.3/loki_3.6.3_arm64.deb
+sudo dpkg -i loki_3.6.3_arm64.deb
+
+sudo systemctl daemon-reload
+sudo systemctl enable loki
+sudo systemctl start loki
+sudo systemctl status loki
+Note: Make sure to update User=root in service config file at /etc/systemd/system else create loki user and add suitable permissions.
+
+Install promtail -------
+Go to https://github.com/grafana/loki/releases
+wget https://github.com/grafana/loki/releases/download/v3.6.3/promtail-linux-arm64.zip
+
+Go to https://github.com/aussiearef/grafana-udemy/blob/main/loki/promtail-sample-config.yml for promtail config file
+./promtail-linux-arm64  -config.file=promtail-config.yaml
+
+
+
+
+
+
+
+
+
+
 
 
