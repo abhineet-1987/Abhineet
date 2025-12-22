@@ -53,7 +53,7 @@ cd node_exporter-1.10.2.linux-arm64
 hostname -I # to get the ip of multipass VM
 On your browser open http://192.168.64.5:9100 to view the node metrics
 
-###### Data Model in Prmetheus #######
+###### Data Model in Prometheus #######
 So in Prometheus, obviously data is stored as time series, which means that we have a metric and there
 is a timestamp, a Linux timestamp attached to it.
 So every time series in Prometheus is identified by a metric name and labels.
@@ -94,5 +94,24 @@ Uses OpenTelemetry internally
 
 A trace is a record of a single request’s journey across multiple services, showing where time is spent and where failures occur.
 Metrics use exporters, logs and traces use collectors—and Alloy can handle all three.
+###########
+Typical setup without Alloy (very common)
+Metrics → Prometheus (exporters)
+
+Logs    → Promtail → Loki      (App logs → Promtail → Loki → Grafana)
+OR
+App logs → Fluent Bit → Loki / ElastiSearch / CloudWatch
+OR
+App logs → Fluentd → Loki / ElastiSearch / CloudWatch   (Heavier as compared to Fluent bit and used in complex systems)
+
+Traces  → OTEL Collector → Tempo
+#############
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       GRAFANA             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Non-Cloud
+Grafana Cloud
+
+###### Installing Grafana on Ubuntu ############
+
 
 
