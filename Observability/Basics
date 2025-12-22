@@ -53,3 +53,46 @@ cd node_exporter-1.10.2.linux-arm64
 hostname -I # to get the ip of multipass VM
 On your browser open http://192.168.64.5:9100 to view the node metrics
 
+###### Data Model in Prmetheus #######
+So in Prometheus, obviously data is stored as time series, which means that we have a metric and there
+is a timestamp, a Linux timestamp attached to it.
+So every time series in Prometheus is identified by a metric name and labels.
+And when we say a label is basically a key value pair.
+
+########
+Logs → Loki
+Traces → Tempo
+Metrics → Prometheus / Mimir
+              ↓
+           Grafana
+        (visualization)
+##########
+App / Node
+   ↓
+Grafana Alloy   ← collects
+   ↓
+-------------------------
+| Prometheus → metrics |
+| Loki       → logs    |
+| Tempo      → traces  |
+-------------------------
+        ↓
+     Grafana UI
+
+Alloy:
+One agent for all telemetry
+Replaces multiple exporters
+Uses OpenTelemetry internally
+#################
+| Component  | Role           |
+| ---------- | -------------- |
+| **Alloy**  | Collect & ship |
+| Prometheus | Store metrics  |
+| Loki       | Store logs     |
+| Tempo      | Store traces   |
+| Grafana    | Visualize      |
+
+A trace is a record of a single request’s journey across multiple services, showing where time is spent and where failures occur.
+Metrics use exporters, logs and traces use collectors—and Alloy can handle all three.
+
+
