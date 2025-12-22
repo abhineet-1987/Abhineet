@@ -131,6 +131,20 @@ hostname -I
 
 To open Grafan dashboard, on your browser open http://<ip-of-multipass-vm>:3000
 
+########### Configuring Grafana #######
+cd /etc/grafana
+grafana.ini is the configuration file.  (Note ";" semi colon comments the line, hence remove it if you want tu use particular line in that ini file)
+
+####### Deploying Grafana Stack and Prometheus with Docker on Mac ######
+Make sure you have Docker desktop running
+https://github.com/aussiearef/grafana-udemy/blob/main/docker/docker-compose.yaml
+copy this to your local directory and run:-
+docker compose up -d
+To view Grafan dashboard open in browser http://localhost:3000
+docker compose down # To delete all the container stack deployed using docker compose
+####################
+
+
 
 
 
