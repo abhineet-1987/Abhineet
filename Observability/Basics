@@ -40,6 +40,16 @@ Prometheus scrapes these exporters to store metrics and trigger alerts.
 Exporters translate system- or service-specific metrics into Prometheus format (e.g., SQL query stats, Consul health, HAProxy traffic).
 Examples: mysqld_exporter / postgres_exporter for SQL databases, consul_exporter for Consul catalog & health, cloudwatch_exporter for AWS CloudWatch metrics, and haproxy_exporter for HAProxy requests, errors, and latency.
 
-Node exporter:
+####### Node exporter:
 Node exporter is an official Prometheus exporter for collecting metrics that are exposed by Unix based kernels, for example Ubuntu and Linux servers. So some of the metrics that we can collect using node exporter include, but obviously not limited to
 CPU usage, disk usage, memory and network IO.
+
+On ubuntu multipass VM:-
+Go to https://prometheus.io/download/#node_exporter
+wget https://github.com/prometheus/node_exporter/releases/download/v1.10.2/node_exporter-1.10.2.linux-arm64.tar.gz
+tar xvf node_exporter-1.10.2.linux-arm64.tar.gz
+cd node_exporter-1.10.2.linux-arm64
+./node_exporter
+hostname -I # to get the ip of multipass VM
+On your browser open http://192.168.64.5:9100 to view the node metrics
+
