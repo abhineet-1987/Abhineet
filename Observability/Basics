@@ -31,3 +31,15 @@ wget https://github.com/prometheus/prometheus/releases/download/v3.5.0/prometheu
 tar xvf prometheus-3.5.0.linux-arm64.tar.gz
 nohup ./prometheus --config.file=prometheus.yml &
 On web browser open http://<ip-of-multipass-vm>:9090
+
+##### Data Collection 
+Source system emitting metrics --------> Exporter (customized as per source) --------> Prometheus
+
+Exporters collect metrics from applications or systems and expose them in Prometheus format.
+Prometheus scrapes these exporters to store metrics and trigger alerts.
+Exporters translate system- or service-specific metrics into Prometheus format (e.g., SQL query stats, Consul health, HAProxy traffic).
+Examples: mysqld_exporter / postgres_exporter for SQL databases, consul_exporter for Consul catalog & health, cloudwatch_exporter for AWS CloudWatch metrics, and haproxy_exporter for HAProxy requests, errors, and latency.
+
+Node exporter:
+Node exporter is an official Prometheus exporter for collecting metrics that are exposed by Unix based kernels, for example Ubuntu and Linux servers. So some of the metrics that we can collect using node exporter include, but obviously not limited to
+CPU usage, disk usage, memory and network IO.
