@@ -143,8 +143,7 @@ docker compose up -d
 To view Grafan dashboard open in browser http://localhost:3000
 docker compose down # To delete all the container stack deployed using docker compose
 ####################
-
-
+Open Grafana Dashboard -> Connections  -> Data Sources -> Add new data source -> Add Prom, Loki, Tempo data sources -> Save and test -> Build a dashboard -> Click on Save Button (you may even click on settings to configure further settings for that dashboard)
 
 
 
