@@ -24,3 +24,6 @@ aws eks update-kubeconfig --region us-west-2 --name my-EKS-cluster
 
 Note: In EKS, each pod gets its own private IP address from the VPC subnet.
 
+
+
+
