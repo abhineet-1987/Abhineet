@@ -2,3 +2,7 @@
 References:-
 https://developer.hashicorp.com/consul/tutorials/get-started-kubernetes/kubernetes-gs-deploy
 
+If the Consul server pods are in PENDING stage due to PVC, storage class issue, 
+kubectl apply -f gp3-storageclass.yaml
+and then run helm upgrade or uninstall consul release using helm and install again
+
