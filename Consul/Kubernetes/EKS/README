@@ -2,7 +2,25 @@
 References:-
 https://developer.hashicorp.com/consul/tutorials/get-started-kubernetes/kubernetes-gs-deploy
 
-If the Consul server pods are in PENDING stage due to PVC, storage class issue, 
+git clone https://github.com/hashicorp-education/learn-consul-get-started-kubernetes
+cd learn-consul-get-started-kubernetes/self-managed/eks
+terraform init
+terraform applyhttps://github.com/abhineet-1987/Abhineet/tree/main/Consul/Kubernetes/EKS
+aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw kubernetes_cluster_id)
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm install --values helm/values-v1.yaml consul hashicorp/consul --create-namespace --namespace consul 
+
+Note: If the Consul server pods are in PENDING stage due to PVC, storage class issue, 
 kubectl apply -f gp3-storageclass.yaml
 and then run helm upgrade or uninstall consul release using helm and install again
+
+export CONSUL_HTTP_TOKEN=$(kubectl get --namespace consul secrets/consul-bootstrap-acl-token --template={{.data.token}} | base64 -d)
+export CONSUL_HTTP_ADDR=https://$(kubectl get services/consul-ui --namespace consul -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+export CONSUL_HTTP_SSL_VERIFY=false
+consul catalog services
+consul members
+
+-----------
+
+
 
