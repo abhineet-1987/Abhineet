@@ -1,0 +1,4 @@
+############### Deploy Consul on EKS using terraform #########
+References:-
+https://developer.hashicorp.com/consul/tutorials/get-started-kubernetes/kubernetes-gs-deploy
+
