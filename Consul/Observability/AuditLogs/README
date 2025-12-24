@@ -1,0 +1,16 @@
+References:-
+https://developer.hashicorp.com/consul/docs/monitor/log/audit#configure-audit-logging
+
+export CONSUL_HTTP_ADDR=http://127.0.0.1:8500
+consul acl bootstrap
+export CONSUL_HTTP_TOKEN=xxxxxxxxxxxx
+
+Based on rotation duration:-
+rotate_duration = "24h"  # Given in Consul config file , the existing file will be backed up
+
+abhineet@abhineet-M17KGYKQHL audit % ls -lrt
+drwxr-xr-x@ 3 abhineet  staff     96 24 Dec 11:49 opt
+-rwxr-xr-x@ 1 abhineet  staff    605 24 Dec 11:58 consul.hcl
+-rw-------@ 1 abhineet  staff    917 24 Dec 15:03 audit-1766568845386426000.json
+-rw-------@ 1 abhineet  staff   2372 24 Dec 15:04 audit.json
+-rw-------@ 1 abhineet  staff  71189 24 Dec 15:11 nohup.out
