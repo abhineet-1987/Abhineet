@@ -1,6 +1,8 @@
 References:-
 https://developer.hashicorp.com/consul/docs/monitor/log/audit#configure-audit-logging
 
+Setup was tried in MacOs local
+
 export CONSUL_HTTP_ADDR=http://127.0.0.1:8500
 consul acl bootstrap
 export CONSUL_HTTP_TOKEN=xxxxxxxxxxxx
