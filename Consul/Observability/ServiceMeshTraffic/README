@@ -1,1 +1,9 @@
-test
+References:-
+https://developer.hashicorp.com/consul/tutorials/get-started-kubernetes/kubernetes-gs-deploy
+https://developer.hashicorp.com/consul/tutorials/get-started-kubernetes/kubernetes-gs-service-mesh
+https://developer.hashicorp.com/consul/tutorials/get-started-kubernetes/kubernetes-gs-ingress
+https://developer.hashicorp.com/consul/tutorials/get-started-kubernetes/kubernetes-gs-observability
+
+
+git clone https://github.com/hashicorp-education/learn-consul-get-started-kubernetes
+cd learn-consul-get-started-kubernetes/self-managed/eks
