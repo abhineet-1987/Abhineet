@@ -11,3 +11,4 @@ To reset the clicks count run : sqlite3 clicks.db "UPDATE click_counter SET coun
 
 On Mac:
 brew install sqlite
+brew install requests
