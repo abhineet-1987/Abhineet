@@ -8,3 +8,6 @@ sqlite> SELECT * FROM click_counter;
 To exit, run:
 sqlite>.quit
 To reset the clicks count run : sqlite3 clicks.db "UPDATE click_counter SET count = 0 WHERE id = 1;"
+
+On Mac:
+brew install sqlite
