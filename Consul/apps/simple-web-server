@@ -7,6 +7,16 @@ sudo python3 -m pip install --upgrade pip
 pip3 --version
 pip3 install Flask
 
+On Mac OS:
+brew install python
+pip3 --version
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install flask
+
+
+
 cat t.py
 from flask import Flask
 
