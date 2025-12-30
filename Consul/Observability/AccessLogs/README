@@ -1,7 +1,51 @@
 Used multipass VM.
 Created only single Consul server on VM and tested this.
 
-Consul v1.20.13+ent
+Tested on Consul v1.20.13+ent
+
+hostname -I     # To get ip of VM, you can use this ip in your browser along with reelevant app ports to access the application on your local web browser
+
+# Install python and flask on Ubuntu for apps setup
+sudo apt update
+sudo apt install -y python3 python3-pip python3-venv
+python3 -m venv flask-env
+source flask-env/bin/activate
+pip install flask
+pip install requests
+
+# install sqlite on Ubuntu
+apt install sqlite3
+
+# install envoy on Ubuntu
+wget -O- https://apt.envoyproxy.io/signing.key | sudo gpg --dearmor -o /etc/apt/keyrings/envoy-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/envoy-keyring.gpg] https://apt.envoyproxy.io bookworm main" | sudo tee /etc/apt/sources.list.d/envoy.list
+sudo apt-get update
+sudo apt-get install envoy
+envoy --version
+
+
+# Run the clickme app
+nohup python3 clickme.py > clickme.log 2>&1 &
+# Run sqlite db
+nohup python3 db.py > db.log 2>&1 &
+
+# Create configuration entry for proxy default
+consul config write proxy-default.hcl
+
+# Register clickme web service and db service in Consul
+consul services register  web-service.hcl
+consul services register  db-service.hcl
+
+# Start sidecar envoy proxy for clickme web app and db app
+nohup consul connect envoy -sidecar-for client1 > web-sidecar.log 2>&1 &
+nohup consul connect envoy -sidecar-for client2 -admin-bind=192.168.64.12:19000 > db-sidecar.log 2>&1 &
+
+Note: Since more than one envoy running on same machine, I have used -admin-bind=192.168.64.12:19000 for the second sidecar envoy proxy, 
+else it will error out giving message that port 19000 on localhost i.e 127.0.0.1 is already in use.
+
+You can access the clickme app on http://192.168.64.12:5002/    (where 192.168.64.12 is ip of VM)
+You can access Consul UI on http://192.168.64.12:8500
+
 
 
 
