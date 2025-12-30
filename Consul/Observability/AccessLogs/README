@@ -46,6 +46,17 @@ else it will error out giving message that port 19000 on localhost i.e 127.0.0.1
 You can access the clickme app on http://192.168.64.12:5002/    (where 192.168.64.12 is ip of VM)
 You can access Consul UI on http://192.168.64.12:8500
 
+Sample access logs output:
+
+(flask-env) root@consul-server:/home/ubuntu# ls -lrt
+-rw-r--r-- 1 root root 250107 Dec 30 12:23 access-logs.txt
+
+{"requested_server_name":null,"x_forwarded_for":null,"bytes_sent":0,"user_agent":null,"response_code_details":null,"route_name":null,"protocol":null,"response_code":0,"response_flags":"-","upstream_cluster":"local_app","method":null,"request_id":null,"authority":null,"downstream_local_address":"127.0.0.1:21000","upstream_transport_failure_reason":null,"connection_termination_details":null,"downstream_remote_address":"127.0.0.1:52452","bytes_received":0,"upstream_service_time":null,"upstream_local_address":"127.0.0.1:51932","duration":1,"path":null,"start_time":"2025-12-30T06:52:02.541Z","upstream_host":"127.0.0.1:5002"}
+{"user_agent":null,"path":null,"method":null,"response_code":0,"request_id":null,"upstream_cluster":"local_app","response_flags":"-","x_forwarded_for":null,"connection_termination_details":null,"duration":1,"bytes_received":0,"route_name":null,"protocol":null,"upstream_local_address":"127.0.0.1:49020","start_time":"2025-12-30T06:52:12.563Z","upstream_transport_failure_reason":null,"downstream_local_address":"127.0.0.1:21000","upstream_service_time":null,"bytes_sent":0,"upstream_host":"127.0.0.1:5002","requested_server_name":null,"authority":null,"downstream_remote_address":"127.0.0.1:60500","response_code_details":null}
+{"user_agent":null,"upstream_local_address":null,"upstream_service_time":null,"bytes_sent":0,"protocol":null,"downstream_local_address":"127.0.0.1:21001","downstream_remote_address":"127.0.0.1:36420","duration":0,"upstream_cluster":"local_app","response_code":0,"path":null,"upstream_host":null,"upstream_transport_failure_reason":null,"bytes_received":0,"response_code_details":null,"start_time":"2025-12-30T06:52:06.549Z","method":null,"request_id":null,"x_forwarded_for":null,"connection_termination_details":null,"route_name":null,"response_flags":"-","authority":null,"requested_server_name":null}
+{"response_code":0,"bytes_received":0,"bytes_sent":0,"response_code_details":null,"route_name":null,"connection_termination_details":null,"start_time":"2025-12-30T06:52:16.556Z","protocol":null,"user_agent":null,"requested_server_name":null,"upstream_host":"127.0.0.1:5001","upstream_cluster":"local_app","upstream_service_time":null,"method":null,"x_forwarded_for":null,"downstream_remote_address":"127.0.0.1:33910","response_flags":"-","request_id":null,"upstream_local_address":"127.0.0.1:46872","authority":null,"downstream_local_address":"127.0.0.1:21001","upstream_transport_failure_reason":null,"duration":0,"path":null}
+{"bytes_sent":0,"upstream_host":"127.0.0.1:5002","protocol":null,"upstream_local_address":"127.0.0.1:47366","method":null,"downstream_local_address":"127.0.0.1:21000","upstream_transport_failure_reason":null,"bytes_received":0,"route_name":null,"x_forwarded_for":null,"connection_termination_details":null,"response_code_details":null,"authority":null,"path":null,"response_flags":"-","user_agent":null,"downstream_remote_address":"127.0.0.1:35480","request_id":null,"requested_server_name":null,"upstream_cluster":"local_app","duration":12,"response_code":0,"start_time":"2025-12-30T06:52:22.584Z","upstream_service_time":null}
+
 
 
 
