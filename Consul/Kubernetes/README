@@ -90,6 +90,16 @@ consul-tls-init -> Used by TLS bootstrap job which generated Consul CA and serve
 consul-webhook-cert-manager -> Used by consul-webhook-cert-manager pods to generate TLS certs for webhook (consul-connect-injector) server.
 consul-connect-injector -> Used by consul-connect-injector pod to authenticate to Consul using consul-k8s-component-auth-method
 
+When consul is deployed on kubernetes using helm, below jobs are created:-
+consul-tls-init -> Consul TLS initialization
+consul-server-acl-init -> Consul ACL bootstrap
+consul-server-acl-init-cleanup -> Deletes bootstrap artifacts and temporary permissions
+consul-gateway-resources -> The consul-gateway-resources Job is a Kubernetes Job created by the Consul Helm chart to bootstrap and register the API Gateway resources (GatewayClass, Gateway, and supporting CRDs) into your cluster. It ensures that when you enable Consul’s API Gateway via Helm, 
+the necessary Kubernetes Gateway API objects are created and wired up to Consul’s controller so that Envoy can start handling ingress traffic 
+
+Note: Before consul-connect-injector pod comes up consul-server pod and consul-webhook-cert-manager pod should be up and running. (as it depends on them)
+
+
 
 
 
