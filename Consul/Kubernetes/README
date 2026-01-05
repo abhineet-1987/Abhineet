@@ -54,3 +54,42 @@ consul-k8s-auth-method is used by application workloads (consul-dataplane / Envo
    BindType:     service
    BindName:     ${serviceaccount.name}
    Selector:     serviceaccount.name!=default
+
+% kubectl get secret
+NAME                                 TYPE                                  DATA   AGE
+consul-auth-method                   kubernetes.io/service-account-token   3      6h26m
+consul-bootstrap-acl-token           Opaque                                1      6h25m
+consul-ca-cert                       Opaque                                1      6h26m
+consul-ca-key                        Opaque                                1      6h26m
+consul-connect-inject-webhook-cert   kubernetes.io/tls                     2      6h26m
+consul-server-cert                   kubernetes.io/tls                     2      6h26m
+sh.helm.release.v1.consul.v1         helm.sh/release.v1                    1      6h26m
+
+consul-auth-method: secret associated with service account consul-auth-method used in consul kubernetes auth methods consul-k8s-auth-method and consul-k8s-component-auth-method
+consul-bootstrap-acl-token: master consul acl bootstrap token
+consul-ca-cert, consul-ca-key -> Ca cert and key for Consul TLS
+consul-server-cert -> Consul server certificate
+consul-connect-inject-webhook-cert -> The consul-connect-inject-webhook-cert secret stores the TLS certificate and private key used by the Consul Connect Injector to securely serve Kubernetes admission webhook requests.
+
+% kubectl get sa
+NAME                             SECRETS   AGE
+consul-auth-method               0         6h27m
+consul-connect-injector          0         6h27m
+consul-gateway-cleanup           0         6h27m
+consul-gateway-resources         0         6h27m
+consul-server                    0         6h27m
+consul-server-acl-init           0         6h27m
+consul-server-acl-init-cleanup   0         6h27m
+consul-tls-init                  0         6h27m
+consul-webhook-cert-manager      0         6h27m
+default                          0         6h28m
+
+consul-server-acl-init -> Used by ACL bootstrap job
+consul-server-acl-init-cleanup -> Used by Cleanup job after ACL bootstrap to delete bootstrap artifacts and temporary permissions
+consul-tls-init -> Used by TLS bootstrap job which generated Consul CA and server certificates
+consul-webhook-cert-manager -> Used by consul-webhook-cert-manager pods to generate TLS certs for webhook (consul-connect-injector) server.
+consul-connect-injector -> Used by consul-connect-injector pod to authenticate to Consul using consul-k8s-component-auth-method
+
+
+
+
