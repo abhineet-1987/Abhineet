@@ -37,3 +37,21 @@ Public listener ensures all ingress traffic is authenticated and encrypted.
 👉 In short:
 15001 (outbound) = Envoy intercepts your app’s outgoing traffic.
 20000 (public/inbound) = Envoy receives incoming traffic for your app, applies mTLS, and forwards it internally.
+
+---------------------------------------------------------------------
+
+localhost:19000/clusters
+<cluster_name>::<scope>::<metric>::<value>
+cluster_name = logical upstream (e.g., local_app, consul-dataplane, original-destination)
+scope = priority level, endpoint address, or metadata
+metric = what’s being measured (connections, requests, retries, etc.)
+value = current counter or setting
+
+local_app cluster
+This represents your application itself (the service Envoy is proxying).
+
+consul-dataplane cluster
+This represents Envoy’s connection back to the Consul dataplane control server (for xDS config, mTLS cert rotation, etc.).
+
+original-destination cluster
+This is a special Envoy cluster used for transparent proxying.
