@@ -1,0 +1,39 @@
+kubectl debug -it static-server-74bd9c5d5b-hghkc --target=consul-dataplane --image=nicolaka/netshoot -- sh
+
+~ # curl localhost:19000/listeners
+outbound_listener:127.0.0.1:15001::127.0.0.1:15001
+public_listener:10.244.0.15:20000::10.244.0.15:20000
+
+#########
+outbound_listener:127.0.0.1:15001::127.0.0.1:15001
+This is Envoy’s outbound listener.
+Purpose: intercepts all egress traffic from your application container (the sidecar model).
+Port 15001 is the standard “capture port” used by Envoy in service mesh setups (similar to Istio).
+Traffic flow:
+Your app sends traffic to some external service.
+iptables redirects it into Envoy’s port 15001.
+Envoy applies Consul Connect policies (mTLS, intentions, routing).
+Envoy then forwards it to the correct upstream destination.
+Bound to 127.0.0.1 because it’s local to the dataplane container.
+
+###########
+public_listener:10.244.0.15:20000::10.244.0.15:20000
+This is Envoy’s inbound listener (sometimes called “public listener”).
+Purpose: accepts incoming traffic destined for your service.
+Port 20000 is the default “service port” Envoy uses to expose the proxied application.
+Traffic flow:
+Other services in the mesh connect to this IP:20000.
+Envoy terminates mTLS (using the Connect CA).
+Envoy forwards the decrypted traffic to your application’s real port (inside the pod).
+Bound to the pod’s IP (10.244.0.15 in your case), so other pods in the cluster can reach it.
+
+Summary
+Outbound listener (15001) → Captures and secures traffic leaving your app.
+Public listener (20000) → Accepts and secures traffic coming into your app.
+Together, they implement Consul Connect’s sidecar proxy model:
+Outbound listener ensures all egress traffic is subject to mTLS + intentions.
+Public listener ensures all ingress traffic is authenticated and encrypted.
+
+👉 In short:
+15001 (outbound) = Envoy intercepts your app’s outgoing traffic.
+20000 (public/inbound) = Envoy receives incoming traffic for your app, applies mTLS, and forwards it internally.
