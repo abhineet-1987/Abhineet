@@ -152,3 +152,42 @@ Inside the pod, the dataplane agent passes that config to Envoy via its local ep
 Consul servers always send config down to dataplane over port 8502 (dataplane initiates).
 Dataplane passes config to Envoy over a local ephemeral port (like 34171).
 Envoy handles all service traffic via 15001/20000, not the dataplane agent.
+
+######### For static server and static client apps in k8 ############
+
+# curl localhost:19000/clusters       # executed on static-client consul-dataplane container
+
+You'll see the endpoints for static-server cluster as (If Intentions are defined):
+
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::observability_name::static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::outlier::success_rate_average::-1
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::outlier::success_rate_ejection_threshold::-1
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::outlier::local_origin_success_rate_average::-1
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::outlier::local_origin_success_rate_ejection_threshold::-1
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::default_priority::max_connections::1024
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::default_priority::max_pending_requests::1024
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::default_priority::max_requests::1024
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::default_priority::max_retries::3
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::high_priority::max_connections::1024
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::high_priority::max_pending_requests::1024
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::high_priority::max_requests::1024
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::high_priority::max_retries::3
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::added_via_api::true
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::10.244.0.14:20000::cx_active::0
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::10.244.0.14:20000::cx_connect_fail::0
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::10.244.0.14:20000::cx_total::0
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::10.244.0.14:20000::rq_active::0
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::10.244.0.14:20000::rq_error::0
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::10.244.0.14:20000::rq_success::0
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::10.244.0.14:20000::rq_timeout::0
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::10.244.0.14:20000::rq_total::0
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::10.244.0.14:20000::hostname::
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::10.244.0.14:20000::health_flags::healthy
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::10.244.0.14:20000::weight::1
+static-server.default.dc1.internal.702e0bdb-3fcf-0fba-61f2-82e0549c3902.consul::10.244.0.14:20000::region::
+
+If intentions are not created, then you won't see the above static-server cluster endpoints in the output of localhost:19000/clusters when executed on consul-dataplane container of static-client pod.
+
+
+
+
