@@ -26,7 +26,13 @@ Important:- verify_server_hostname applies to outgoing connections, not incoming
 
 
 ################ mTLS ############
-Consul supports TLS certificates that verify the authenticity of servers and clients to secure RCP, gRPC, and HTTP traffic.
+There are 2 types on mTLS:-
+1) Consul service mesh mTLS (connect CA)
+2) mTLS for:-
+        RPC
+        gRPC
+        http
+Consul supports TLS certificates that verify the authenticity of servers and clients to secure RPC, gRPC, and HTTP traffic.
 
 Minimum config to setup mTLS :-
 verify_incoming = true
