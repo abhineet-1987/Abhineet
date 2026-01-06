@@ -1,0 +1,5 @@
+Use Prometheus to monitor Nomad metrics:-
+https://developer.hashicorp.com/nomad/tutorials/manage-clusters/prometheus-metrics
+
+Monitor job service metrics with Prometheus, Grafana, and Consul:-
+https://developer.hashicorp.com/nomad/tutorials/manage-clusters/prometheus-service-mesh-metrics
