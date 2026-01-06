@@ -1,0 +1,46 @@
+Reference:
+https://kind.sigs.k8s.io/docs/user/loadbalancer/ 
+
+In a Kind (Kubernetes-in-Docker) cluster, a LoadBalancer service will stay in Pending because Kind doesn’t have a built‑in cloud load balancer. 
+You need to deploy a load balancer implementation like MetalLB to assign external IPs to your service.
+
+LoadBalancer type services rely on a cloud provider (AWS ELB, Azure LB, GCP LB) to provision an external IP.
+Kind runs Kubernetes inside Docker containers, with no cloud provider integration.
+That’s why your service shows:
+Code
+foo-service   LoadBalancer   10.96.98.103   <pending>
+The cluster allocated a cluster IP (10.96.98.103), but the external IP is <pending>
+
+Install MetalLB in your Kind cluster:
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.10/config/manifests/metallb-native.yaml
+
+Configure an IP address pool that MetalLB can use:
+------------ metallb-config.yaml --------------
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  namespace: metallb-system
+  name: default-address-pool
+spec:
+  addresses:
+  - 172.18.255.200-172.18.255.250   # Example range inside your Docker network
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  namespace: metallb-system
+  name: default
+---------------------------------------------------
+kubectl apply -f metallb-config.yaml
+kubectl get svc foo-service
+% kubectl get svc | grep -i foo
+foo-service               LoadBalancer   10.96.98.103    172.18.255.200   5678:32379/TCP                                                                     49m
+
+
+---------- To access the app using Load Balancer -------
+On a seperate terminal, execute:-
+kubectl port-forward svc/foo-service 5678:5678
+Then curl,
+curl localhost:5678
+--------------------
+
