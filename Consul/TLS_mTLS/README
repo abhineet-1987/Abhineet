@@ -1,0 +1,36 @@
+References:-
+https://developer.hashicorp.com/consul/docs/reference/agent/configuration-file/tls#tls-configuration-parameters-for-consul-agent-configuration-files
+https://developer.hashicorp.com/consul/docs/secure/encryption/tls/enable/existing/vm
+https://developer.hashicorp.com/consul/docs/secure/encryption/tls/mtls
+
+verify_incoming - If set to true, Consul requires that all incoming connections make use of TLS and that the client provides a certificate signed by a Certificate Authority from the ca_file or ca_path. 
+By default, this is false, and Consul will not enforce the use of TLS or verify a client's authenticity.
+
+verify_incoming=true
+You can connect to me only if:
+1. You use TLS
+2. You present a certificate and that certificate is signed by my trusted CA”
+
+verify_outgoing - If set to true, Consul requires that all outgoing connections from this agent make use of TLS and that the server provides a certificate that is signed by a Certificate Authority from the ca_file or ca_path. 
+By default, this is false, and Consul will not make use of TLS for outgoing connections
+
+verify_outgoing=true
+I will only connect if:
+1. TLS is used
+2. The destination/target server presents a cert and that cert is signed by my trusted CA”
+
+verify_server_hostname - When set to true, Consul verifies the TLS certificate presented by the servers match the hostname server.<datacenter>.<domain>. 
+By default this is false, and Consul does not verify the hostname of the certificate, only that it is signed by a trusted CA.
+
+Important:- verify_server_hostname applies to outgoing connections, not incoming ones.
+
+
+################ mTLS ############
+Minimum config to setup mTLS :-
+verify_incoming = true
+verify_outgoing = true
+
+Best practice (strongest security):-
+verify_incoming = true
+verify_outgoing = true
+verify_server_hostname = true
