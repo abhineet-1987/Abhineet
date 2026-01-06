@@ -24,13 +24,6 @@ By default this is false, and Consul does not verify the hostname of the certifi
 
 Important:- verify_server_hostname applies to outgoing connections, not incoming ones.
 
-Standard consul.hcl with TLS and mTLS enabled 
-
-
-
-
-
-
 
 ################ mTLS ############
 Consul supports TLS certificates that verify the authenticity of servers and clients to secure RCP, gRPC, and HTTP traffic.
