@@ -1,0 +1,12 @@
+Deploy Consul on OC:
+
+Reference: https://developer.hashicorp.com/consul/docs/deploy/server/k8s/platform/openshift
+
+oc new-project consul
+
+Create registry service account https://access.redhat.com/terms-based-registry/ 
+% kubectl create -f 20113073-abhineet-pull-secret.yaml --namespace=consul
+secret/20113073-abhineet-pull-secret created
+
+helm search repo hashicorp/consul
+helm repo update
