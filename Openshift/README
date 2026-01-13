@@ -44,3 +44,13 @@ To run sample app:
 oc new-app docker.io/library/nginx:1.26 --name=mynginx     # This will create deployment,service and pod
 oc get all -l app=mynginx
 oc delete all -l app=mynginx
+
+oc config set-context --current --namespace=default    # Set default namespace as working namespace
+
+oc expose svc mynginx   # To expose cluster ip service so that the nginx app can be viewed on browser
+% oc get route mynginx        # To get url of exposed service 
+NAME      HOST/PORT                          PATH   SERVICES   PORT     TERMINATION   WILDCARD
+mynginx   mynginx-default.apps-crc.testing          mynginx    80-tcp                 None    
+
+Run http://mynginx-default.apps-crc.testing on your browser to access the nginx application on your browser
+
