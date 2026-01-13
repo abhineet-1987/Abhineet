@@ -39,3 +39,8 @@ eval $(crc oc-env)
 oc config current-context
 oc config use-context crc-admin
 oc whoami
+------------------
+To run sample app:
+oc new-app docker.io/library/nginx:1.26 --name=mynginx     # This will create deployment,service and pod
+oc get all -l app=mynginx
+oc delete all -l app=mynginx
