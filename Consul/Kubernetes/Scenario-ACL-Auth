@@ -1,0 +1,27 @@
+Install Helm chart on Minikube cluster
+Read the auth method and check the pods they will be in failing state
+Now update the auth methods add CA chain and recreate the pod, it'll work.
+Now rerun helm upgrade as server-acl-init job is still there
+    Now we run helm upgrade to remove tha acl-init job which is in terminating state
+    The Consul-auth method remains same so the pod continues to run
+Now everything is clean, so we ran helm upgrade to confirm few things, now acl-init-job is recreated and due to this auth-method is changed to api-server
+    Then we'll have to change the auth-method CA chain.
+Change config to kind
+    Now when we do helm install for kind cluster and check the pod, it'll be failing and we see unknown authority error bcoz CA chain is of minikube even though kubeauthhost is of kind(8444).
+    read the auth-method and it confirms CA chain is of minikube.
+    Now we do consul-auth methods update and add kind's proxy CA chain, this resolves the unknown authority issue.
+    But the acl-init job is there
+    To clear the acl-init job we need to do helm upgrade
+Now we change context to minikube
+    Now if you see the pod it'll be in running state
+    If we read the auth method it'll be pointing to kind endpoint
+    If we delete the pod, it'll show the following error, "2026-01-14T06:46:59.907Z [ERROR[] consul-server-connection-manager.consul-server-connection-manager: ACL auth method login failed: error="rpc error: code = Unauthenticated desc = lookup failed: [invalid bearer token, invalid signature, no keys found]"
+    2026-01-14T06:46:59.907Z [ERROR[] consul-server-connection-manager.consul-server-connection-manager: connection error: error="rpc error: code = Unauthenticated desc = lookup failed: [invalid bearer token, invalid signature, no keys found]""
+    Now we update the auth method with minikube endpoint
+    Now the pod will show the following error as the bg data is still of Kind cluster, "2026-01-14T07:13:57.898Z [ERROR] consul-server-connection-manager.consul-server-connection-manager: ACL auth method login failed: error="rpc error: code = Unauthenticated desc = Unauthorized"                    │
+    │ 2026-01-14T07:13:57.898Z [ERROR] consul-server-connection-manager.consul-server-connection-manager: connection error: error="rpc error: code = Unauthenticated desc = Unauthorized"".   IT FAILS AS CONTENT IS STILL OF KIND CLUSTER
+    Now we run helm upgrade, acl-init job is created,
+    Now the pods show this error, " 2026-01-14T07:15:48.659Z [ERROR] consul-server-connection-manager.consul-server-connection-manager: connection error: error="rpc error: code = Unauthenticated desc = Post \"https://127.0.0.1:8443/apis/authentication.k8s.io/v1/tokenreviews\": tls: failed to verify certificate: x509: certificate signed by unknown authority" "
+    Now we update the auth-method with envoy cert chain, now the pods starts to run.  But now the acl-init-job is there.
+Now if we switch back to kind
+    And run helm upgrade, and it'll trigger one init job which will change my auth method config which was pointing to minikube to kube-api server cert and change the endpoint to the one provided in the values file of kind. (edited) 
