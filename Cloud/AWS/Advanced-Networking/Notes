@@ -1,0 +1,26 @@
+This Network ACL (Access Control List) configuration defines inbound traffic rules for a subnet in your VPC. Here's what each part means and how it behaves:
+
+🔐 Rule Breakdown
+Rule Number	Type	Protocol	Port Range	Source	Action
+100	All traffic	All	All	0.0.0.0/0	Allow
+* (default)	All traffic	All	All	0.0.0.0/0	Deny
+🧠 What This Means
+Rule 100: Allows all inbound traffic from any IP address (0.0.0.0/0) across all protocols and ports.
+Rule * (default): Denies all inbound traffic that doesn't match any of the numbered rules.
+
+🧭 How Network ACLs Work
+Rules are evaluated in order by rule number, starting from the lowest.
+Once a match is found, no further rules are evaluated.
+The * rule is the implicit default rule that applies if no other rule matches.
+
+✅ Final Behavior
+Because Rule 100 allows all traffic and is evaluated before the default deny rule:
+
+All inbound traffic is allowed into the subnet.
+This setup is very permissive and should be used cautiously. If you're looking to restrict access, you'd typically define more granular rules (e.g., allow HTTP/HTTPS only) and rely on the default deny to block everything else.
+
+--------
+For EC2 instance to be accessible from the Internet, below 2 criteria required:-
+1. It should be in the public subnet
+2. It should have public ip assigned to it
+------------
