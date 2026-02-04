@@ -16,6 +16,11 @@ and then run helm upgrade or uninstall consul release using helm and install aga
 
 export CONSUL_HTTP_TOKEN=$(kubectl get --namespace consul secrets/consul-bootstrap-acl-token --template={{.data.token}} | base64 -d)
 export CONSUL_HTTP_ADDR=https://$(kubectl get services/consul-ui --namespace consul -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+#######
+Note: if CONSUL_HTTP_ADDR is blank/incomplete then,
+kubectl port-forward service/consul-server --namespace consul 8501:8501
+export CONSUL_HTTP_ADDR="https://localhost:8501"
+##########
 export CONSUL_HTTP_SSL_VERIFY=false
 consul catalog services
 consul members
