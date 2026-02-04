@@ -20,6 +20,8 @@ export CONSUL_HTTP_ADDR=https://$(kubectl get services/consul-ui --namespace con
 Note: if CONSUL_HTTP_ADDR is blank/incomplete then,
 kubectl port-forward service/consul-server --namespace consul 8501:8501
 export CONSUL_HTTP_ADDR="https://localhost:8501"
+
+Refer: https://developer.hashicorp.com/consul/docs/deploy/server/k8s/helm#viewing-the-consul-ui
 ##########
 export CONSUL_HTTP_SSL_VERIFY=false
 consul catalog services
