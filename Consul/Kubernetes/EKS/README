@@ -28,6 +28,20 @@ consul catalog services
 consul members
 
 -----------
+If you need to setup 2 EKS clusters for connectivity for eg WAN federation MESH gateway setup, peering etc. You need to make sure that using above method
+VPC will get CIDR range of 10.0.0.0/16
+But if you want make VPC1 talk to VPC2, while deploying EKS2 update aws.tf to use non overlapping CIDR such as 10.1.0.0/16 if VPC1 CIDR is 10.0.0.0/16. Make sure you update subnets value as well in aws.tf accordingly.
+
+Follow below:-
+1. Create vpc peering connection
+2. Accept the peering connection
+3. Update VPC route tables' route for both the VPC by configuring destination the CIDR of other VPC and connection type as peering (pcx-) (update main (vpc) route table)
+4. Update all the subnets (associated with above VPCs) route tables' route for both the VPC's subnets by configuring destination the CIDR of other VPC and connection type as peering (pcx-) (update subnet route table)
+5. For ssh into worker nodes update security group's inbound rule to allow traffic.
+6. Update security group of both the VPCs EKS worker nodes by adding inbound rule to allow all traffic from the other VPC's security group.
+7. Validate by SSHing into the EKS1 worker node and ping the private ip of the EKS2 worker node. It should be pingable.
+
+------------
 
 
 
