@@ -2,3 +2,5 @@ Reference:
 https://github.com/abhineet-1987/Abhineet/blob/main/Consul/Kubernetes/EKS/README
 https://developer.hashicorp.com/consul/docs/east-west/wan-federation/k8s
 
+Note: You can create intentions defined in intention.yaml on any of the DC i.e primary or secondary.
+
