@@ -34,5 +34,5 @@ meshGateway:
     type: NodePort
     nodePort: <node-port-value>
  
-But, please make sure that if you are using kind/k3s etc then possibly go with Option2 above as it may work.
+But, please make sure that if you are using kind/k3s etc then possibly go with Option2 above as it may work. In EKS, any of the above works.
 
