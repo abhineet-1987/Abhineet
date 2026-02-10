@@ -5,3 +5,34 @@ https://developer.hashicorp.com/consul/docs/east-west/wan-federation/k8s
 Note: You can create intentions defined in intention.yaml in any of the DC i.e primary or secondary.
       Deploy proxy-default.yaml in primary DC only, no need to deploy it in secondary DC.
 
+You can use either of the annotation syntax mentioned below in static-client.yaml :-
+ 
+Format 1:
+consul.hashicorp.com/connect-service-upstreams: "static-server:1234:dc2-k3s"
+Format 2:
+consul.hashicorp.com/connect-service-upstreams: "static-server.svc.default.ns.dc2-k3s.dc:1234"
+ 
+Basically, the first one is the unlabelled annotation format and the second one is the labelled annotation format. Refer the documentation given below for more details on the usage of the annotation format.
+https://developer.hashicorp.com/consul/docs/reference/k8s/annotation-label#consul-hashicorp-com-connect-service-upstreams
+
+Also, on the usage of meshGateway: section in Consul values.yaml. You can use either of these options and that should not make a difference:-
+ 
+Option1:-
+meshGateway:
+  enabled: true
+  service:
+    type: NodePort
+    nodePort: <node-port-value>
+ 
+Option2:-
+meshGateway:
+  enabled: true
+  wanAddress:
+    source: NodeIP
+    port: <node-port-value>
+  service:
+    type: NodePort
+    nodePort: <node-port-value>
+ 
+But, please make sure that if you are using kind/k3s etc then possibly go with Option2 above as it may work.
+
