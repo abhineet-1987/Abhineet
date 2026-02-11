@@ -14,3 +14,17 @@ Reference: https://developer.hashicorp.com/consul/docs/register/service/k8s/serv
 
 # Consul Cheat sheet:-
 https://github.com/devops-cheat-sheets/consul-cheat-sheet/blob/main/README.md#consul-cheat-sheet
+
+If TLS enabled:-
+export CONSUL_HTTP_ADDR="https://localhost:8501"
+export CONSUL_HTTP_TOKEN=93ed9c04-e88f-7722-e1e9-bd68bbb01a96
+
+root@ip-10-0-5-32:/etc/consul.d# consul members
+Error retrieving members: Get "https://localhost:8501/v1/agent/members?segment=_all": tls: failed to verify certificate: x509: certificate signed by unknown authority
+
+Set:-
+export CONSUL_HTTP_SSL_VERIFY=false
+
+
+
+
