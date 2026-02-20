@@ -52,10 +52,11 @@ MeshGateway {
      
 consul config write proxy-defaults.hcl
  
-Kubernetes Secondary Cluster Setup:-
+------------- Kubernetes Secondary Cluster Setup:-   -----------------------------------------
  
-Create Kubernetes federation secret
-abhineet@abhineet-M17KGYKQHL helm % kubectl create secret generic consul-federation \
+Create Kubernetes federation secret:-
+
+% kubectl create secret generic consul-federation \
   --from-file=caCert=consul-agent-ca.pem \
   --from-file=caKey=consul-agent-ca-key.pem \
   --from-literal=replicationToken="XXXX-ad3892302ba0"
