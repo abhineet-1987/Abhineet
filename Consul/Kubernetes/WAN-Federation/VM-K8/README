@@ -1,1 +1,4 @@
-Reference Document: https://developer.hashicorp.com/consul/docs/east-west/wan-federation/k8s-vm  
+Reference Documents: 
+https://developer.hashicorp.com/consul/docs/east-west/wan-federation/k8s-vm 
+https://developer.hashicorp.com/consul/docs/secure/encryption/tls/mtls#federated-consul-datacenter 
+https://developer.hashicorp.com/consul/docs/secure/encryption/gossip/enable
