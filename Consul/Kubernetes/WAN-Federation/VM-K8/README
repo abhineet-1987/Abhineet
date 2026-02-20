@@ -1,3 +1,4 @@
+Note: I have used EKS here and deployed Consul on ec2 instance (VM).
 Reference Documents: 
 https://developer.hashicorp.com/consul/docs/east-west/wan-federation/k8s-vm 
 https://developer.hashicorp.com/consul/docs/secure/encryption/tls/mtls#federated-consul-datacenter 
@@ -14,7 +15,7 @@ consul keygen
 
 ------Consul Server Config #################
 
-Create consul.hcl as defined in this folder.
+Create consul.hcl as defined in this folder and start the Consul service.
 
 ############################################################## 
 Configure the anonymous token policy, first create a policy with the mentioned rules as given below (Refer here), then attach it to the anonymous token:-
@@ -61,7 +62,8 @@ abhineet@abhineet-M17KGYKQHL helm % kubectl create secret generic consul-federat
   --from-literal=gossipEncryptionKey="XXXXXXXXXXXXX"
 Please note: To keep things simple, I have used the same master bootstrap token of the primary cluster as the replication token for the secondary cluster.
 
--------- Create values.yaml for K8 cluster as given in folder here.
+-------- Create values.yaml for K8 cluster as given in folder here and run:
+helm install consul hashicorp/consul --values=values.yaml --debug
  
 For validating the WAN federation setup, refer this.
  
