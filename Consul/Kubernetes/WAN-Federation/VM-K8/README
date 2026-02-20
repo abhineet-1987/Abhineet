@@ -3,6 +3,9 @@ Reference Documents:
 https://developer.hashicorp.com/consul/docs/east-west/wan-federation/k8s-vm 
 https://developer.hashicorp.com/consul/docs/secure/encryption/tls/mtls#federated-consul-datacenter 
 https://developer.hashicorp.com/consul/docs/secure/encryption/gossip/enable
+https://developer.hashicorp.com/consul/docs/secure/encryption/tls/mtls
+https://developer.hashicorp.com/consul/docs/east-west/mesh-gateway/enable
+https://developer.hashicorp.com/consul/tutorials/archive/service-mesh-gateways
 
 Steps:
 --------Create CA and Server TLS certificates:
