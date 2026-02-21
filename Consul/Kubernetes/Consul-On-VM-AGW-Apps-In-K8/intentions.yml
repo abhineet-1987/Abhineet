@@ -1,0 +1,11 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: api-gw-int
+spec:
+  destination:
+    name: "*"
+  sources:
+    - name: agw-manual
+      namespace: consul-sm
+      action: allow
