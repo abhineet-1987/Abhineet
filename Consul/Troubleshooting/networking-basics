@@ -15,3 +15,183 @@ sudo tcpdump -vvv -X -n host <HOST_IP> -w all_traffic_capture.pcap
 # For tcp traffic 
 sudo tcpdump -vvv -X -n tcp and host <HOST_IP> -w tcp_traffic_capture.pcap
 
+curl ifconfig.me   # to check public ip of my laptop
+ipconfig getifaddr en0  # to check ip of my laptop, This is the IP your Mac uses within your home or office network.
+
+######## I am using kind on my laptop to create K8 clsuetr #######
+Case1:
+To Expose Kubernetes API to Your Laptop : kubectl proxy --address='0.0.0.0' --port=8001 --accept-hosts='.*'
+Validate: curl http://localhost:8001/version
+
+Case2:
+Foe eg you have to use kubernetes host as env variable in your pods, you can use as below. For eg in while setting kubernetes auth method inside Vault pods
+KUBE_HOST="https://kubernetes.default.svc"  
+###############################################
+
+###### Some useful networking commands ###############
+ip addr   : Lists all network interfaces and their assigned IP addresses on the host.
+ip route   : Displays the routing table, showing how the host directs traffic to different networks.
+docker network ls   : Shows all Docker networks currently defined on the system.
+docker network inspect <kind-network-name>   : Provides detailed configuration and connected containers for a specific Docker network (like the one KIND uses).
+
+iptables,iptable rules, chain, NAT    ### Need to read more on this
+
+###### How to clean up the IPtables rules containing stale IP address entries #########
+Listed IPtables rules for port 8443 : iptables -L -t nat -n -v  | grep 8443
+Took note of target in offending rules , identified the bad IP address, cleaned its references by deleting the each such rule from all Chains: iptables -t nat -D <chain-name> <rule-num>
+Flushed the offending IPtables CHAIN relevant to target captured: iptables -t nat -F <chain-name>
+Deleted the Iptables CHAIN as well: iptables -t nat -X <chain-name>
+Later verified that all the offending iptables rules containing stale IP address dont exist anymore using : iptables -L -t nat -n -v  | grep 8443
+
+To check OS details Linux:
+cat /etc/os-release
+
+netstat -antp # The command netstat -antp is used to display active network connections and listening ports
+
+
+Common network errors:-
+1.Packet loss
+ping -c 5 google.com
+mtr
+2. Latency
+3. DNS issue
+nslookup google.com
+4. Network Interface error : problems with NICs (network interface cards)
+
+Network error codes:
+4xx client errors, 
+401: Unauthorized
+403: Forbidden
+404: Not found
+5xx server errors
+500: Internal server error
+502: Bad Gateway
+503: Service Unavialable
+504: Gateway timeout
+Note:- 1xx informational response, 2xx success, 3xx redirection
+
+
+Application level network errors:
+1. Time out errors
+2. Connection refused
+3. I/O timeout
+4. Broken pipe
+5. Network could not be establish
+6. DNS resolution failed
+
+Troubleshooting tools:
+ping and traceroute
+netsat
+tcpdump
+nslookup and dig
+wireshark tool -> *.pcap files, statistics->conversations, DynamiteLab open source tool to visualize pcap files.
+
+# To view consul service logs:-
+journalctl -xeu consul -f
+journalctl -xeu consul --since "5 hour ago" -f
+journalctl -xeu consul --since "10 minute ago" -f
+journalctl -xeu consul --since "2025-10-24 09:00" --until "2025-10-24 12:00"
+journalctl -xeu consul --since "2025-10-24"
+
+################################################## SYSTEM DETAILS ###############################################################################
+# To know detailed information about your Linux operating system
+cat /etc/os-release
+# To know kernel version and architecture details
+uname -a
+
+# Linux distribution Vs Pacakge manager used
+RHEL, CentOS, Fedora, Amazon Linux 2, Amazon Linux 2023  -  "yum"
+Ubuntu, Debian  - "apt"
+
+# To check when system was rebooted last time:-
+who -b
+uptime -s
+last reboot
+
+# To check DNS server details on a host:
+cat /etc/resolv.conf
+
+# To check Router/Gateway details on a host:
+ip route
+Note: Refer to the entry with pattern "default via X.X.X.X"
+
+# To check the tcp ports i.e Show all connections (both listening and established)
+netstat -antp
+# To check the udp ports i.e Show all connections (both listening and established)
+netstat -anup
+# To check the both the tcp and udp ports i.e Show all connections (both listening and established)
+netstat -antup
+ss -tuln
+
+# To check network interfaces details on the VM
+ip addr
+ip link
+
+################################################## CONNECTIVITY RELATED ###############################################################################
+# To check connectivity to the server, whether server is reachable or not:
+ping <ip-address>
+ping <hostname>
+
+# Tests TCP connectivity to a specific port
+telnet <ip-address-or-hostname> <port>
+telnet www.google.com 443
+
+# Tests TCP and UDP connectivity to a specific port
+nc -zv <ip-address-or-hostname> <port>
+nc -zv www.google.com 443
+
+# Scans open ports
+nmap www.google.com
+nmap 142.250.73.100
+
+# Tests HTTP/HTTPS endpoints and APIs
+curl http(s)://<hostname-or-url>:<port>/<endpoint>
+
+# To check DNS server details on a host:
+cat /etc/resolv.conf
+
+# DNS resolution
+nslookup www.google.com
+dig www.google.com
+
+# Shows routing path to a host but does not confirms whether the ip is reachable or not, for that you have to use ping, telnet commands etc
+ip route get 142.250.73.132
+
+# Show all routes on a host
+ip route
+
+################################################## PERFORMANCE RELATED ###############################################################################
+
+# To check CPU and MEMORY:
+top
+vmstat -w 1
+
+# To check free memory
+free -h
+Note: free - Memory that is completely unused — not touched by apps, buffers, or cache.
+      available - Memory that is available for new applications — includes free + reclaimable cache/buffers.
+
+# Shows DISK usage for all mounted filesystems.
+df -h
+# Shows disk usage only for the filesystem that contains the current directory
+df -h .
+# Shows how much space a specific folder or file is using.
+du -hs /var/log
+# This shows the disk usage of each top-level directory on the root filesystem.
+sudo du -sh /* 2>/dev/null
+# To know size of all directories under /var directory
+sudo du -sh /var/* 2>/dev/null
+
+
+# To check IOPS usage on host:
+iostat
+iostat -dx
+Note: If iostat not available then run:
+sudo yum install sysstat   # RHEL/CentOS
+sudo apt install sysstat   # Debian/Ubuntu
+
+# To check actual IOPS supported, ec2 ui -> Storage -> Click EBS Volumes -> There you'll see size,IOPS (operations per second) ,throughput (MB of data transferred in 1 second).
+
+# Real-time network bandwidth monitoring for Linux.
+iftop -n -P
+
