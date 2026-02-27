@@ -1,3 +1,12 @@
+Note: I have used EKS here and deployed Consul on ec2 instance (VM).
+Reference Documents: 
+https://developer.hashicorp.com/consul/docs/east-west/wan-federation/k8s-vm 
+https://developer.hashicorp.com/consul/docs/secure/encryption/tls/mtls#federated-consul-datacenter 
+https://developer.hashicorp.com/consul/docs/secure/encryption/gossip/enable
+https://developer.hashicorp.com/consul/docs/secure/encryption/tls/mtls
+https://developer.hashicorp.com/consul/docs/east-west/mesh-gateway/enable
+https://developer.hashicorp.com/consul/tutorials/archive/service-mesh-gateways
+
 VM Primary Cluster Setup:-
  
 Create CA and Server TLS certificates:
@@ -12,9 +21,12 @@ total 16
 -rwxr-xr-x 1 root root  227 Feb 20 10:57 consul-lab.myinfo.com-agent-ca-key.pem
 -rwxr-xr-x 1 root root 1135 Feb 20 11:01 dce-server-consul-lab.myinfo.com-0.pem
 -rwxr-xr-x 1 root root  227 Feb 20 11:01 dce-server-consul-lab.myinfo.com-0-key.pem
+
 Generate Gossip encryption key
 consul keygen
 xOq3gO9a3XXXXXXXXXXXXXXMYk=
+
+
 Consul Server Config:
 
 root@ip-10-0-5-32:/etc/consul.d# cat consul.hcl
@@ -122,8 +134,10 @@ grpc {
 ui_config {
   enabled = true
 }
+######################################
 Start the Consul
 systemctl start consul
+
 Configure the anonymous token policy, first create a policy with the mentioned rules as given below (Refer here), then attach it to the anonymous token:-
 
 echo 'partition_prefix "" {
@@ -143,7 +157,11 @@ consul acl token update -id 00000000-0000-0000-0000-000000000002 -policy-name an
 Register and start the mesh gateway on the VM:-
 
 nohup consul connect envoy -gateway=mesh -register -expose-servers -service "gateway-primary" -address "<private-ip-vm>:8443" -wan-address "<public-ip-vm>:8443"  -grpc-addr "https://<private-ip-vm>:8502" -grpc-ca-file "/etc/consul.d/tls_cust/consul-lab.myinfo.com-agent-ca.pem" &
- 
+nohup consul connect envoy -gateway=mesh -register -expose-servers -service "gateway-primary" -address "10.0.5.32:8443" -wan-address "10.0.5.32:8443"  -grpc-addr "https://10.0.5.32:8502" -grpc-ca-file "/etc/consul.d/tls_cust/consul-lab.myinfo.com-agent-ca.pem" &
+nohup consul connect envoy -gateway=mesh -register -expose-servers -service "gateway-primary" -address "10.0.5.32:8443" -wan-address "34.222.236.18:8443"  -grpc-addr "https://10.0.5.32:8502" -grpc-ca-file "/etc/consul.d/tls_cust/consul-lab.myinfo.com-agent-ca.pem" &
+
+Note: Working with both the above commands i.e with -wan-address "10.0.5.32:8443" and -wan-address "34.222.236.18:8443" (private and public ip)
+
 Create the Configuration entry for proxy defaults:-
 
 # cat proxy-defaults.hcl
@@ -157,9 +175,12 @@ MeshGateway {
 }
    
 consul config write proxy-defaults.hcl
+
 Restart the Consul 
 systemctl restart consul
- 
+
+###############################################################
+
 Kubernetes Secondary Cluster Setup:-
  
 Create Kubernetes federation secret
