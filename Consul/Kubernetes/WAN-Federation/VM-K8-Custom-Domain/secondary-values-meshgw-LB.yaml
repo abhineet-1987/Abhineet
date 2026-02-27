@@ -1,0 +1,46 @@
+global:
+  name: consul
+  datacenter: dc3-k3s
+  domain: consul-lab.myinfo.com
+  image: hashicorp/consul-enterprise:1.21.4-ent
+  enterpriseLicense:
+    secretName: consul-ent-license
+    secretKey: key
+  tls:
+    enabled: true
+    caCert:
+      secretName: consul-federation
+      secretKey: caCert
+    caKey:
+      secretName: consul-federation
+      secretKey: caKey
+
+  # Delete this acls section if ACLs are disabled.
+  acls:
+    manageSystemACLs: true
+    replicationToken:
+      secretName: consul-federation
+      secretKey: replicationToken
+
+  federation:
+    enabled: true
+    k8sAuthMethodHost: https://DB4869DXXXXXXXXXXXX829DD.gr7.us-west-2.eks.amazonaws.com
+    primaryDatacenter: dce
+    primaryGateways: ["<private-ip-vm>:8443"]
+
+  gossipEncryption:
+    secretName: consul-federation
+    secretKey: gossipEncryptionKey
+
+
+connectInject:
+  enabled: true
+meshGateway:
+  enabled: true
+server:
+  extraConfig: |
+    {
+      "primary_gateways": ["<private-ip-vm>"]
+    }
+  enabled: true
+  replicas: 1
