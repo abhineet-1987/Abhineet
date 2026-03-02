@@ -120,6 +120,7 @@ Similarly you can run these commands on primary Consul cluster except curl to ch
 
 
 ################################# SERVICE TO SERVICE VALIDATION BETWEEN WAN FEDERATED DATACENTERS ####################################################
+
 Step 1: Create the Service Definition on the VM static-client.hcl
 
 Step 2: Register the Service
@@ -129,7 +130,13 @@ Step 3: Start the Envoy Sidecar Proxy
 nohup consul connect envoy -sidecar-for static-client -admin-bind "127.0.0.1:19001" &  
 Note:-  The reason I have used -admin-bind "127.0.0.1:19001" because on my VM another envoy process was running on 19000 port as mesh gateway service
 
-Step 4: Test the Connectivity
+Step 4: Deploy static-server app on secondary K8 cluster
+kubectl apply -f static-server.yaml
+
+Step 5: Create intentions using the intention.yaml by running "kubectl apply -f intention.yaml" on secondary cluster. 
+Please note that you can create intentions using intention config file on primary cluster as well.
+
+Step 6: Test the Connectivity from the VM primary Consul server where static-client app is deployed.
 curl localhost:1234
 
 Note :- 
@@ -137,6 +144,4 @@ Note :-
 2. If intentions are not created, then you'll get error "RBAC: access denied"
 3. If static server app is deployed and intentions created, then you'll get output as "hello world from dc2"
 
-Create the intentions using the intention.yaml by running "kubectl apply -f intention.yaml" on secondary cluster. 
-Please note that you can create intentions using intention config file on primary cluster as well.
 #######################################################################################
