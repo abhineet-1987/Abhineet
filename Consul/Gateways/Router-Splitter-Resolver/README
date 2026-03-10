@@ -77,6 +77,7 @@ Curl the upstream:
 curl localhost:1234
 
 #########################  Setup for Service Router, Splitter and Resolver #######################
+Flow : Router -> Splitter -> Resolver
 The Scenario
 We will set up a service called web that talks to a backend service called api. We will simulate two versions of api: v1 (stable) and v2 (canary).
 /v1 -> api v1 
@@ -246,3 +247,19 @@ Run application api v2 on 8082:-
 cd api-v2
 touch api-v2-test
 python3 -m http.server 8082
+
+Step 6: Create proxy-defaults.hcl
+
+Kind      = "proxy-defaults"
+Name      = "global"
+Config {
+  protocol = "http"
+}
+
+consul config write proxy-default.hcl 
+
+Step 7: Validation
+curl localhost:5000/v1
+curl localhost:5000/v2
+curl localhost:5000/distribute
+curl localhost:5000
