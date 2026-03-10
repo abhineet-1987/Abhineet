@@ -1,1 +1,248 @@
- 
+################ Setup for Terminating Gateway #########################################
+Install Consul and Envoy ( I have used Consul v1.21.5 and Envoy 1.32.2 )
+https://www.envoyproxy.io/docs/envoy/latest/start/install 
+I have used multipass here.
+
+Run Consul:
+consul agent -dev
+
+Step 1: Start an "External" Service
+python3 -m http.server 9001
+
+Step 2: Register the External Service in the Catalog
+Since this service is "outside" the mesh, we register it directly to the Consul catalog rather than through an agent.
+
+Create external-service.json:
+
+{
+  "Node": "external-node",
+  "Address": "127.0.0.1",
+  "Service": {
+    "ID": "legacy-app-1",
+    "Service": "legacy-app",
+    "Port": 9001
+  }
+}
+
+Register it:
+curl --request PUT --data @external-service.json localhost:8500/v1/catalog/register
+
+Step 3: Create the Terminating Gateway Configuration
+Now, tell Consul which services this gateway is allowed to represent.
+Create terminating-gateway.hcl:
+
+Kind = "terminating-gateway"
+Name = "my-terminating-gateway"
+Services = [
+  {
+    Name = "legacy-app"
+  }
+]
+
+Write the config entry:
+consul config write terminating-gateway.hcl
+
+Step 4: Start the Gateway Process
+In a new terminal, launch the Envoy proxy that will act as the Gateway. Consul will automatically generate the Envoy bootstrap config for you.
+
+consul connect envoy -gateway=terminating -service my-terminating-gateway -register
+
+Step 5: Test Connectivity from a Mesh Service
+To prove it works, we’ll register a "test-client" and try to reach the legacy app through its allocated local port.
+
+Register a client with an upstream:
+Create test-client.json:
+
+{
+  "service": {
+    "name": "test-client",
+    "connect": {
+      "sidecar_service": {
+        "proxy": {
+          "upstreams": [{
+            "destination_name": "legacy-app",
+            "local_bind_port": 1234
+          }]
+        }
+      }
+    }
+  }
+}
+
+Register and start its sidecar:
+consul services register test-client.json
+consul connect envoy -sidecar-for test-client -admin-bind "127.0.0.1:19001" &
+
+Curl the upstream:
+curl localhost:1234
+
+#########################  Setup for Service Router, Splitter and Resolver #######################
+The Scenario
+We will set up a service called web that talks to a backend service called api. We will simulate two versions of api: v1 (stable) and v2 (canary).
+/v1 -> api v1 
+/v2 -> api v2
+/distribute -> 50% to v1 and 50% to v2
+/ -> external service accessed through terminating gateway
+
+Step 1: Register Two Versions of the Backend
+Register two instances of the api service with different metadata so Consul can distinguish them.
+
+api-v1.json
+
+{
+  "service": {
+    "name": "api",
+    "id": "api-v1",
+    "meta": { "version": "v1" },
+    "port": 8081,
+    "connect": { "sidecar_service": {} }
+  }
+}
+
+api-v2.json
+
+{
+  "service": {
+    "name": "api",
+    "id": "api-v2",
+    "meta": { "version": "v2" },
+    "port": 8082,
+    "connect": { "sidecar_service": {} }
+  }
+}
+Register both: 
+consul services register api-v1.json 
+consul services register api-v2.json
+
+Step 2: Define the Service Resolver (Grouping)
+The Resolver creates "subsets" based on the metadata we just added. This is the foundation for splitting traffic.
+
+api-resolver.hcl
+
+Kind = "service-resolver"
+Name = "api"
+
+Subsets = {
+  "v1" = {
+    Filter = "Service.Meta.version == v1"
+  }
+  "v2" = {
+    Filter = "Service.Meta.version == v2"
+  }
+}
+
+Apply: consul config write api-resolver.hcl
+
+Step 3: Define the Service Splitter (Weighting)
+The Splitter tells Consul how much traffic to send to each subset defined in the Resolver.
+
+api-splitter.hcl
+
+Kind = "service-splitter"
+Name = "api"
+
+Splits = [
+  {
+    Weight        = 50
+    ServiceSubset = "v1"
+  },
+  {
+    Weight        = 50
+    ServiceSubset = "v2"
+  }
+]
+Apply: consul config write api-splitter.hcl
+
+Step 4: Define the Service Router (Path-based Routing)
+The Router is the first stop in the chain. It can send traffic to different services or splitters based on HTTP attributes like the URL path.
+
+api-router.hcl
+
+Kind = "service-router"
+Name = "api"
+
+Routes = [
+  {
+    Match {
+      HTTP {
+        PathPrefix = "/v1"
+      }
+    }
+    Destination {
+      ServiceSubset = "v1"
+      PrefixRewrite = "/"  # This strips /v1 and sends / to the app
+    }
+  },
+  {
+    Match {
+      HTTP {
+        PathPrefix = "/v2"
+      }
+    }
+    Destination {
+      ServiceSubset = "v2"
+      PrefixRewrite = "/"  # This strips /v2 and sends / to the app
+    }
+  },
+  {
+    Match {
+      HTTP {
+        PathPrefix = "/distribute"
+      }
+    }
+    Destination {
+      Service       = "api"
+      PrefixRewrite = "/"  # This strips /distribute and sends / to the app
+    }
+  },
+  {
+    Match {
+      HTTP {
+        PathPrefix = "/" 
+      }
+    }
+    Destination {
+      Service = "legacy-app"
+    }
+  }
+]
+
+Apply: consul config write api-router.hcl
+
+Step 5: Start the Client and Test
+Register a client:
+
+{
+  "service": {
+    "name": "web",
+    "connect": {
+      "sidecar_service": {
+        "proxy": {
+          "upstreams": [{"destination_name": "api", "local_bind_port": 5000}]
+        }
+      }
+    }
+  }
+}
+
+Start the proxies:
+Launch Envoy proxies for api-v1, api-v2, and web.
+
+# Sidecar for v1
+consul connect envoy -sidecar-for api-v1 -admin-bind 127.0.0.1:19005 &
+# Sidecar for v2
+consul connect envoy -sidecar-for api-v2 -admin-bind 127.0.0.1:19006 &
+# Sidecar for web (the client)
+consul connect envoy -sidecar-for web -admin-bind 127.0.0.1:19007 &
+
+Run application api v1 on 8081:-
+
+cd api-v1
+touch api-v1-test
+python3 -m http.server 8081
+
+Run application api v2 on 8082:-
+
+cd api-v2
+touch api-v2-test
+python3 -m http.server 8082
