@@ -74,3 +74,105 @@ consul connect envoy -sidecar-for test-client -admin-bind "127.0.0.1:19001" &
 
 Curl the upstream:
 curl localhost:1234
+
+###################################### API GW -> TERMINATING GW -> EXTERNAL SERVICE ############################################
+
+The Traffic Flow:
+User -> API Gateway (Port 8080) -> Terminating Gateway -> External Service (Port 9001)
+
+Step 1: Register the API Gateway Configuration
+You need to define how the API Gateway should listen for traffic and where it should route it.
+Create api-gateway.hcl:
+
+Kind = "api-gateway"
+Name = "my-api-gateway"
+
+# Define where the gateway listens
+Listeners = [
+  {
+    Port     = 8080
+    Protocol = "http"
+    Name     = "http-listener"
+  }
+]
+
+Apply it:
+consul config write api-gateway.hcl
+
+Step 2: Create an HTTP Route
+This tells the API Gateway that any request hitting the listener should be sent to the legacy-app service (which is managed by your Terminating Gateway).
+
+Create api-route.hcl:
+
+Kind = "http-route"
+Name = "legacy-route"
+
+Parents = [
+  {
+    Kind        = "api-gateway"
+    Name        = "my-api-gateway"
+    SectionName = "http-listener"
+  }
+]
+
+Rules = [
+  {
+    # Each rule can have filters and a list of services (backends)
+    Filters = [
+      {
+        URLRewrite = {
+          Path = "/"
+        }
+      }
+    ]
+    # 'Services' replaces 'BackendRefs'
+    Services = [
+      {
+        Name = "legacy-app"
+      }
+    ]
+  }
+]
+
+Apply it:
+consul config write api-route.hcl
+
+Step 3: Start the API Gateway Envoy Instance
+In a new terminal, launch the Envoy process specifically for the API Gateway.
+
+Note: Since you have the Terminating Gateway running on port 19000 (Envoy admin) and static client on 19001, you must use a different admin port for this one (e.g., 19002).
+
+consul connect envoy -gateway=api -service my-api-gateway -register -admin-bind 127.0.0.1:19002
+
+Step 4: Verification
+Now, you can hit the API Gateway directly. It will route the traffic through the mesh to your Terminating Gateway, which then hits your Python server.
+
+# Hit the API Gateway on port 8080
+curl -v http://localhost:8080
+
+O/P:
+connect to 127.0.0.1 port 8080 from 127.0.0.1 port 57964 failed: Connection refused
+* Failed to connect to localhost port 8080 after 1 ms: Couldn't connect to server
+* Closing connection
+curl: (7) Failed to connect to localhost port 8080 after 1 ms: Couldn't connect to server
+
+Step 5: Create proxy-defaults.hcl
+
+Kind      = "proxy-defaults"
+Name      = "global"
+Config {
+  protocol = "http"
+}
+
+consul config write proxy-default.hcl 
+
+Step 6: Re-Verification
+
+# Hit the API Gateway on port 8080
+curl -v http://localhost:8080
+
+(This time you'll see the output)
+
+
+
+
