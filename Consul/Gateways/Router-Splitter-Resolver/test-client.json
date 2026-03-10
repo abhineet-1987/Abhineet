@@ -1,0 +1,15 @@
+{
+  "service": {
+    "name": "test-client",
+    "connect": {
+      "sidecar_service": {
+        "proxy": {
+          "upstreams": [{
+            "destination_name": "legacy-app",
+            "local_bind_port": 1234
+          }]
+        }
+      }
+    }
+  }
+}
