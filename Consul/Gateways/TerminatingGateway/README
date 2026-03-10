@@ -1,1 +1,76 @@
- 
+Install Consul and Envoy ( I have used Consul v1.21.5 and Envoy 1.32.2 )
+https://www.envoyproxy.io/docs/envoy/latest/start/install 
+I have used multipass here.
+
+Run Consul:
+consul agent -dev
+
+Step 1: Start an "External" Service
+python3 -m http.server 9001
+
+Step 2: Register the External Service in the Catalog
+Since this service is "outside" the mesh, we register it directly to the Consul catalog rather than through an agent.
+
+Create external-service.json:
+
+{
+  "Node": "external-node",
+  "Address": "127.0.0.1",
+  "Service": {
+    "ID": "legacy-app-1",
+    "Service": "legacy-app",
+    "Port": 9001
+  }
+}
+
+Register it:
+curl --request PUT --data @external-service.json localhost:8500/v1/catalog/register
+
+Step 3: Create the Terminating Gateway Configuration
+Now, tell Consul which services this gateway is allowed to represent.
+Create terminating-gateway.hcl:
+
+Kind = "terminating-gateway"
+Name = "my-terminating-gateway"
+Services = [
+  {
+    Name = "legacy-app"
+  }
+]
+
+Write the config entry:
+consul config write terminating-gateway.hcl
+
+Step 4: Start the Gateway Process
+In a new terminal, launch the Envoy proxy that will act as the Gateway. Consul will automatically generate the Envoy bootstrap config for you.
+
+consul connect envoy -gateway=terminating -service my-terminating-gateway -register
+
+Step 5: Test Connectivity from a Mesh Service
+To prove it works, we’ll register a "test-client" and try to reach the legacy app through its allocated local port.
+
+Register a client with an upstream:
+Create test-client.json:
+
+{
+  "service": {
+    "name": "test-client",
+    "connect": {
+      "sidecar_service": {
+        "proxy": {
+          "upstreams": [{
+            "destination_name": "legacy-app",
+            "local_bind_port": 1234
+          }]
+        }
+      }
+    }
+  }
+}
+
+Register and start its sidecar:
+consul services register test-client.json
+consul connect envoy -sidecar-for test-client -admin-bind "127.0.0.1:19001" &
+
+Curl the upstream:
+curl localhost:1234
