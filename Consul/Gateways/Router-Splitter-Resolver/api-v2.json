@@ -1,0 +1,9 @@
+{
+  "service": {
+    "name": "api",
+    "id": "api-v2",
+    "meta": { "version": "v2" },
+    "port": 8082,
+    "connect": { "sidecar_service": {} }
+  }
+}
