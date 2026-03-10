@@ -1,0 +1,9 @@
+{
+  "Node": "external-node",
+  "Address": "127.0.0.1",
+  "Service": {
+    "ID": "legacy-app-1",
+    "Service": "legacy-app",
+    "Port": 9001
+  }
+}
