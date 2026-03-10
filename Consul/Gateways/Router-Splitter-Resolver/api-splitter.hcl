@@ -1,0 +1,13 @@
+Kind = "service-splitter"
+Name = "api"
+
+Splits = [
+  {
+    Weight        = 50
+    ServiceSubset = "v1"
+  },
+  {
+    Weight        = 50
+    ServiceSubset = "v2"
+  }
+]
