@@ -1,1 +1,3 @@
- 
+Refer the below document for setting up KIND clusters for peering and setting peering between them before we proceed with usage of exported services in peering setup:-
+
+https://github.com/abhineet-1987/Abhineet/tree/main/Consul/Peering/Kubernetes/control-plane-peering
