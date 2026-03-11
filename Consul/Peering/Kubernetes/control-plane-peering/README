@@ -19,6 +19,7 @@ secret=$(cat license.hclic)
 kubectl create secret generic consul-ent-license --from-literal="key=${secret}"
 helm install consul hashicorp/consul --values=values-dc1.yaml
 kubectl apply -f mesh.yaml
+Apply to dc1 ProxyDefaults CRD to configure the mesh gateway mode "kubectl apply -f proxy-defaults.yaml"
 kubectl apply -f acceptor.yaml        # Post this step peering-token secret will be created
 kubectl get secret peering-token --output yaml > peering-token.yaml      # Save your peering token so that you can export it to the other cluster
 
@@ -27,6 +28,7 @@ Switch context "kubectl config use-context kind-dc2"
 kubectl create secret generic consul-ent-license --from-literal="key=${secret}"
 helm install consul hashicorp/consul --values=values-dc2.yaml
 kubectl apply -f mesh.yaml
+Apply to dc2 ProxyDefaults CRD to configure the mesh gateway mode "kubectl apply -f proxy-defaults.yaml"
 kubectl apply -f peering-token.yaml     # Apply the peering token to the second cluster
 kubectl apply -f dialer.yaml        # Post this step, the peering connection will be established
 
