@@ -7,3 +7,14 @@ Deploy static-client app static-client.yaml in cluster-01. "kubectl appy -f stat
 Deploy static-server app static-server.yaml in cluster-02. "kubectl appy -f static-server.yaml"
 Deploy ExportedServices CRD into cluster-02. "kubectl appy -f exported.yaml"
 Deploy ServiceIntentions CRD into cluster-02 if ACLs are enabled else not required. "kubectl appy -f intentions.yaml"
+
+Validation:-
+kubectl debug -it static-client-7cbc46f79-td5k8 --image=nicolaka/netshoot -- sh
+curl localhost:1234
+"hello world from exported service"
+
+Note: Even though you use below annotation in static-client app, you have to create ExportedServices CRD in cluster-02 else you'll get error "url: (56) Recv failure: Connection reset by peer" when you run "curl localhost:1234" on static-client app pod
+annotations:
+        consul.hashicorp.com/connect-service-upstreams: "static-server.svc.cluster-02.peer:1234"
+
+You can run "kubectl port-forward svc/consul-server 8501:8501" on other terminal and then open browser and open the url "https://127.0.0.1:8501" to view Consul UI.
