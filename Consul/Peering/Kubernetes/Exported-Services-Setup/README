@@ -18,3 +18,11 @@ annotations:
         consul.hashicorp.com/connect-service-upstreams: "static-server.svc.cluster-02.peer:1234"
 
 You can run "kubectl port-forward svc/consul-server 8501:8501" on other terminal and then open browser and open the url "https://127.0.0.1:8501" to view Consul UI.
+If you need to run CLI commands then run below:-
+export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
+export CONSUL_HTTP_SSL_VERIFY=false
+
+If ACL deployed then:
+kubectl get secret consul-bootstrap-acl-token -o yaml
+echo <token-copied-from-above> | base64 -d
+export CONSUL_HTTP_TOKEN=xxxxxxxxxxxx
