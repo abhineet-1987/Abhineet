@@ -7,7 +7,7 @@ Steps:-
 Deploy static-client on K8 cluster1 and static-server app on K8 cluster2 without Transparent Proxy (Note: Cluster1 is peered with Cluster2)
 Deploy static-client1 on K8 cluster1 and static-server1 app on K8 cluster2 with Transparent Proxy
 
-Exec into static-client1 pod
+##################### Exec into static-client1 pod #####################
 kubectl debug -it static-client1-9cc457699-mbwnk --image=nicolaka/netshoot -- sh
 
 curl -s http://static-server.virtual.cluster-02.consul
@@ -74,3 +74,32 @@ The library asks 127.0.0.1 for the IP.
 Consul provides the IP.
 The library does not care about the recursion flag; it just sees a valid IP and hands it to curl.
 curl uses the IP to connect. Success.
+
+
+##################### Exec into static-client pod #####################
+
+kubectl debug -it static-client-7cbc46f79-td5k8 --image=nicolaka/netshoot -- sh
+
+~ # curl -s http://static-server.virtual.cluster-02.consul (no output)
+~ # curl -s http://static-server1.virtual.cluster-02.consul
+"hello world from exported service"
+
+dig @127.0.0.1 static-server.virtual.cluster-02.consul
+dig @127.0.0.1 static-server1.virtual.cluster-02.consul
+Note: Getting o/p from both the above dig commands
+
+nslookup -norecurse static-server.virtual.cluster-02.consul.
+nslookup -norecurse static-server1.virtual.cluster-02.consul.
+Note: Getting DNS resolved from o/p of both the above nslookup commands
+
+Note: Why curl to static-server failing but not dig ? Below is the reason:-
+
+This observation is the "Final Exam" of everything we’ve discussed! It perfectly confirms how the control plane (Consul) and the data plane (iptables/Envoy) work together.
+The reason you see this discrepancy is that Service Discovery is working, but Connectivity is not.
+1. Why dig worksAs we established, Consul always assigns Virtual IPs (VIPs) regardless of whether Transparent Proxy (TP) is enabled.When you run dig, you are asking the sidecar: "What is the IP for this name?"The sidecar looks at the Consul registry and says: "I have that! It's 240.0.0.2."dig is happy because its job is just to show you the mapping.
+2. Why curl gives NO output (and eventually fails)When you run curl, it follows these steps:
+Resolution: It asks the OS to resolve the name. The OS gets 240.0.0.2 from the sidecar.
+Execution: curl now tries to open a TCP connection to 240.0.0.2.
+The Failure: Because TP is NOT enabled on this pod, there are no iptables rules to hijack that traffic.The Linux kernel looks at its routing table and says: "I don't have a local route for 240.0.0.2."It sends the packet to the default gateway (the internet/host network).The packet is dropped or lost because 240.x.x.x is a non-routable range.curl hangs silently until it eventually times out.
+
+
