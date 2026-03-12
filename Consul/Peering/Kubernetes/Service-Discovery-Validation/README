@@ -92,7 +92,7 @@ nslookup -norecurse static-server.virtual.cluster-02.consul.
 nslookup -norecurse static-server1.virtual.cluster-02.consul.
 Note: Getting DNS resolved from o/p of both the above nslookup commands
 
-Note: Why curl to static-server failing but not dig ? Below is the reason:-
+Note: Why curl to static-server failing but not dig nor nslookup ? Below is the reason:-
 
 This observation is the "Final Exam" of everything we’ve discussed! It perfectly confirms how the control plane (Consul) and the data plane (iptables/Envoy) work together.
 The reason you see this discrepancy is that Service Discovery is working, but Connectivity is not.
