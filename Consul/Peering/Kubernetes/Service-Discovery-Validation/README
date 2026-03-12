@@ -10,6 +10,15 @@ Deploy static-client1 on K8 cluster1 and static-server1 app on K8 cluster2 with 
 ##################### Exec into static-client1 pod #####################
 kubectl debug -it static-client1-9cc457699-mbwnk --image=nicolaka/netshoot -- sh
 
+~ # cat /etc/resolv.conf
+search default.svc.cluster.local svc.cluster.local cluster.local
+nameserver 127.0.0.1         # local consul dns used by sidecar
+nameserver 10.11.0.10        # kube-dns 
+options ndots:5
+
+Note: nameserver 127.0.0.1 tells the pod to use the local loopback (127.0.0.1) as a DNS server. In a Consul service mesh, the sidecar proxy often runs a local DNS forwarder. 
+This lets the pod resolve Consul service names directly through the sidecar.
+
 curl -s http://static-server.virtual.cluster-02.consul
 "hello world from exported service"
 curl static-server1.virtual.cluster-02.consul
