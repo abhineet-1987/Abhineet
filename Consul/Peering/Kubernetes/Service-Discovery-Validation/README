@@ -12,6 +12,8 @@ kubectl debug -it static-client1-9cc457699-mbwnk --image=nicolaka/netshoot -- sh
 
 curl -s http://static-server.virtual.cluster-02.consul
 "hello world from exported service"
+curl static-server1.virtual.cluster-02.consul
+"hello world from exported service"
 curl -s http://static-server1.virtual.cluster-02.consul
 "hello world from exported service"
 
