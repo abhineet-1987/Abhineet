@@ -1,0 +1,43 @@
+The scenario is that on Cluster1 I have deployed static-server and static-client app in Consul service mesh with Transparent proxy enabled.
+
+I exec into static client app pod to check for DNS resolution of static server and below is the output and observations:-
+
+kubectl debug -it static-client1-9cc457699-mbwnk --image=nicolaka/netshoot -- sh
+
+~ # cat /etc/resolv.conf
+search default.svc.cluster.local svc.cluster.local cluster.local
+nameserver 127.0.0.1
+nameserver 10.11.0.10
+options ndots:5
+
+~ # curl static-server2
+"hello world from exported service"
+Note: This is finally resolved by 10.11.0.10.
+1. The Resolution Flow
+When you run curl static-server2, your OS looks at /etc/resolv.conf. Since 127.0.0.1 is at the top:
+Stage 1 (Consul Check): Your app asks 127.0.0.1 for static-server2.
+Stage 2 (Search Path): Because of ndots:5, the OS actually asks for static-server2.default.svc.cluster.local.
+The Forwarder: Consul sees that the request ends in .cluster.local.
+Consul says: "I don't own the .cluster.local domain."
+The Action: Because you have Transparent Proxy enabled, the Consul sidecar is configured to forward queries it doesn't own to the next nameserver in the chain, which is 10.11.0.10 (CoreDNS).
+2. Who is the "Winner"?
+Technically: 10.11.0.10 (CoreDNS) provides the actual IP address for a standard Kubernetes service like static-server2.
+Effectively: 127.0.0.1 (Consul) acts as the Gatekeeper. Your application only ever talks to Consul. Consul is the one that reaches out to CoreDNS behind the scenes and hands the answer back to you.
+
+~ # curl static-server2.virtual.consul
+"hello world from exported service"
+Unlike the previous example where Consul had to ask CoreDNS for help, here Consul handles everything "in-house."
+1. Who resolves it?
+127.0.0.1 (Consul DNS).
+When you use the .consul TLD (Top Level Domain), the sidecar recognizes it immediately as its own territory. It does not forward this to CoreDNS or any other server. It looks directly into its local cache of the Consul Service Registry.
+2. How does it get resolved? (The Step-by-Step)
+Step A: The DNS Lookup
+The Request: curl asks the OS for the IP of static-server2.virtual.consul.
+The Hit: The OS asks 127.0.0.1.
+The Match: Consul sees static-server2. It checks its internal table and finds that this service is registered in the local datacenter.
+The Answer: Consul returns a Virtual IP (VIP), likely something like 240.0.0.10.
+Step B: The Connection (The "Magic" Part)
+The Packet: curl tries to send an HTTP GET request to 240.0.0.10.
+The Interception: The Transparent Proxy (iptables) rules catch this packet because the destination is in the 240.0.0.0/4 range.
+The Redirection: The packet is shoved into Envoy on port 15001.
+The Destination Discovery: Envoy looks at the metadata for 240.0.0.10 and says: "I know this IP. It belongs to the static-server2 cluster." It then finds the actual Pod IP of the server and sends the traffic there over mTLS.
