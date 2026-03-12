@@ -5,7 +5,7 @@ https://github.com/abhineet-1987/Abhineet/tree/main/Consul/Peering/Kubernetes/co
 Steps:-
 Deploy static-client app static-client.yaml in cluster-01. "kubectl appy -f static-client.yaml"
 Deploy static-server app static-server.yaml in cluster-02. "kubectl appy -f static-server.yaml"
-Deploy ExportedServices CRD into cluster-02. "kubectl appy -f exported.yaml"
+Deploy ExportedServices CRD into cluster-02. "kubectl appy -f exported.yaml" (Note: If you want to export all services then refer export-all-services.yaml)
 Deploy ServiceIntentions CRD into cluster-02 if ACLs are enabled else not required. "kubectl appy -f intentions.yaml"
 
 Validation:-
