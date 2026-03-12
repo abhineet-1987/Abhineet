@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: static-client1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-client1
+spec:
+  selector:
+    app: static-client1
+  ports:
+    - port: 4322
+      targetPort: 4322
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: static-client1
+  name: static-client1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: static-client1
+  template:
+    metadata:
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/transparent-proxy: "true"
+      labels:
+        app: static-client1
+    spec:
+      serviceAccountName: static-client1
+      containers:
+        - name: static-client1
+          image: curlimages/curl:7.77.0
+          ports:
+            - containerPort: 4322
+          command: ["/bin/sh", "-c", "--"]
+          args: ["while true; do sleep 30; done;"]
+          securityContext:
+            privileged: true
+            runAsUser: 0
