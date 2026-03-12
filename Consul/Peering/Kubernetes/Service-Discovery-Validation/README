@@ -1,1 +1,76 @@
- 
+Prerequisite reference documents:-
+https://github.com/abhineet-1987/Abhineet/blob/main/Consul/Kubernetes/KIND/PodToPodCommunication-MultiCluster
+https://github.com/abhineet-1987/Abhineet/tree/main/Consul/Peering/Kubernetes/control-plane-peering
+https://github.com/abhineet-1987/Abhineet/tree/main/Consul/Peering/Kubernetes/Exported-Services-Setup
+
+Steps:-
+Deploy static-client on K8 cluster1 and static-server app on K8 cluster2 without Transparent Proxy (Note: Cluster1 is peered with Cluster2)
+Deploy static-client1 on K8 cluster1 and static-server1 app on K8 cluster2 with Transparent Proxy
+
+Exec into static-client1 pod
+kubectl debug -it static-client1-9cc457699-mbwnk --image=nicolaka/netshoot -- sh
+
+curl -s http://static-server.virtual.cluster-02.consul
+"hello world from exported service"
+curl -s http://static-server1.virtual.cluster-02.consul
+"hello world from exported service"
+
+dig @127.0.0.1 static-server.virtual.cluster-02.consul
+dig @127.0.0.1 -p 53 static-server.virtual.cluster-02.consul
+dig @127.0.0.1 -p 8600 static-server.virtual.cluster-02.consul
+Note: We get same output from all the above dig command formats as it is same thing. 
+Port 53: This is the standard DNS port. When you have Consul DNS enabled, the sidecar often maps port 53 to port 8600 internally (using a listener) so that standard applications (which always default to 53) can reach it.
+dig defaults to port 53 if none is specified. This is identical to your first command.
+
+nslookup -norecurse static-server.virtual.cluster-02.consul.
+nslookup -norecurse static-server1.virtual.cluster-02.consul.
+nslookup -norecurse static-server.virtual.cluster-02.consul. 127.0.0.1
+nslookup -norecurse static-server1.virtual.cluster-02.consul. 127.0.0.1
+
+Note: The above nslookup command with flag -norecurse and . at the end, making it absolute DNS name, resolves the DNS. If you remove . OR remove flag -norecurse, it will not work.
+In a Service Mesh environment, always trust dig or curl over nslookup. nslookup is an older tool that expects a very traditional DNS setup, whereas dig accurately reports exactly what the modern sidecar is telling it.
+
+1. The static-client (Explicit Upstreams)
+In this case, Transparent Proxy logic is NOT being used for your connection. * The Path: Your application code literally says curl localhost:1234.
+The Logic: Envoy is told: "Listen on port 1234. If anyone talks to that port, send them to static-server in cluster-02."
+No "Hijacking": There are no iptables rules redirecting this traffic. You are manually hitting a local listener that Envoy opened specifically for you.
+
+2. The static-client1 (Transparent Proxy Enabled)
+In this case, Transparent Proxy IS being used.
+The Path: Your application code says curl static-server1.virtual.cluster-02.consul.
+The Logic: 1. DNS gives your app a Virtual IP (e.g., 240.0.0.5).
+2. The Hijack: Your app tries to send a packet to 240.0.0.5. The iptables rules (TP) catch this packet and "hijack" it.
+3. The Redirection: The packet is forcibly redirected to Envoy's universal listener on port 15001.
+Automatic: You didn't have to define a local port like 1234. The mesh "intercepted" the traffic based on the destination IP.
+
+curl works, but nslookup fails—but it is actually a classic case of how Linux resolves names differently than specialized DNS tools.
+
+The short answer: curl is using the OS Resolver (which is being "helped" by Consul), while nslookup is a pure DNS tool that is getting tripped up by your ndots:5 setting and the "Recursion Not Available" flags.
+
+1. Why curl works
+When you run curl, the operating system looks at /etc/resolv.conf.
+It asks the first server (127.0.0.1) for the name.
+Even though Consul says "Recursion Not Available" for external sites, for a .consul name, it is the authority. It quickly hands the IP to the OS.
+Because the OS gets a valid answer from the very first nameserver, it stops looking and gives the IP to curl.
+curl connects, and you see "hello world."
+2. Why nslookup fails (without -norecurse flag and trailing dot "." at the end )
+nslookup (and dig) behaves differently. It doesn't just ask the OS for an answer; it tries to be "smart" about the DNS protocol.
+The ndots:5 Trap: Because your name static-server1.virtual.cluster-02.consul has only 4 dots, nslookup refuses to look it up as a "real" name first.
+The Search Path Loop: Instead, it tries:
+static-server1.virtual.cluster-02.consul.default.svc.cluster.local
+static-server1.virtual.cluster-02.consul.svc.cluster.local
+...and so on.
+The Conflict: * It asks 127.0.0.1 for these "long" names. Consul sees .cluster.local at the end and says: "I don't know that, and recursion is not available."
+nslookup sees that "Recursion Not Available" flag and thinks: "This server is useless for this query, let me try the next one (10.11.0.10)."
+10.11.0.10 (CoreDNS) doesn't know about Consul names, so it either times out or says it doesn't exist.
+By the time nslookup finally tries the correct name without the suffixes, it has already been "offended" by the recursion flags or timed out waiting for CoreDNS.
+
+The fact that curl works is the only thing that matters for your application. Your application code (Go, Python, Java, etc.) uses the same "OS Resolver" logic as curl.
+The nslookup errors are just "DNS noise" caused by the specific way that tool handles the ndots configuration in Kubernetes.
+
+Why curl works while nslookup fails (without -norecurse flag and trailing dot "." at the end )
+Applications (like curl, Python, Go, or Java) use the standard system library (glibc/getaddrinfo).
+The library asks 127.0.0.1 for the IP.
+Consul provides the IP.
+The library does not care about the recursion flag; it just sees a valid IP and hands it to curl.
+curl uses the IP to connect. Success.
