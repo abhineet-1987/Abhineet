@@ -41,3 +41,9 @@ The Packet: curl tries to send an HTTP GET request to 240.0.0.10.
 The Interception: The Transparent Proxy (iptables) rules catch this packet because the destination is in the 240.0.0.0/4 range.
 The Redirection: The packet is shoved into Envoy on port 15001.
 The Destination Discovery: Envoy looks at the metadata for 240.0.0.10 and says: "I know this IP. It belongs to the static-server2 cluster." It then finds the actual Pod IP of the server and sends the traffic there over mTLS.
+
+
+dig @127.0.0.1 static-server2.virtual.consul
+nslookup static-server2
+Note: Both of the above command works
+
