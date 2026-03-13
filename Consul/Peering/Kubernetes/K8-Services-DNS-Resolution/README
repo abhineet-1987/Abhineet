@@ -47,3 +47,26 @@ dig @127.0.0.1 static-server2.virtual.consul
 nslookup static-server2
 Note: Both of the above command works
 
+################################################### Service Discovery Commands and Output ##################################################
+Scenario1: Transparent Proxy enabled and Applications in Consul Service Mesh within same Kubernetes cluster. I have exec into static-client application and running the below commands from there:-
+
+~ # curl static-server2
+"hello world from exported service"
+
+~ # curl static-server2.virtual.consul
+"hello world from exported service"
+
+~ # curl static-server2.service.consul
+curl: (52) Empty reply from server
+
+dig @127.0.0.1 static-server2       (Not Working)
+dig @127.0.0.1 static-server2.service.consul    (Working)
+dig @127.0.0.1 static-server2.virtual.consul    (Working)
+
+nslookup static-server2             (Working) Since kube-dns resolving this through K8 DNS
+nslookup static-server2.service.consul     (Not Working)
+nslookup static-server2.virtual.consul     (Not Working)
+
+
+
+
