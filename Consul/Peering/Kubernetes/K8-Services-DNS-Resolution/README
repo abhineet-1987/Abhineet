@@ -71,5 +71,42 @@ nslookup static-server2.service.consul     (Not Working)
 nslookup static-server2.virtual.consul     (Not Working)
 
 
+Q. This is working:
+~ # curl static-server2
+"hello world from exported service"
+
+but below does not:
+dig @127.0.0.1 static-server2  
+
+WHY?
+
+Answer:
+
+This is the final piece of the DNS puzzle. You are seeing curl succeed because it is "lazy" (it uses the OS search path), while dig fails because it is "strict" (it only looks for the exact name you typed).
+1. The "Short Name" Secret
+When you run curl static-server2, the OS resolver looks at /etc/resolv.conf. It sees a list of search domains like:
+default.svc.cluster.local
+svc.cluster.local
+cluster.local
+The OS (curl) does this:
+"Hey 127.0.0.1, do you have static-server2.default.svc.cluster.local?"
+Consul says: "I don't know that name, let me ask CoreDNS (10.11.0.10)."
+CoreDNS says: "Yes, here is the IP."
+curl gets the IP and connects. Success.
+2. Why dig @127.0.0.1 static-server2 fails
+dig is a technical tool designed to query exactly what you tell it to query. It does not automatically use the search path.
+dig does this:
+"Hey 127.0.0.1, do you have a record for the literal name static-server2?"
+Consul looks in its .consul registry. It doesn't see a service just named static-server2 (it expects something like static-server2.service.consul).
+Consul returns NXDOMAIN (No such domain).
+dig shows you the failure.
+3. How to make dig work
+If you want dig to behave like curl and follow the Kubernetes search paths, you have to add the +search flag:
+dig @127.0.0.1 static-server2 +search
+Alternatively, you can provide the Fully Qualified Domain Name (FQDN), which is what the OS is actually sending behind the scenes:
+dig @127.0.0.1 static-server2.default.svc.cluster.local
+
+
+
 
 
