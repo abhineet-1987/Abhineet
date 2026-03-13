@@ -60,6 +60,7 @@ Scenario1: Transparent Proxy enabled and Applications in Consul Service Mesh wit
 curl: (52) Empty reply from server
 
 dig @127.0.0.1 static-server2       (Not Working)
+dig @10.11.0.10 static-server2      (Not Working)
 dig @127.0.0.1  static-server2 +search    (Not Working)
 dig @10.11.0.10 static-server2 +search    (Working)
 dig @127.0.0.1 static-server2.service.consul    (Working)
