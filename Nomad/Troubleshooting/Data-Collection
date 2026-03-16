@@ -7,7 +7,7 @@ nomad node status
 nomad node status -verbose
 nomad node status 8c7e3b79
 
-# To check nommad agent details
+# To check nomad agent details
 nomad agent-info
 nomad agent-info -json
 curl http://localhost:4646/v1/agent/self | jq
