@@ -14,9 +14,16 @@ consul monitor
 consul monitor -log-level=debug 2>&1 | tee consul.logs
 
 consul validate /etc/consul.d/counting.json(.hcl)
+#Consul debug bundle
 consul debug
 consul debug -http-addr=172.31.8.233:8500 -duration=1m -interval=15s (to get debug info for other consul agent)
 tar -xvf consul-debug-2025-07-23T05-15-46Z.tar.gz
+
+#Consul pprof data
+Set enable_debug = true in Consul agent config and restart Consul and then run "consul debug"
+While deploying Consul using helm set enableAgentDebug: true in values.yaml and perform helm upgrade. This would restart the Consul server pods and then you can capture the pprof data.
+Reference: https://support.hashicorp.com/hc/en-us/articles/41750098445075-Consul-Performance-Profiling-Manual-and-Automated-pprof-Collection
+https://www.ibm.com/support/pages/consul-performance-profiling-manual-and-automated-pprof-collection
 
 Health Checks of Services:
 curl "http://127.0.0.1:8500/v1/agent/services"
