@@ -1,0 +1,22 @@
+Environment-----------------------------
+Is this a production environment or a non-prod environment?
+What is the Impact ?
+Is Consul running on VMs or K8s? Where is workload (Consul clients/apps) running VM or K8s?
+Consul version, Helm Chart version, consul-k8 image version, consul dataplane image version, kubernetes version, envoy version
+Where is Consul deployed ? AWS, GCP, Azure, or on-prem
+Consul Use case: What is the use case of Consul - Are they using Consul as Vault backend, service discovery, or other use cases? Is Consul integrated with Nomad?
+
+General Information to gather as preparation ----------------------------
+When did the issue start happening?
+Were there any changes made to Consul configuration?
+Was Consul recently upgraded?
+Were there any changes made to the environment where Consul is running?
+Do you have a snapshot of the cluster that can be used to restore the last known operational state?
+Is the Consul Environment currently stable?
+
+Basic data collection commands to know the cluster state
+Check for Resource utilization (cpu,memory,disk space,connectivity,disk io,firewall,consul ports opened or not,security group etc)
+Architecture (Whether Load Balancers, ASGs are used or not, Any gateways used etc, how is the traffic flow in and out of Consul). Datacenter layout(i.e. How many Datacenters? How many Servers and Clients in each DC?)
+Configuration: Ask for config files of Consul servers, clients, services etc (as per requirement). Any other relevant configuration entries.
+Logs/Debug Logs/journalctl logs/Metrics using tools such as DataDog/StatsD/Prometheus/Grafana etc OR (debug bundle)/pprof data
+
