@@ -1,5 +1,6 @@
 # Go to to https://releases.hashicorp.com/nomad/ to check the release version to be deployed
 # Ubuntu instances used here
+# Make sure you have "unzip" installed. If not, then install using "apt install unzip"
 
 export NOMAD_VERSION="1.10.5+ent"
 curl --silent --remote-name https://releases.hashicorp.com/nomad/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_linux_amd64.zip
