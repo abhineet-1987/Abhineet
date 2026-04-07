@@ -24,16 +24,23 @@ sudo chmod -R 755 /etc/nomad.d
 
 # Nomad client specific changes:-
 
-# Install dependencies
+# Install dependencies. This is for Amazon Linux
 echo "Installing Dependencies"
 sudo yum update -y
 sudo yum install -y jq
 sudo yum install -y yum-utils
 
-# Install Docker
+
+# Install Docker for Amazon Linux
 sudo yum install -y docker
 sudo systemctl enable docker
 sudo systemctl start docker
+
+# For Ubuntu
+# sudo apt update
+# sudo apt install -y docker.io
+# sudo systemctl enable docker
+# sudo systemctl start docker
 
 # Install cni plugin on nomad client machine
 export ARCH_CNI=$( [ $(uname -m) = aarch64 ] && echo arm64 || echo amd64)
