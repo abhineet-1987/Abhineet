@@ -1,5 +1,12 @@
 References:-
 https://www.ibm.com/support/pages/node/7263725 
+https://developer.hashicorp.com/nomad/docs/job-specification/scaling
+https://github.com/abhineet-1987/Abhineet/tree/main/Nomad/Enterprise
+https://developer.hashicorp.com/nomad/tutorials/enterprise/production-deployment-guide-vm-with-consul
+https://support.hashicorp.com/hc/en-us/articles/41399644149651-Running-Nomad-Autoscaler-Directly-on-a-Host
+https://developer.hashicorp.com/nomad/tutorials/manage-clusters/prometheus-metrics
+https://developer.hashicorp.com/nomad/tools/autoscaling/agent
+https://developer.hashicorp.com/nomad/tutorials/autoscaler/dynamic-application-sizing-concepts
 
 I have used 2 ec2 instances. One for Nomad server and other for Nomad client.
 
@@ -30,5 +37,7 @@ Start the nomad-autoscaler: "nohup nomad-autoscaler agent -config=autoscaler.hcl
 Run the Nomad job:
 nomad job run hello-world-DAS-job.hcl   # For DAS i.e Dynamic application scaling. On the Nomad UI -> Optimize -> You will see the recommendations for the job. If you accept it the job will be restarted with the recommended resources
 nomad job run hello-world-horizontal-app-scaling-job.hcl   # For horizontal application scaling
+To check scaling policies: 
+curl https://localhost:4646/v1/scaling/policies   (Refer https://developer.hashicorp.com/nomad/api-docs/scaling-policies)
 
 
