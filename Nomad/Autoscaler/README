@@ -1,1 +1,31 @@
- 
+References:-
+https://www.ibm.com/support/pages/node/7263725 
+
+I have used 2 ec2 instances. One for Nomad server and other for Nomad client.
+
+Steps:-
+----------------- On Nomad Server ---------
+Deploy Nomad server on ec2 instance using nomad-server.hcl
+Verify that Prometheus metrics are exposed: curl http://localhost:4646/v1/metrics
+Deploy Prometheus server on same ec2 instance (Nomad server).[I have used same ec2 instance, however we can use a different one as well]
+cd /opt
+sudo wget https://github.com/prometheus/prometheus/releases/download/v3.9.1/prometheus-3.9.1.linux-amd64.tar.gz
+sudo tar xvf prometheus-3.9.1.linux-amd64.tar.gz
+sudo mv prometheus-3.9.1.linux-amd64 prometheus
+sudo vi /opt/prometheus/prometheus.yml   (refer prometheus.yml attached in this directory)
+cd /opt/prometheus
+Run the prometheus server:-
+nohup ./prometheus --config.file=prometheus.yml --web.listen-address="0.0.0.0:9090" &
+Open the Prometheus UI in a browser: http://<SERVER_PUBLIC_IP>:9090
+Navigate to Status → Target Health (You may also search In the query box, try: {job="nomad"} or {exported_job="hello-world"})
+
+----------------- On Nomad Client ---------
+Deploy Nomad client on ec2 instance using nomad-client.hcl
+Install and Deploy nomad-autoscaler-enterprise:0.4.9-ent on the Nomad client, steps given below:-
+wget https://releases.hashicorp.com/nomad-autoscaler/0.4.9+ent/nomad-autoscaler_0.4.9+ent_linux_amd64.zip
+unzip nomad-autoscaler_0.4.9+ent_linux_amd64.zip
+mv nomad-autoscaler /usr/local/bin/
+nomad-autoscaler version
+Start the nomad-autoscaler: "nohup nomad-autoscaler agent -config=autoscaler.hcl -enable-debug &"
+
+
