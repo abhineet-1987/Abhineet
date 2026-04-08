@@ -27,5 +27,8 @@ unzip nomad-autoscaler_0.4.9+ent_linux_amd64.zip
 mv nomad-autoscaler /usr/local/bin/
 nomad-autoscaler version
 Start the nomad-autoscaler: "nohup nomad-autoscaler agent -config=autoscaler.hcl -enable-debug &"
+Run the Nomad job:
+nomad job run hello-world-DAS-job.hcl   # For DAS i.e Dynamic application scaling. On the Nomad UI -> Optimize -> You will see the recommendations for the job. If you accept it the job will be restarted with the recommended resources
+nomad job run hello-world-horizontal-app-scaling-job.hcl   # For horizontal application scaling
 
 
