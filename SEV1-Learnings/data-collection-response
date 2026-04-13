@@ -1,0 +1,24 @@
+Hello XXXX,
+ 
+ 
+My name is YYYY and I work with the Consul Support Team. I have taken the ownership of your ticket.
+ 
+If I understand correctly, you are having the error XXXXXXXXX
+ 
+Please gather the following information for a live session and upload all the information to the ticket as soon as possible:
+consul debug -duration=5m # leader node (minimum) and if possible, all the servers
+consul members
+consul operator raft list-peers
+consul info
+ 
+Please also provide any relevant error messages or logs related to the issue.
+ 
+ 
+In about 10 minutes, I will follow up with another update containing a  Microsoft Teams link.  Please join the call with the information requested above.
+
+NOTE
+We strive to provide a thorough root cause analysis for any incidents that occur. However, it is important to note that a definitive root cause cannot always be guaranteed. To enhance our ability to diagnose and resolve issues effectively, we require debug-level logs from the server(s) and from any impacted services. These logs are crucial in giving us the best possible chance to pinpoint the underlying causes and implement appropriate solutions.
+We prefer to receive debug-level logs during the incident, though we understand that this is not always possible. In such cases, please provide any available system logs.
+
+ 
+Thanks in advance. 
