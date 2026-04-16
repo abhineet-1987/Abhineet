@@ -1,1 +1,6 @@
- 
+On Mac OS, to check whether port is free or not:-
+lsof -i :32181
+Result Interpretation
+No output → Port 32181 is free
+Output with process info → Port is in use
+To free port: kill -9 <pid>
