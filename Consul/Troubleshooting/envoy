@@ -50,5 +50,9 @@ With --target → You can inspect a specific container’s processes and state, 
 --------------------------------------
 kubectl exec -it <api-gateway-pod-name> -n consul -c api-gateway -- envoy --version
 
+# To check total clusters in envoy:
+# Count based on unique names
+curl -s localhost:19000/clusters | awk -F'::' '{print $1}' | sort | uniq | wc -l
+
 
 
