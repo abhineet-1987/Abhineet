@@ -1,1 +1,45 @@
- 
+1. Generate the Root CA
+# Create CA private key and certificate
+openssl req -x509 -newkey rsa:4096 -days 365 -nodes \
+  -keyout ca.key -out ca.crt -subj "/CN=MyLocalCA"
+
+2. Generate the Server Certificate (for static-server)
+# Create Server private key and CSR (Certificate Signing Request)
+openssl req -newkey rsa:2048 -nodes \
+  -keyout server.key -out server.csr -subj "/CN=static-server"
+
+# Sign the Server CSR with the Root CA
+openssl x509 -req -in server.csr -days 365 \
+  -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt
+
+3. Generate the Client Certificate (for Terminating Gateway)
+# Create Client private key and CSR
+openssl req -newkey rsa:2048 -nodes \
+  -keyout client.key -out client.csr -subj "/CN=terminating-gateway"
+
+# Sign the Client CSR with the Root CA
+openssl x509 -req -in client.csr -days 365 \
+  -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt
+
+---------------- Create Kubernetes Secrets for the Certs -----------------
+1. Secret for the External Service:
+
+kubectl create secret generic external-certs \
+  --from-file=server.crt --from-file=server.key --from-file=ca.crt
+
+2. Secret for the Terminating Gateway:
+
+kubectl create secret generic tgw-client-certs \
+  --from-file=client.crt --from-file=client.key --from-file=ca.crt
+-------------------------------------------------------------------------
+kubectl apply -f static-client.yaml
+kubectl apply -f static-server.yaml
+kubectl apply -f service-intentions.yaml
+kubectl apply -f terminating-gateway.yaml
+curl -k --request PUT --data @external-service.json --header "X-Consul-Token: 6eb8cb43-xxxxxxxxxxxx-34110ce139a5" https://localhost:8501/v1/catalog/register
+--------------------------------
+Validation:-
+kubectl exec -it static-client-74bc477bcd-svqqz -c static-client -- sh
+/ # curl static-server.virtual.consul
+Success! Connected via mTLS to the external server.
+--------------------------------
