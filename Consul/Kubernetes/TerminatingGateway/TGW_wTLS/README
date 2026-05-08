@@ -1,3 +1,19 @@
+I have deployed kind cluster.
+
+helm install consul hashicorp/consul --values=values.yaml --version 2.0.0-rc1 --debug
+
+export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
+export CONSUL_HTTP_SSL_VERIFY=false
+kubectl get secret consul-bootstrap-acl-token -o yaml
+echo XXXXXXXXXXX | base64 -d
+export CONSUL_HTTP_TOKEN=019309ecXXXXXXXXXXXXXXX0b3dcd6
+kubectl port-forward svc/consul-server 8501:8501    (on other terminal)
+
+--------- To test a Terminating Gateway connecting to an external service using mutual TLS (mTLS), you need to simulate both ends of the connection. 
+The Terminating Gateway acts as the client, and your external service (static-server) acts as the server. 
+Both will need certificates signed by a common Certificate Authority (CA).
+Run the below commands on your local machine to generate the root CA, the external server's certificate, and the Terminating Gateway's client certificate.
+
 1. Generate the Root CA
 # Create CA private key and certificate
 openssl req -x509 -newkey rsa:4096 -days 365 -nodes \
@@ -21,6 +37,17 @@ openssl req -newkey rsa:2048 -nodes \
 openssl x509 -req -in client.csr -days 365 \
   -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt
 
+% ls -lrt
+-rw-------@ 1 abhineet  staff  3272  8 May 10:26 ca.key
+-rw-r--r--@ 1 abhineet  staff  1805  8 May 10:26 ca.crt
+-rw-------@ 1 abhineet  staff  1704  8 May 10:27 server.key
+-rw-r--r--@ 1 abhineet  staff   895  8 May 10:27 server.csr
+-rw-r--r--@ 1 abhineet  staff  1444  8 May 10:27 server.crt
+-rw-------@ 1 abhineet  staff  1704  8 May 10:28 client.key
+-rw-r--r--@ 1 abhineet  staff   903  8 May 10:28 client.csr
+-rw-r--r--@ 1 abhineet  staff    41  8 May 10:28 ca.srl
+-rw-r--r--@ 1 abhineet  staff  1452  8 May 10:28 client.crt
+
 ---------------- Create Kubernetes Secrets for the Certs -----------------
 1. Secret for the External Service:
 
@@ -43,3 +70,18 @@ kubectl exec -it static-client-74bc477bcd-svqqz -c static-client -- sh
 / # curl static-server.virtual.consul
 Success! Connected via mTLS to the external server.
 --------------------------------
+
+
+-------Misc -----
+To check details of a service in COnsul service mesh 
+curl -k https://localhost:8501/v1/catalog/service/static-server | jq .
+
+To derigister a given external service:
+curl -k --request PUT \
+  --header "X-Consul-Token: 019309ecXXXXXXXXXXXXXXc040b3dcd6" https://localhost:8501/v1/catalog/deregister \
+  --data '{
+    "Datacenter": "tgw",
+    "Node": "external-node",
+    "ServiceID": "external-service-app"
+  }'
+-------------------
