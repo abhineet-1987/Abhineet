@@ -63,7 +63,7 @@ kubectl apply -f static-client.yaml
 kubectl apply -f static-server.yaml
 kubectl apply -f service-intentions.yaml
 kubectl apply -f terminating-gateway.yaml
-curl -k --request PUT --data @external-service.json --header "X-Consul-Token: 6eb8cb43-xxxxxxxxxxxx-34110ce139a5" https://localhost:8501/v1/catalog/register
+curl -k --request PUT --data @external-service.json --header "X-Consul-Token: 6eb8cb43-xxxxxxxxxxxx-34110ce139a5" https://localhost:8501/v1/catalog/register   (register external service in Consul catalog)
 --------------------------------
 Validation:-
 kubectl exec -it static-client-74bc477bcd-svqqz -c static-client -- sh
