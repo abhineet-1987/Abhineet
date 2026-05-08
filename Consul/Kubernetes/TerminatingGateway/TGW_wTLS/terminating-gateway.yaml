@@ -1,0 +1,13 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: TerminatingGateway
+metadata:
+  name: terminating-gateway
+  namespace: default
+spec:
+  services:
+    - name: static-server
+      caFile: /consul/userconfig/tgw-client-certs/ca.crt
+      certFile: /consul/userconfig/tgw-client-certs/client.crt
+      keyFile: /consul/userconfig/tgw-client-certs/client.key
+      secretRef:
+        name: tgw-client-certs
