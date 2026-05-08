@@ -1,0 +1,25 @@
+global:
+  enabled: true
+  name: consul
+  image: hashicorp/consul:2.0.0-rc1
+  datacenter: tgw
+  tls:
+    enabled: true
+  acls:
+    manageSystemACLs: true
+server:
+  enabled: true
+  replicas: 1
+terminatingGateways:
+  enabled: true
+  defaults:
+    extraVolumes:
+      - type: secret
+        name: tgw-client-certs
+ui:
+  enabled: true
+  service:
+    type: NodePort
+connectInject:
+  enabled: true
+  #default: true
