@@ -1,1 +1,65 @@
- 
+I have deployed kind cluster.
+
+helm install consul hashicorp/consul --values=values.yaml --debug
+
+export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
+export CONSUL_HTTP_SSL_VERIFY=false
+kubectl get secret consul-bootstrap-acl-token -o yaml
+echo XXXXXXXXXXX | base64 -d
+export CONSUL_HTTP_TOKEN=019309ecXXXXXXXXXXXXXXX0b3dcd6
+kubectl port-forward svc/consul-server 8501:8501    (on other terminal)
+
+To register external service static-server, run below command:-
+curl -k --request PUT --data @external-service.json --header "X-Consul-Token: 019309ecXXXXXXXXXXXXXXX0b3dcd6" https://localhost:8501/v1/catalog/register
+
+To validate connectivity from static-client to external service static-server :-
+kubectl debug -it static-client-74bc477bcd-6prr9 --image=nicolaka/netshoot -- sh
+
+~ # curl static-server
+"hello world from static-server external service"
+
+Proof: That static-client app talking to static-server through terminating gateway
+kubectl debug -it static-client-74bc477bcd-6prr9 --image=nicolaka/netshoot -- sh
+curl localhost:19000/clusters
+You'll see below output:
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::observability_name::static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::outlier::success_rate_average::-1
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::outlier::success_rate_ejection_threshold::-1
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::outlier::local_origin_success_rate_average::-1
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::outlier::local_origin_success_rate_ejection_threshold::-1
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::default_priority::max_connections::1024
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::default_priority::max_pending_requests::1024
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::default_priority::max_requests::1024
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::default_priority::max_retries::3
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::high_priority::max_connections::1024
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::high_priority::max_pending_requests::1024
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::high_priority::max_requests::1024
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::high_priority::max_retries::3
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::added_via_api::true
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::cx_active::0
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::cx_connect_fail::0
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::cx_total::1
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::rq_active::0
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::rq_error::0
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::rq_success::0
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::rq_timeout::0
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::rq_total::1
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::hostname::
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::health_flags::healthy
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::weight::1
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::region::
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::zone::
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::sub_zone::
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::canary::false
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::priority::0
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::success_rate::-1
+static-server.default.tgw.internal.e17ed308-6a1d-eac8-eec3-0c68a32b908b.consul::10.244.0.8:8443::local_origin_success_rate::-1
+
+10.244.0.8 is the pod ip of terminating gateway.
+% kubectl get po -o wide
+NAME                                           READY   STATUS    RESTARTS   AGE    IP            NODE                NOMINATED NODE   READINESS GATES
+consul-terminating-gateway-5b67b45f9f-2mwhp    1/1     Running   0          108m   10.244.0.8    tgw-control-plane   <none>           <none>
+
+
+
+
