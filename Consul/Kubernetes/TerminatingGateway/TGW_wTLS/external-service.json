@@ -1,0 +1,9 @@
+{
+  "Node": "external-node",
+  "Address": "static-server.default.svc.cluster.local",
+  "Service": {
+    "ID": "external-service-app",
+    "Service": "static-server",
+    "Port": 8443
+  }
+}
