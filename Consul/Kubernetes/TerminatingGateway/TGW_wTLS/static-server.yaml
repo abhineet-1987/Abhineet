@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: static-server-conf
+  namespace: default
+data:
+  default.conf: |
+    server {
+        listen 8443 ssl;
+        server_name static-server;
+
+        # Server TLS setup
+        ssl_certificate /certs/server.crt;
+        ssl_certificate_key /certs/server.key;
+
+        # Enforce mTLS (Client must present cert signed by CA)
+        ssl_client_certificate /certs/ca.crt;
+        ssl_verify_client on;
+
+        location / {
+            return 200 "Success! Connected via mTLS to the external server.\n";
+        }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: static-server
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: static-server
+  template:
+    metadata:
+      labels:
+        app: static-server
+      annotations:
+        consul.hashicorp.com/connect-inject: "false" # Ensure it's outside the mesh
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 8443
+        volumeMounts:
+        - name: certs
+          mountPath: /certs
+        - name: conf
+          mountPath: /etc/nginx/conf.d
+      volumes:
+      - name: certs
+        secret:
+          secretName: external-certs
+      - name: conf
+        configMap:
+          name: static-server-conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-server
+  namespace: default
+spec:
+  ports:
+  - port: 8443
+    targetPort: 8443
+  selector:
+    app: static-server
