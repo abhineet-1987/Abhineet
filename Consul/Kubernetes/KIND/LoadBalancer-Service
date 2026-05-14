@@ -32,6 +32,10 @@ metadata:
   name: default
 ---------------------------------------------------
 kubectl apply -f metallb-config.yaml
+
+You can check the MetalLB IP range by looking at the IPAddressPool resource.
+kubectl get ipaddresspools -A
+
 kubectl get svc foo-service
 % kubectl get svc | grep -i foo
 foo-service               LoadBalancer   10.96.98.103    172.18.255.200   5678:32379/TCP                                                                     49m
