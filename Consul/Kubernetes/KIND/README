@@ -1,0 +1,2 @@
+Script create-kind-clusters.sh creates as many kind clusters as you want with inter pod connectivity along with installation of MetalLB load balancer functionality.
+It askes you for the number of kind cluster you want and it creates it for you.
