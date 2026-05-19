@@ -1,0 +1,13 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ExportedServices
+metadata:
+  name: clients1
+spec:
+  services:
+    - name: static-server
+      consumers:
+        - partition: default
+    - name: static-server-ns
+      namespace: t
+      consumers:
+        - partition: default
