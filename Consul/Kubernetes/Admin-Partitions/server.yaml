@@ -1,0 +1,30 @@
+global:
+  enabled: true
+  name: consul
+  enableConsulNamespaces: true
+  image: hashicorp/consul-enterprise:2.0.0-rc1-ent
+  enterpriseLicense:
+    secretName: "license"
+    secretKey: "key"
+    enableLicenseAutoload: true
+  adminPartitions:
+    enabled: true
+  datacenter: dc1
+  tls:
+    enabled: true
+  acls:
+    manageSystemACLs: true
+server:
+  enabled: true
+  replicas: 1
+meshGateway:
+  enabled: true
+  service:
+    type: LoadBalancer
+ui:
+  enabled: true
+  service:
+    type: LoadBalancer
+connectInject:
+  enabled: true
+  #default: true
