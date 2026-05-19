@@ -1,7 +1,94 @@
+Use case:-
+2 k8 kind clusters with consul server running in default partition in cluster1 (DC1) and custom partition "clients1" running in cluster2 (DC1).
+Both the clusters are part of same Consul datacenter DC1.
+I will be deploying static-client app in default partition in cluster1 and will access static-server app deployed in custom partition (one in default ns and other in custom ns "t")
+"clients1" in cluster2
+
 Reference Documents: 
 https://developer.hashicorp.com/consul/docs/multi-tenant/admin-partition/k8s#cross-partition-networking
-https://github.com/abhineet-1987/Abhineet/blob/main/Consul/Kubernetes/KIND/create-kind-clusters.sh
+https://github.com/abhineet-1987/Abhineet/blob/main/Consul/Kubernetes/KIND/create-kind-clusters.sh  (To deploy kind clusters with inter pod connectivity and load balancing feature)
 
 Create 2 kind clusters using https://github.com/abhineet-1987/Abhineet/blob/main/Consul/Kubernetes/KIND/create-kind-clusters.sh
 
+export HELM_RELEASE_SERVER=server
+export HELM_RELEASE_CLIENT=client
+export SERVER_CONTEXT=kind-cluster1
+export CLIENT_CONTEXT=kind-cluster2
+
+kubectl create --context ${SERVER_CONTEXT} namespace consul
+kubectl create secret --context ${SERVER_CONTEXT} --namespace consul generic license --from-file=key=license.hclic
+
+kubectl create --context ${CLIENT_CONTEXT} namespace consul
+kubectl create secret --context ${CLIENT_CONTEXT} --namespace consul generic license --from-file=key=license.hclic
+
+kubectl config use-context ${SERVER_CONTEXT}
+
+Install the Consul server(s) using server.yaml
+helm install ${HELM_RELEASE_SERVER} hashicorp/consul --create-namespace --namespace consul --values server.yaml --debug
+
+Get the EXTERNAL-IP assigned to service consul-expose-servers (kubectl get svc -n consul) so that it can be added to the client configuration (externalServers.hosts) in client.yaml
+
+Get the Kubernetes authentication method URL for the non-default partition cluster running your workloads:
+Note: In my case I have used https://172.30.0.3:6443. "172.30.0.3" is the cluster2 control plane node ip address that I've got from "kubectl get node -o wide"
+
+Copy the server certificate to the non-default partition cluster running your workloads.
+kubectl get secret consul-ca-cert --context ${SERVER_CONTEXT} -n consul --output yaml | kubectl apply --namespace consul --context ${CLIENT_CONTEXT} --filename -
+
+Copy the server key to the non-default partition cluster running your workloads:
+kubectl get secret consul-ca-key --context ${SERVER_CONTEXT} -n consul --output yaml | kubectl apply --namespace consul --context ${CLIENT_CONTEXT} --filename -
+
+If ACLs were enabled in the server configuration values file, copy the token to the non-default partition cluster running your workloads:
+kubectl get secret consul-partitions-acl-token --context ${SERVER_CONTEXT} -n consul --output yaml | kubectl apply --namespace consul --context ${CLIENT_CONTEXT} --filename -
+
+Deploy client.yaml on cluster2
+helm install ${HELM_RELEASE_CLIENT} hashicorp/consul  --create-namespace --namespace consul --values client.yaml --debug
+
+Verify the deployment:-
+export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
+export CONSUL_HTTP_SSL_VERIFY=false
+kubectl get secret consul-bootstrap-acl-token -o yaml
+echo xxxxxxxxxxxxxxx | base64 -d
+export CONSUL_HTTP_TOKEN=xxxxxxxxxxxxxxxx
+kubectl port-forward svc/consul-server -n consul 8501:8501    (on other terminal) OR kubectl port-forward -n consul svc/consul-expose-servers 8501:8501
+Open Consul UI on browser https://localhost:8501
+
+------------------------------------------- DEPLOY WORKLOADS ------------------
+Deploy static-client app on cluster1:-
+kubectl apply -f static-client_wTP.yaml (If you want to test the service communication with Transparent Proxy) OR 
+kubectl apply -f static-client_woTP.yaml (If you want to test the service communication without Transparent Proxy)
+
+Deploy static-server app in default namespace on cluster2:-
+kubectl apply -f static-server.yaml
+
+Deploy static-server-ns app in "t" namespace on cluster2:-
+kubectl apply -f static-server-ns.yaml
+
+Deploy exported services Configuration entry:-
+kubectl apply -f exported-services.yaml
+
+Deploy service intentions for both the paths 1. static-client->static-server 2. static-client->static-server-ns
+kubectl apply -f service-intentions.yaml
+kubectl apply -f service-intentions2.yaml
+
+Validation:-
+1. For static-client app with Transparent Proxy:-
+SSH into static-client app :
+% k exec -it static-client-74bc477bcd-v78hr -c static-client -- sh
+/ # curl localhost:19000/listeners
+outbound_listener:127.0.0.1:15001::127.0.0.1:15001
+public_listener:10.10.0.27:20000::10.10.0.27:20000
+/ # curl http://static-server.virtual.default.ns.clients1.ap.consul
+"hello world from dc1"
+/ # curl http://static-server-ns.virtual.t.ns.clients1.ap.consul
+"hello world from dc1"
+
+
+2.  For static-client app without Transparent Proxy:-
+SSH into static-client app :
+% k exec -it static-client-74bc477bcd-v78hr -c static-client -- sh
+# curl localhost:1234
+"hello world from dc1"
+--------------------------------------------------------------------------------------------
+Note: In this setup there is no need to set Proxy default (http config)  or mesh gateway mode to local or exporting mesh gateway service.
+It was observed that when I had set above, I've got TLS OpenSSL error "TLS_error:|33554536:system library:OPENSSL_internal:Connection reset by peer:TLS_error_end"
 
