@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: static-server-ns
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-server-ns
+spec:
+  selector:
+    app: static-server-ns
+  ports:
+    - port: 1234
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: static-server-ns
+  name: static-server-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: static-server-ns
+  template:
+    metadata:
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+      labels:
+        app: static-server-ns
+    spec:
+      serviceAccountName: static-server-ns
+      containers:
+        - name: static-server-ns
+          image: hashicorp/http-echo:latest
+          args:
+            - -text="hello world from dc1"
+            - -listen=:8080
+          ports:
+            - containerPort: 8080
+              name: http
