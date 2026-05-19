@@ -1,2 +1,7 @@
-Reference Document: https://developer.hashicorp.com/consul/docs/multi-tenant/admin-partition/k8s#cross-partition-networking
+Reference Documents: 
+https://developer.hashicorp.com/consul/docs/multi-tenant/admin-partition/k8s#cross-partition-networking
+https://github.com/abhineet-1987/Abhineet/blob/main/Consul/Kubernetes/KIND/create-kind-clusters.sh
+
+Create 2 kind clusters using https://github.com/abhineet-1987/Abhineet/blob/main/Consul/Kubernetes/KIND/create-kind-clusters.sh
+
 
