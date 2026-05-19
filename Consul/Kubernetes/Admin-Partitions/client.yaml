@@ -1,0 +1,34 @@
+global:
+  name: consul
+  enabled: false
+  datacenter: dc1
+  enableConsulNamespaces: true
+  image: hashicorp/consul-enterprise:2.0.0-rc1-ent
+  adminPartitions:
+    enabled: true
+    name: clients1
+  tls:
+    enabled: true
+    caCert:
+      secretName: consul-ca-cert # See step 6 from `Install Consul server cluster`
+      secretKey: tls.crt
+    caKey:
+      secretName: consul-ca-key # See step 7 from `Install Consul server cluster`
+      secretKey: tls.key
+  acls:
+    manageSystemACLs: true
+    bootstrapToken:
+      secretName: consul-partitions-acl-token # See step 8 from `Install Consul server cluster`
+      secretKey: token
+  enterpriseLicense:
+    secretName: license
+    secretKey: key
+externalServers:
+  enabled: true
+  hosts: [172.30.255.200] # See step 4 from `Install Consul server cluster`
+  tlsServerName: server.dc1.consul
+  k8sAuthMethodHost: https://172.30.0.3:6443 # See step 5 from `Install Consul server cluster`
+meshGateway:
+  enabled: true
+  service:
+    type: LoadBalancer
