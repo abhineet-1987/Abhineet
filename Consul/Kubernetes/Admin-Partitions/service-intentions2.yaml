@@ -1,0 +1,14 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: allow-cross-partition-2
+  namespace: default
+spec:
+  destination:
+    name: static-server-ns
+    namespace: t
+  sources:
+    - name: static-client
+      partition: default # Specifying where the source is coming from
+      namespace: default
+      action: allow
