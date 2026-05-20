@@ -46,6 +46,7 @@ kubectl config use-context ${CLIENT_CONTEXT}
 helm install ${HELM_RELEASE_CLIENT} hashicorp/consul  --create-namespace --namespace consul --values client.yaml --debug
 
 Verify the deployment:-
+kubectl config use-context ${SERVER_CONTEXT}
 export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
 export CONSUL_HTTP_SSL_VERIFY=false
 kubectl get secret consul-bootstrap-acl-token -o yaml
