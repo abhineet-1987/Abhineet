@@ -49,7 +49,7 @@ Verify the deployment:-
 kubectl config use-context ${SERVER_CONTEXT}
 export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
 export CONSUL_HTTP_SSL_VERIFY=false
-kubectl get secret consul-bootstrap-acl-token -o yaml
+kubectl get secret consul-bootstrap-acl-token -n consul -o yaml
 echo xxxxxxxxxxxxxxx | base64 -d
 export CONSUL_HTTP_TOKEN=xxxxxxxxxxxxxxxx
 kubectl port-forward svc/consul-server -n consul 8501:8501    (on other terminal) OR kubectl port-forward -n consul svc/consul-expose-servers 8501:8501
