@@ -41,6 +41,8 @@ If ACLs were enabled in the server configuration values file, copy the token to 
 kubectl get secret consul-partitions-acl-token --context ${SERVER_CONTEXT} -n consul --output yaml | kubectl apply --namespace consul --context ${CLIENT_CONTEXT} --filename -
 
 Deploy client.yaml on cluster2
+kubectl config use-context ${CLIENT_CONTEXT}
+
 helm install ${HELM_RELEASE_CLIENT} hashicorp/consul  --create-namespace --namespace consul --values client.yaml --debug
 
 Verify the deployment:-
