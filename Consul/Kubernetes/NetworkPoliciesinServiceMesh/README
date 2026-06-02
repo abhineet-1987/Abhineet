@@ -34,6 +34,8 @@ nohup consul agent -config-file=consul.hcl &
 kubectl create ns consul-dp
 secret=$(cat license.hclic)
 kubectl create secret generic consul-ent-license -n consul-dp --from-literal="key=${secret}"
+In another terminal run below command to expose Kubernetes api server url:
+kubectl proxy --address='0.0.0.0' --port=8001 --accept-hosts='.*'
 helm install consul hashicorp/consul -n consul-dp --values=values.yaml --debug
 
 6. Deploy applications :-
