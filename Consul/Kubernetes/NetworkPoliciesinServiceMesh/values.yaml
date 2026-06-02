@@ -1,0 +1,23 @@
+global:
+  enabled: false
+  name: consul
+  enableConsulNamespaces: true
+  image: hashicorp/consul-enterprise:1.21.7-ent
+  datacenter: dc1
+enterpriseLicense:
+  secretName: consul-ent-license
+  secretKey: key
+
+externalServers:
+  enabled: true
+  httpsPort: 8500
+  grpcPort: 8502
+  hosts:
+    - host.docker.internal
+  k8sAuthMethodHost: "http://localhost:8001"
+
+meshGateway:
+  enabled: true
+connectInject:
+  enabled: true
+  #default: true
