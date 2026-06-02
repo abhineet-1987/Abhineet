@@ -1,0 +1,9 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+networking:
+  # This is the magic line that disables kindnet
+  disableDefaultCNI: true
+  # Calico's default pod subnet
+  podSubnet: 10.244.0.0/16
