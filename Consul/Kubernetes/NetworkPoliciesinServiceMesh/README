@@ -1,1 +1,88 @@
- 
+ Objective: I have disabled ACLs in this setup so no intentions required. So the primary aim of this setup is to configure the Network Policies required for Consul
+ service mesh communication to be established. There are scenarios where customer's namespaces are default set to deny for any ingress/egress communication. In such cases there is need to explicitly set the network policies for Consul service mesh communication.
+
+Setup: Consul servers running on VM (my laptop)
+       Applications (In Service mesh) deployed on Kubernetes cluster (kind cluster) with externalServers: field set to refer consul server.
+       consul dataplane running on namespace consul-dp
+       static-client running on app-ns1 namespace
+       static-server running on app-ns2 namespace
+       static-client in app-ns1 ns will be talking to static-server in app-ns2 ns.
+Note: If you want to test Network policy in Kind cluster, you have to use some other cni and not the Kind default CNI (kindnet). Here I have used Calico CNI.
+
+Steps:
+1. Deploy kind cluster:
+kind create cluster --config kind.yaml
+Note: Make sure the pods subnet defined in kind.yaml does not have overlapping ip address as that of the Consul server running on VM. Else there will be connectivity issue.
+
+2. Install the Calico CNI:
+First, install the operator as usual:
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml
+Crucial Step: Do not apply the custom-resources.yaml directly from the internet URL. We need to modify it first so it matches our new Kind subnet.
+Run this command to download it:
+curl -O https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/custom-resources.yaml
+Open that downloaded custom-resources.yaml file in a text editor. Look for the cidr: line under ipPools and change it to 10.244.0.0/16 as defined in kind.yaml.
+Apply the modified file:
+kubectl create -f custom-resources.yaml
+
+3. Verify the Installation
+watch kubectl get pods -n calico-system
+
+4. Deploy Consul server on VM (laptop-Mac)
+nohup consul agent -config-file=consul.hcl &
+
+5. Deploy Consul dataplane on Kubernetes:-
+kubectl create ns consul-dp
+secret=$(cat license.hclic)
+kubectl create secret generic consul-ent-license -n consul-dp --from-literal="key=${secret}"
+helm install consul hashicorp/consul -n consul-dp --values=values.yaml --debug
+
+6. Deploy applications :-
+kubectl create ns app-ns1
+kubectl create ns app-ns2
+kubectl apply -f static-client.yaml -n app-ns1
+kubectl apply -f static-server.yaml -n app-ns2
+kubectl apply -f static-client_wUpstream.yaml -n app-ns1 # With consul.hashicorp.com/connect-service-upstreams: annotation
+
+7. Configure default deny and DNS allow network policies in app-ns1 and app-ns2 namespaces. When you apply a "Default Deny", it blocks absolutely everything—including DNS lookups. If your pods cannot reach kube-dns, they cannot resolve host.docker.internal or service names. You must apply both the Deny and the DNS Allow to both namespaces.
+kubectl apply -f defaultdenyandDNSallow-app-ns1.yaml
+kubectl apply -f defaultdenyandDNSallow-app-ns2.yaml
+Exec into static-client app to connect to static-server, and you won't be able to connect it.
+kubectl exec -it static-client-upstream-7fffc8849-qlhxz -c static-client-upstream -n app-ns1 -- sh
+ # curl static-server.virtual.app-ns2.ns.consul
+
+8. Now configure Control plane egress Network policy for namespaces consul-dp, app-ns1 and app-ns2.
+kubectl apply -f allow-egress-to-mac-consul-app-ns1.yaml
+kubectl apply -f allow-egress-to-mac-consul-app-ns2.yaml
+kubectl apply -f allow-egress-to-mac-consul-consul-dp.yaml
+
+9. Now configure Consul dataplane applications cross namespaces network policy. In my case I'll be creating egress NetPol for app-ns1 ns and ingress NetPol for app-ns2 ns.
+kubectl apply -f egresspolicyforapp-ns1.yaml
+kubectl apply -f ingresspolicyforapp-ns2.yaml
+
+10. Validate:
+Exec into static-client app to connect to static-server. 
+abhineet@abhineet-M17KGYKQHL dbs % kubectl exec -it static-client-74bc477bcd-2rc4t -c static-client -n app-ns1 -- sh
+/ # curl localhost:19000/listeners
+outbound_listener:127.0.0.1:15001::127.0.0.1:15001
+public_listener:10.244.82.13:20000::10.244.82.13:20000
+/ # curl static-server.virtual.app-ns2.ns.consul
+"hello world from dc1"
+/ # curl localhost:1234
+curl: (7) Failed to connect to localhost port 1234: Connection refused
+/ #
+
+Output from static-client-upstream pod: (With consul.hashicorp.com/connect-service-upstreams: annotation)
+abhineet@abhineet-M17KGYKQHL dbs % kubectl exec -it static-client-upstream-7fffc8849-qlhxz -c static-client-upstream -n app-ns1 -- sh
+/ # curl static-server.virtual.app-ns2.ns.consul
+"hello world from dc1"
+/ # curl localhost:1234
+"hello world from dc1"
+/ # curl localhost:19000/listeners
+public_listener:10.244.82.18:20000::10.244.82.18:20000
+default/app-ns2/static-server?dc=dc1:127.0.0.1:1234::127.0.0.1:1234
+outbound_listener:127.0.0.1:15001::127.0.0.1:15001
+
+Very Important Observation: If you see output from static-client-upstream pod, you get the ouput from both the ways i.e using "curl localhost:1234" and using "curl static-server.virtual.app-ns2.ns.consul"
+But if you see output from static-client pod where no upstream annotation defined, you get output only for "curl static-server.virtual.app-ns2.ns.consul"
+
+
