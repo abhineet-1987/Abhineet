@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-to-mac-consul
+  namespace: consul-dp # APPLY THIS file three times (consul-dp, consul-dp, consul-dp)
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 192.168.65.254/32 # Docker Desktop VM Gateway
+    - ipBlock:
+        cidr: 192.168.1.2/32    # Your Mac's physical IP (just in case)
+    ports:
+    - protocol: TCP
+      port: 8502
+    - protocol: TCP
+      port: 8500
