@@ -1,0 +1,10 @@
+# Apply to both app-ns1 and app-ns2
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: app-ns1 # CHANGE THIS to app-ns2 for the second application
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
