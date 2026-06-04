@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-k8s-api-to-webhooks
+  namespace: consul-dp
+spec:
+  podSelector: {} # Applies to all webhook pods in the namespace
+  policyTypes:
+  - Ingress
+  ingress:
+  - ports:
+    - protocol: TCP
+      port: 8080 # Injector internal listening port
+    - protocol: TCP
+      port: 8443 # Standard K8s webhook service port
+    - protocol: TCP
+      port: 443  # Fallback HTTPS port
