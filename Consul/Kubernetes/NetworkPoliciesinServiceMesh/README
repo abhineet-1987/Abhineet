@@ -7,6 +7,7 @@ Setup: Consul servers running on VM (my laptop)
        static-client running on app-ns1 namespace
        static-server running on app-ns2 namespace
        static-client in app-ns1 ns will be talking to static-server in app-ns2 ns.
+       Default deny network policies (defaultdenyandDNSallow-app-ns1.yaml, defaultdenyandDNSallow-app-ns2.yaml) applied for both ingress and egress traffic for app-ns1 and app-ns2 namespaces. The requirement is to explicitly set the ingress and egress policies for namespaces app-ns1 and app-ns2 so that static-client app in app-ns1 ns can talk to static-server app in app-ns2 ns.
 Note: If you want to test Network policy in Kind cluster, you have to use some other cni and not the Kind default CNI (kindnet). Here I have used Calico CNI.
 
 Steps:
@@ -87,4 +88,23 @@ outbound_listener:127.0.0.1:15001::127.0.0.1:15001
 Very Important Observation: If you see output from static-client-upstream pod, you get the ouput from both the ways i.e using "curl localhost:1234" and using "curl static-server.virtual.app-ns2.ns.consul"
 But if you see output from static-client pod where no upstream annotation defined, you get output only for "curl static-server.virtual.app-ns2.ns.consul"
 
+########################################################### SCENARIO 2 #########################################################
+In this setup, deny all ingress is configured for namespaces consul-dp, app-ns1 and app-ns2. Egress is already allowed by default. 
+Here we will deploy specific ingress network policies so that static-client app in app-ns1 ns can talk to static-server app in app-ns2 ns.
 
+Follow the setps as given in above section and apply Network policies as given below:-
+
+kubectl apply -f defaultdenyIngress-consul-dp.yaml
+kubectl apply -f allow-k8s-api-to-webhooks-consul-dp.yaml
+kubectl apply -f defaultdenyIngress-app-ns1.yaml
+kubectl apply -f defaultdenyIngress-app-ns2.yaml
+kubectl apply -f ingresspolicyforapp-ns2.yaml
+
+Validate:
+Exec into static-client app to connect to static-server. 
+abhineet@abhineet-M17KGYKQHL dbs % kubectl exec -it static-client-74bc477bcd-2rc4t -c static-client -n app-ns1 -- sh
+/ # curl localhost:19000/listeners
+outbound_listener:127.0.0.1:15001::127.0.0.1:15001
+public_listener:10.244.82.13:20000::10.244.82.13:20000
+/ # curl static-server.virtual.app-ns2.ns.consul
+"hello world from dc1"
