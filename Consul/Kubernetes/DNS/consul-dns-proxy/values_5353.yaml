@@ -1,0 +1,21 @@
+global:
+  enabled: true
+  name: consul
+  image: hashicorp/consul:1.21.5
+  datacenter: dc1
+  tls:
+    enabled: true
+server:
+  enabled: true
+  replicas: 1
+ui:
+  enabled: true
+  service:
+    type: NodePort
+connectInject:
+  enabled: true
+dns:
+  enabled: true
+  proxy:
+    enabled: true
+    port: 5353
