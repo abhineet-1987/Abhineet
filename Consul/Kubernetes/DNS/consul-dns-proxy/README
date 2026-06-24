@@ -11,3 +11,59 @@ Establish communication between non service-mesh app static-client and service-m
 Create kind cluster:
 kind create cluster --name=dc1
 
+Deploy consul on K8:-
+helm install consul hashicorp/consul --values=values.yaml --debug
+
+Deploy non-mesh and mesh apps:-
+kubectl apply -f static-client-non-mesh.yaml
+kubectl apply -f static-server-mesh.yaml
+
+Update coreDNS config map to add the .consul domain resolution block in it.
+kubectl edit cm coredns -n kube-system   # Refer the config map attached in the folder section
+kubectl rollout restart deploy coredns -n kube-system
+
+Exec into static-client non-mesh app:-
+/ # nslookup static-server.virtual.consul
+Server:		10.96.0.10
+Address:	10.96.0.10:53
+
+Name:	static-server.virtual.consul
+Address: 240.0.0.1
+
+Name:	static-server.virtual.consul
+Address: 240.0.0.1
+
+/ # nslookup static-server.service.consul
+Server:		10.96.0.10
+Address:	10.96.0.10:53
+
+Name:	static-server.service.consul
+Address: 10.244.0.15
+
+/ # nslookup static-server
+Server:		10.96.0.10
+Address:	10.96.0.10:53
+
+** server can't find static-server.cluster.local: NXDOMAIN
+
+** server can't find static-server.cluster.local: NXDOMAIN
+
+Name:	static-server.default.svc.cluster.local
+Address: 10.96.34.29
+
+** server can't find static-server.svc.cluster.local: NXDOMAIN
+
+** server can't find static-server.svc.cluster.local: NXDOMAIN
+
+This shows that DNS resolution for .consul domain is happening successfully. But if you run curl command, it wont work because static-client is sending plain text to mesh app static-server expecting mTLS encrypted traffic. 
+See below the output:-
+
+/ # curl static-server.service.consul
+curl: (52) Empty reply from server
+/ # curl static-server.service.consul:8080
+curl: (52) Empty reply from server
+/ # curl static-server:1234
+curl: (52) Empty reply from server
+
+So inorder to make this actual communication happen using curl, we have to configure mesh service to allow permissive TLS
+
