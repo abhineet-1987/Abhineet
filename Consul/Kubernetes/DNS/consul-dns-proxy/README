@@ -65,5 +65,8 @@ curl: (52) Empty reply from server
 / # curl static-server:1234
 curl: (52) Empty reply from server
 
-So inorder to make this actual communication happen using curl, we have to configure mesh service to allow permissive TLS
+So inorder to make this actual communication happen using curl, we have to configure mesh service to allow permissive mTLS so that non-mesh app can talk to mesh apps.
+
+Run:
+
 
