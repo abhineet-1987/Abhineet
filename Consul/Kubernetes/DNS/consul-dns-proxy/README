@@ -1,0 +1,13 @@
+Reference Documents:-
+https://developer.hashicorp.com/consul/docs/manage/dns/views
+https://developer.hashicorp.com/consul/docs/manage/dns/forwarding/k8s?page=k8s&page=dns&page=enable
+https://developer.hashicorp.com/consul/docs/secure-mesh/certificate/permissive-mtls
+https://developer.hashicorp.com/consul/docs/register/external/permissive-mtls
+https://developer.hashicorp.com/consul/docs/manage/dns/views/enable
+
+UseCase:
+Establish communication between non service-mesh app static-client and service-mesh app static-server.
+
+Create kind cluster:
+kind create cluster --name=dc1
+
