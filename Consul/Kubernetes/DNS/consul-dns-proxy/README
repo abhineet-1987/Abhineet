@@ -81,4 +81,6 @@ kubectl exec -it static-client-67cd8cb9b6-hsxpb -c static-client -- sh
 / # curl static-server.default.svc.cluster.local:1234
 "hello world from dc1"
 
+Note: By default consul-dns-proxy service listens DNS queries on port 53, but you can customize the port for eg 5353. Refer values_5353.yaml and coreDNS-configmap_5353.yaml to see the usage.
+
 
