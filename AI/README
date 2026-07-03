@@ -1,1 +1,25 @@
- 
+Artificial Intelligence (AI)
+│
+├── Traditional AI : Uses predefined rules : Eg Rule-based chatbots, if X happens do Y
+│
+├── Machine Learning (ML) : Learns patterns grom data : Eg Netflix recommendations
+│
+├── Deep Learning (DL) : A subset of Machine Learning using neural networks : Eg Face/Image recognition, Google photos
+│
+├── Generative AI : Creates new content (text,image,audio,video,code etc) : Eg Claude, Chatgpt, Copilot, Gemini
+│
+├── Agentic AI : The AI performs an entire task autonomously. Eg book me a flight, taling action on production alert etc
+│
+├── Multimodal AI : Can understand multiple data types : Eg Claude, Chatgpt, Copilot, Gemini
+│
+├── Predictive AI : Predicts future outcomes : Eg Weather/Sales Forecast
+│
+├── Conversational AI : AI specialized in conversation : Eg Claude, Chatgpt, Copilot, Gemini
+│
+├── Computer Vision : AI understands images : Eg CCTV, X-Rays, NUmber plate detection
+│
+├── Speech AI : Works with speech : Eg Siri, Alexa
+│
+├── Robotics AI : AI controlling robots : Eg Surgical robots, Warehouse robots
+│
+└── Reinforcement Learning: Learns by trial and error : Eg Self-driving, Game AI
