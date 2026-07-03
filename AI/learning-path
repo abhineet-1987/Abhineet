@@ -1,0 +1,92 @@
+Phase 1: Applied Generative AI & API Integration
+Setup IBM Bob on your machine
+Setup Github Copilot on Visual Studio code
+Understand how to consume LLMs via APIs (OpenAI, Anthropic, Google Vertex AI). [The Project: Write a simple Python script (or use a tool like Postman) that takes a server log file, sends it to an LLM API, and asks the LLM to identify the root cause of an error.]
+Learn about prompting techniques, system prompts, context windows, and temperature settings.
+
+Phase 2: RAG and Vector Databases
+Giving AI an enterprise memory. LLMs only know what they were trained on. To make them useful for a company, you have to connect them to private data. This is called Retrieval-Augmented Generation (RAG).
+Learn how vector databases work (Pinecone, Weaviate, or pgvector). Learn an orchestration framework like LangChain or LlamaIndex, which handles the complex flow of taking a user query, searching the database, and sending the results to the LLM.
+The Project: Build a chatbot that can answer questions based strictly on your company's internal Confluence wiki or technical documentation.
+
+Phase 3: AI Agents and Tool Calling
+Learn how to build agentic workflows. Instead of just asking an LLM a question, you give it access to tools (like a Python REPL, a GitHub API, or a Kubernetes command line).
+The Project: Build an AI agent that takes a natural language prompt ("Restart the failing pod in the staging namespace"), translates it to a kubectl command, executes it, and confirms the status.
+
+Phase 4: AI Platform Infrastructure (LLMOps)
+Running open-source models locally or within secure enterprise boundaries, rather than relying on external APIs.
+Learn how to deploy and scale inference servers (like vLLM or Triton Inference Server) on Kubernetes. Understand how to manage GPU scheduling and optimize model weights.
+The Project: Deploy an open-source model (like Llama 3) onto your Kubernetes cluster and expose it as a secure internal service via Consul.
+
+-----------------------------------------------------------------
+ML Concepts/Terminology:-
+Training vs inference, model artifacts, checkpoints
+What a model registry is, versioning, drift, retraining triggers
+Evaluation metrics at a conceptual level (accuracy, precision/recall, perplexity for LLMs)
+
+LLM Concepts:-
+Transformer architecture — conceptual only
+Context windows, tokens, embeddings (you'll be managing infra around these — cost, latency, memory)
+Fine-tuning vs RAG vs prompt engineering — know when each is used, since you'll be asked to support all three
+
+MLOPS Concepts:-
+ML pipeline stages: data ingestion → training → validation → deployment → monitoring
+Tools: MLflow (experiment tracking/model registry), Kubeflow, Airflow/Dagster for pipelines
+Model serving: TorchServe, Triton Inference Server, KServe
+Containerization/orchestration for ML workloads (you likely know K8s already — now apply it to GPU scheduling, model serving patterns)
+Feature stores (Feast, Tecton) — conceptually
+
+LLMOPS Concepts:-
+LLM serving: vLLM, TGI (Text Generation Inference), Ollama for local
+Vector databases: Pinecone, Weaviate, Chroma, pgvector — deployment/scaling, not just usage
+RAG pipeline infra: chunking strategies, embedding pipelines, retrieval latency
+Prompt/version management: prompt registries, A/B testing prompts
+LLM observability: LangSmith, Langfuse, Arize — tracing agent calls, token usage, cost tracking
+Guardrails/safety: rate limiting, PII filtering, content moderation layers
+Agent orchestration at scale: MCP servers, tool-calling infra, multi-agent systems in production
+
+Cost & Performance Engineering Concepts:-
+This is a huge, underrated part of LLMOps that plays directly to IT-ops instincts:
+Token cost optimization, caching strategies (prompt caching, semantic caching)
+GPU utilization, batching, quantization basics (why/when you'd quantize a model)
+Latency vs throughput tradeoffs for real-time vs batch inference
+------------------------------------------------------------------
+Month 1: AI Foundations
+AI vs ML vs Deep Learning vs Generative AI
+Neural networks (high level)
+Transformers (conceptual)
+LLM basics
+Tokens
+Context windows
+Embeddings
+
+Month 2: Build with LLMs
+Prompt engineering
+RAG
+Vector databases
+AI agents
+MCP
+AI gateways
+
+Month 3: AI Platforms
+Kubeflow
+KServe
+MLflow
+Ray
+OpenShift AI
+NVIDIA GPU Operator (concepts)
+
+So, in short below are the main items:-
+
+Generative AI (understand what modern AI applications are)
+LLMs (how they work conceptually)
+Embeddings and Vector Databases
+RAG
+AI Agents
+AI Platform Engineering (Kubeflow, KServe, OpenShift AI)
+MLOps
+Machine Learning (deeper understanding of training and lifecycle)
+Deep Learning
+AI Infrastructure
+
+This order lets you leverage your existing platform engineering expertise while gradually building the theoretical foundatio
