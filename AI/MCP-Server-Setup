@@ -1,0 +1,274 @@
+# MCP Server Setup Guide
+
+## What is an MCP Server?
+
+**MCP (Model Context Protocol)** servers extend Bob's capabilities by connecting it to external
+tools, data sources, and services — such as web fetching, databases, APIs, and more.
+
+---
+
+## Prerequisites
+
+Before setting up an MCP server, ensure the required runtime is installed on your machine:
+
+| Runtime | Used For | Check Command | Install URL |
+|---|---|---|---|
+| Node.js (`npx`) | Most MCP servers | `node --version` | https://nodejs.org |
+| Python (`uvx`) | Python-based servers | `uvx --version` | https://docs.astral.sh/uv/getting-started/installation/ |
+| Docker | Container-based servers | `docker --version` | https://docs.docker.com/get-started/get-docker/ |
+
+---
+
+## Config File Locations
+
+MCP servers are configured in a JSON file. There are two scopes:
+
+| Scope | File Path | When to Use |
+|---|---|---|
+| **Global** | `~/.bob/settings/mcp.json` | Available in ALL workspaces |
+| **Workspace** | `.bob/mcp.json` (in project root) | Only for THIS project |
+
+> ⚠️ If both files define a server with the same name, the **workspace** config takes priority.
+
+---
+
+## Config File Structure
+
+```json
+{
+  "mcpServers": {
+    "<server-name>": {
+      "command": "npx",
+      "args": ["-y", "<mcp-package-name>"],
+      "env": {
+        "API_KEY": "your-api-key"
+      }
+    }
+  }
+}
+```
+
+### Config Fields Reference
+
+| Field | Required | Description |
+|---|---|---|
+| `command` | Yes (local) | Executable to run: `npx`, `uvx`, `node`, or absolute path |
+| `args` | Yes (local) | Array of arguments passed to the command |
+| `url` | Yes (remote) | URL for remote MCP servers (mutually exclusive with `command`) |
+| `headers` | No | HTTP headers for remote servers (e.g. auth tokens) |
+| `env` | No | Environment variables injected into the server process |
+| `disabled` | No | Set `true` to disable without deleting the entry |
+| `disabledTools` | No | Array of tool names to suppress from this server |
+| `alwaysAllow` | No | Array of tool names to auto-approve (skip confirmation prompt) |
+| `timeout` | No | Connection timeout in ms (e.g. `30000` for 30 seconds) |
+| `groups` | No | Restrict server tools to specific Bob modes (e.g. `["plan", "agent"]`) |
+
+> ⚠️ **Local** servers use `command` + `args`. **Remote** servers use `url`. Never set both.
+
+---
+
+## Step-by-Step: Add a New MCP Server
+
+### Step 1 — Choose Your Scope
+
+Decide if the server should be **global** or **workspace-only**.
+
+- **Global:** `~/.bob/settings/mcp.json`
+- **Workspace:** `.bob/mcp.json` in your project root
+
+### Step 2 — Check the Runtime
+
+Run the appropriate version check in your terminal:
+
+```bash
+# For npx-based servers
+node --version
+
+# For uvx-based servers
+uvx --version
+
+# For Docker-based servers
+docker --version && docker info
+```
+
+### Step 3 — Read Existing Config (if any)
+
+Always read the existing file before editing to avoid overwriting other servers:
+
+```bash
+cat ~/.bob/settings/mcp.json        # global
+cat .bob/mcp.json                   # workspace
+```
+
+### Step 4 — Add Your Server Entry
+
+Add your server under the `mcpServers` key. Example for a **web fetch** server:
+
+```json
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "mcp-fetch-server",
+      "args": []
+    }
+  }
+}
+```
+
+Example for a **GitHub** server (with API key):
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "your-github-token-here"
+      }
+    }
+  }
+}
+```
+
+Example for a **remote** MCP server:
+
+```json
+{
+  "mcpServers": {
+    "my-remote-server": {
+      "url": "https://my-mcp-server.example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer your-token-here"
+      }
+    }
+  }
+}
+```
+
+### Step 5 — Save the File
+
+Save the `mcp.json` file. Bob **hot-reloads** the config automatically — no restart needed
+(as long as a workspace folder is open in Bob).
+
+### Step 6 — Verify Connection
+
+Check the **MCP panel** in Bob's UI. Your server should appear as **active/connected**.
+
+If it fails to connect, see the Troubleshooting section below.
+
+---
+
+## Example: Fetch MCP Server (Used in This Project)
+
+This is the server configured for live web access (e.g. Consul documentation):
+
+**File:** `~/.bob/settings/mcp.json`
+
+```json
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "mcp-fetch-server",
+      "args": [],
+      "disabled": false
+    }
+  }
+}
+```
+
+**Package:** `mcp-fetch-server` (install once globally: `npm install -g mcp-fetch-server`)
+
+**What it does:** Allows Bob to fetch any public URL in real-time, enabling live access to
+documentation, APIs, and websites. Supports HTML, Markdown, plain text, JSON, and YouTube
+transcripts.
+
+> ⚠️ **Do not use `mcp-fetch`** (a different npm package). It requires Puppeteer/Chromium and
+> its install frequently fails, leaving a broken binary. Use `mcp-fetch-server` instead.
+
+---
+
+## Multiple Servers in One File
+
+You can define multiple servers in the same config file:
+
+```json
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "mcp-fetch-server",
+      "args": []
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "your-token"
+      }
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://user:pass@localhost/db"
+      }
+    }
+  }
+}
+```
+
+---
+
+## Troubleshooting
+
+### Server Not Connecting
+
+1. **Check Bob has a workspace folder open** — MCP servers don't connect in an empty window.
+2. **Check the MCP panel** in Bob's UI for the live error message.
+3. **Test the command manually** in your terminal:
+   ```bash
+   mcp-fetch-server
+   ```
+   The process should start silently and wait (no output = correct). If it prints a help message
+   and exits, you are running the CLI binary (`mcp-fetch`) instead of the server binary
+   (`mcp-fetch-server`).
+4. **Check for placeholder values** — env vars like `"your-api-key"` or `"..."` will cause auth failures.
+5. **Validate JSON** — malformed JSON causes the entire file to be ignored.
+6. **Avoid `mcp-fetch`** — this package requires Puppeteer/Chromium; install frequently fails.
+   Use `mcp-fetch-server` instead.
+
+### Common Errors
+
+| Error | Cause | Fix |
+|---|---|---|
+| `command not found: npx` | Node.js not installed | Install from https://nodejs.org |
+| `command not found: uvx` | uv not installed | Install from https://docs.astral.sh/uv |
+| Server shows as disabled | `"disabled": true` in config | Remove or set to `false` |
+| Auth failure | Placeholder API key in `env` | Replace with real credentials |
+| JSON parse error | Malformed JSON | Validate at https://jsonlint.com |
+
+---
+
+## Security Notes
+
+- ⚠️ Secrets in `env` and `headers` are stored **in plaintext** on disk.
+- Prefer servers that read credentials from the **OS environment** or a **keychain**.
+- Use `alwaysAllow` sparingly — only for non-destructive, read-only tools.
+- Avoid committing `mcp.json` files with secrets to version control.
+
+---
+
+## Useful MCP Servers
+
+| Server Package | Install Command | Purpose |
+|---|---|---|
+| `mcp-fetch-server` ✅ | `npm install -g mcp-fetch-server` | Fetch URLs (HTML, MD, text, JSON, YouTube) |
+| `@modelcontextprotocol/server-github` | `npm install -g @modelcontextprotocol/server-github` | GitHub repos, issues, PRs |
+| `@modelcontextprotocol/server-postgres` | `npm install -g @modelcontextprotocol/server-postgres` | Query PostgreSQL databases |
+| `@modelcontextprotocol/server-sqlite` | `npm install -g @modelcontextprotocol/server-sqlite` | Query SQLite databases |
+| `@modelcontextprotocol/server-filesystem` | `npm install -g @modelcontextprotocol/server-filesystem` | Access files outside workspace |
+| `@modelcontextprotocol/server-slack` | `npm install -g @modelcontextprotocol/server-slack` | Slack messages and channels |
+| `@modelcontextprotocol/server-brave-search` | `npm install -g @modelcontextprotocol/server-brave-search` | Web search via Brave Search API |
+
+> 💡 **Tip:** Pre-installing packages globally with `npm install -g` avoids the startup delay
+> that `npx -y` causes each time Bob connects (npx re-downloads if not cached).
