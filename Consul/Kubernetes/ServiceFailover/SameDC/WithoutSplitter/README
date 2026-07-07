@@ -1,1 +1,50 @@
- 
+Use case:-
+I have one kind cluster deployed. static-server app is deployed in namespaces default,p1,p2,bkp1 and bkp2. static-client app is deployed in default ns.
+Service Router and Service Resolver are used here. The use case is that when we ssh into static-client app and access static-server, it should be accessible with below rules:-
+1. http://static-server/ ---> it should talk to static-server on default ns
+2. http://static-server/p1 ---> it should talk to static-server on p1 ns
+3. http://static-server/p2 ---> it should talk to static-server on p2 ns
+4. http://static-server/p1 ---> it should talk to static-server on bkp1 ns, if static-server on p1 ns is down or not available.
+5. http://static-server/p2 ---> it should talk to static-server on bkp2 ns, if static-server on p2 ns is down or not available.
+For point 1,2 and 3 Servide router is used. For points 4 and 5 Srvice Resolver is used.
+Note: We have not used ACL here.
+
+Steps:-
+Deploy kind cluster
+kind create cluster --name=dc1
+
+Deploy Consul enterprise on K8:-
+secret=$(cat license.hclic)
+kubectl create secret generic consul-ent-license --from-literal="key=${secret}"
+helm install consul hashicorp/consul --values=values.yaml --version=2.0.0 --debug
+
+kubectl apply -f static-server-p1-ns.yaml
+kubectl apply -f static-server-p2-ns.yaml
+kubectl apply -f static-server-bkp1-ns.yaml
+kubectl apply -f static-server-bkp2-ns.yaml
+kubectl apply -f static-server-default-ns.yaml
+kubectl apply -f static-client-default-ns.yaml
+kubectl apply -f proxy-defaults.yaml
+kubectl apply -f service-router.yaml
+kubectl apply -f service-resolver.yaml
+
+Validation:-
+kubectl exec -it static-client-74bc477bcd-dvmlm -c static-client -- sh
+
+/ # curl http://static-server/
+"Hello from static-server in default namespace"
+/ # curl http://static-server/p1
+"Hello from static-server in p1 namespace"
+/ # curl http://static-server/p2
+"Hello from static-server in p2 namespace"
+
+Now explicitly down the static-server app in p1 and p2 namespace to test the failover and then ssh again into the static-client app.
+kubectl exec -it static-client-74bc477bcd-dvmlm -c static-client -- sh
+
+/ # curl http://static-server/
+"Hello from static-server in default namespace"
+/ # curl http://static-server/p1
+"Hello from static-server in bkp1 namespace"
+/ # curl http://static-server/p2
+"Hello from static-server in bkp2 namespace"
+
