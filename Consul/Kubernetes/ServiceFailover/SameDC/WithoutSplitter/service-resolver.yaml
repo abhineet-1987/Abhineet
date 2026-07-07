@@ -1,0 +1,22 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: static-server
+  namespace: p1
+spec:
+  failover:
+    '*':
+      service: static-server
+      namespace: bkp1
+---
+# 07-failover-p2.yaml
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: static-server
+  namespace: p2
+spec:
+  failover:
+    '*':
+      service: static-server
+      namespace: bkp2
