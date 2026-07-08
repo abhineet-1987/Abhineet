@@ -1,3 +1,7 @@
+References:-
+https://developer.hashicorp.com/consul/docs/secure/encryption/tls/enable/existing/vm#configure-the-clients
+https://developer.hashicorp.com/consul/commands/tls/cert
+
 Deploy 2 VMs on multipass.
 
 Install Consul on both the VMs https://developer.hashicorp.com/consul/install
