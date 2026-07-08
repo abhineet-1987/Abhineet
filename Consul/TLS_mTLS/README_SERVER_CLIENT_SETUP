@@ -1,0 +1,25 @@
+Deploy 2 VMs on multipass.
+
+Install Consul on both the VMs https://developer.hashicorp.com/consul/install
+On first VM (consul-server) run below commands:-
+consul tls ca create
+consul tls cert create -server
+
+Run consul :-
+nohup consul agent -config-file=consul-server.hcl &
+export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
+export CONSUL_HTTP_SSL_VERIFY=false
+consul members
+consul operator raft list-peers
+
+Copy ca file from first VM to your system
+multipass transfer intriguing-planarian:/home/ubuntu/consul-agent-ca.pem .
+Copy ca file from your system to second VM (consul-client)
+multipass transfer consul-agent-ca.pem tasty-darter:/home/ubuntu/
+
+Run consul client on VM2:-
+nohup consul agent -config-file=consul-client.hcl &
+export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
+export CONSUL_HTTP_SSL_VERIFY=false
+consul members
+
