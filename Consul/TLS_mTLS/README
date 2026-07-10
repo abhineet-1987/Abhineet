@@ -43,4 +43,12 @@ verify_incoming = true
 verify_outgoing = true
 verify_server_hostname = true
 
+######################################################### To get TLS certificate details used by Consul agent without explicitly passing the certificate  ###############
+echo | openssl s_client -connect 127.0.0.1:8501 2>/dev/null | openssl x509 -text -noout
+echo | openssl s_client -connect 127.0.0.1:8501 2>/dev/null | openssl x509 -noout -issuer -subject
+
+To inspect certificate:-
+openssl x509 -text -noout -in dc1-server-consul-0.pem
+___________________
+
 
