@@ -15,7 +15,7 @@ then you don't need the above steps, it will get auto recovered.
 Note: If "consul members" and "consul operator raft list-peers" not working due to ACL errors ( 403 (ACL not found)) and you want to know the leader, run below command:
 curl http://127.0.0.1:8500/v1/status/leader
 
-2. peers.json recovery :-
+3. peers.json recovery :-
 Why it is used?
 In this cluster recovery scenario, you still have live, healthy servers with fully current Raft data on disk — but you've permanently lost enough other servers that the survivors can no longer reach a majority. 
 When losing multiple Consul servers results in a loss of quorum and a complete outage, partial recovery is possible using data on the remaining servers in the cluster. 
@@ -55,4 +55,5 @@ Data Directory Copy: This worked in your test because you likely restored the da
 You use Snapshots to restore state. You use peers.json to force a broken cluster to talk to itself again.
 
 Note:-
-The bootstrap_expect setting is only taken into account for nodes with an empty Consul data directory that are forming a new cluster.
+1.The bootstrap_expect setting is only taken into account for nodes with an empty Consul data directory that are forming a new cluster.
+2. The peers.json file must only include the node that was not lost in the outage. If you had more than one node that survived an outage situation, you must include all of them in this file.
