@@ -236,23 +236,13 @@ Consul will automatically delete the acl-bootstrap-reset file from your disk for
 tell me does :
 
 acl {
-
-  enabled        = true
-
+  enabled  = true
   default_policy = "allow" # Temporarily allow everything
-
 }
 
-
-
 is same as:
-
 acl {
-
-  enabled        = false
-
- 
-
+  enabled = false
 }. ??
 
 No, they are not the same. While both configurations allow actions to succeed without being blocked, they behave fundamentally differently under the hood.
