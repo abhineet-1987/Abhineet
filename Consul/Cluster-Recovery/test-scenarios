@@ -273,14 +273,10 @@ All API endpoints and agent communications are completely wide open.
 
 Why this is a problem for recovery: Because the ACL engine is completely disabled, all ACL-related CLI commands and API endpoints are blocked. If you run consul acl bootstrap, Consul will return an error stating that ACLs are disabled on the agent. You cannot generate new tokens or manage policies in this state.
 
-Summary Table
-Feature	enabled = true / default_policy = "allow"	enabled = false
-Are operations allowed?	Yes (defaults to allow)	Yes (security is bypassed)
-Can you manage tokens/policies?	Yes	No (APIs are disabled)
-Can you run consul acl bootstrap?	Yes	No (Fails with ACLs disabled error)
-Can you transition to deny later?	Yes, simply change policy to deny	No, requires full enablement first
-
 
 Note:-
 1.The bootstrap_expect setting is only taken into account for nodes with an empty Consul data directory that are forming a new cluster.
 2. The peers.json file must only include the node that was not lost in the outage. If you had more than one node that survived an outage situation, you must include all of them in this file.
+
+References:-
+https://developer.hashicorp.com/consul/tutorials/operate-consul/recovery-outage
