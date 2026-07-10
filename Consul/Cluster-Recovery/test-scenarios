@@ -1,0 +1,17 @@
+1. Consul cluster recovery with snapshot. Considering all data directory is deleted:-
+Bring up the fresh Consul cluster with 0 data.
+Restore the snapshot from the latest snapshot taken.
+
+2. No snapshot is available, but backup of data directory is available.
+Copy the content from the backup dir to the Consul data directory for any given Consul server.
+Start Consul on all servers.
+When you'll run "consul members" and "consul operator raft list-peers" you'll get error 403 (ACL not found).
+Run "consul acl bootstrap" and then you'll get error "Failed ACL bootstrapping: Unexpected response code: 403 (Permission denied: rpc error making call: ACL bootstrap no longer allowed (reset index: 274))"
+Refer this doc for ACL reset https://developer.hashicorp.com/consul/docs/secure/acl/reset
+After following above step your cluster will be recovered and back to normal with previous data.
+Note: The above scenario is reproducible if you dont have the ACL bootstrap token associated with the backup data directory. If you have the ACL bootstrap token associated with the backup data directory
+then you don't need the above steps, it will get auto recovered.
+
+
+Note: If "consul members" and "consul operator raft list-peers" not working due to ACL errors ( 403 (ACL not found)) and you want to know the leader, run below command:
+curl http://127.0.0.1:8500/v1/status/leader
