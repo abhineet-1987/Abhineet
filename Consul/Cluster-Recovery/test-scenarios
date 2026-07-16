@@ -1,3 +1,11 @@
+Note:-
+If Customer have lost ACL bootstrap token, hold the customer accountable to get it.
+Suggest them that if they want to reset the ACL token (https://developer.hashicorp.com/consul/docs/secure/acl/reset). This will only work if leader is there, hence done when leader is there i.e after peers.json recovery.
+If still it is not recovered i.e ACL token not available then in the consul config in acl block set default policy to allow (worst case).
+
+
+#################################################################
+
 1. Consul cluster recovery with snapshot. Considering all data directory is deleted:-
 Bring up the fresh Consul cluster with empty data.
 Restore the snapshot from the latest snapshot taken.
