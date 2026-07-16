@@ -25,3 +25,14 @@ Error - "Empty reply from server" when using curl
 Fix1 - Protocol mismatch issue. Check for service default created with protocol set as http or in curl request wrong protocol being passed, for eg instead of https using http or vice versa
 Fix2 - Intentions not created from one service to another
 --------------------------------
+
+Helm upgrade error for Consul:-
+level=DEBUG msg="Error patching resource" namespace="" name=consul-connect-injector gvk="admissionregistration.k8s.io/v1, Kind=MutatingWebhookConfiguration" error="conflict occurred while applying object /consul-connect-injector admissionregistration.k8s.io/v1, Kind=MutatingWebhookConfiguration: Apply failed with 1 conflict: conflict with \"admissionsenforcer\" using admissionregistration.k8s.io/v1: .webhooks[name=\"consul-connect-injector.consul.hashicorp.com\"].namespaceSelector"
+level=DEBUG msg="Patched resource" namespace="" name=consul-connect-injector gvk="admissionregistration.k8s.io/v1, Kind=ValidatingWebhookConfiguration"
+level=WARN msg="upgrade failed" name=consul error="conflict occurred while applying object /consul-connect-injector admissionregistration.k8s.io/v1, Kind=MutatingWebhookConfiguration: Apply failed with 1 conflict: conflict with \"admissionsenforcer\" using admissionregistration.k8s.io/v1: .webhooks[name=\"consul-connect-injector.consul.hashicorp.com\"].namespaceSelector"
+Error: UPGRADE FAILED: conflict occurred while applying object /consul-connect-injector admissionregistration.k8s.io/v1, Kind=MutatingWebhookConfiguration: Apply failed with 1 conflict: conflict with "admissionsenforcer" using admissionregistration.k8s.io/v1: .webhooks[name="consul-connect-injector.consul.hashicorp.com"].namespaceSelector
+conflict with "admissionsenforcer" using admissionregistration.k8s.io/v1: .webhooks[name="consul-connect-injector..."].namespaceSelector
+
+Fix:- Use flag --force-conflicts in helm upgrade
+helm upgrade consul hashicorp/consul -f upgrade-values.yaml --version 2.0.2 --force-conflicts --debug
+Note: I got this error in AKS cluster.
