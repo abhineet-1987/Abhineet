@@ -110,6 +110,49 @@ You can even validate the complete discovery chain :-
 kubectl exec -it consul-server-0 -- sh
 curl -k https://127.0.0.1:8501/v1/discovery-chain/static-server | jq
 
+######################################## VALIDATION WITH API GATEWAY AND HTTP ROUTE SETUP ################################################
+kubectl apply -f api-gw.yaml
+kubectl apply -f http-route.yaml
+
+Note: I have set api gateway to use NodePort as service in values.yaml and have updated port of api-gateway service to 32338 which is defined in kind.yaml for port forwarding purposes from localhost.
+
+abhineet@abhineet-M17KGYKQHL MASTER_1.21.7 % curl http://localhost:32338
+"hello world from static-server default namespace"
+abhineet@abhineet-M17KGYKQHL MASTER_1.21.7 % curl http://localhost:32338
+"hello world from static-server default namespace"
+abhineet@abhineet-M17KGYKQHL MASTER_1.21.7 % curl http://localhost:32338/tea
+"hello world from static-server-tea-v2 default ns"
+abhineet@abhineet-M17KGYKQHL MASTER_1.21.7 % curl http://localhost:32338/tea
+"hello world from static-server-tea-v2 default ns"
+abhineet@abhineet-M17KGYKQHL MASTER_1.21.7 % curl http://localhost:32338/tea
+"hello world from static-server-tea-v2 default ns"
+abhineet@abhineet-M17KGYKQHL MASTER_1.21.7 % curl http://localhost:32338/tea
+"hello world from static-server-tea-v2 default ns"
+abhineet@abhineet-M17KGYKQHL MASTER_1.21.7 % curl http://localhost:32338/tea
+"hello world from static-server-tea-v2 default ns"
+abhineet@abhineet-M17KGYKQHL MASTER_1.21.7 % curl http://localhost:32338/tea
+"hello world from static-server-tea-v2 default ns"
+abhineet@abhineet-M17KGYKQHL MASTER_1.21.7 % curl http://localhost:32338/tea
+"hello world from static-server-tea-v2 default ns"
+abhineet@abhineet-M17KGYKQHL MASTER_1.21.7 % curl http://localhost:32338/tea
+"hello world from static-server-tea-v1 default ns"
+abhineet@abhineet-M17KGYKQHL MASTER_1.21.7 % curl http://localhost:32338/coffee
+"hello world from static-server-coffee-v2 default ns"
+abhineet@abhineet-M17KGYKQHL MASTER_1.21.7 % curl -s -H "x-debug: 1" localhost:32338
+"hello world from static-server-header-query-param default ns"
+abhineet@abhineet-M17KGYKQHL MASTER_1.21.7 % curl http://localhost:32338?x-debug=1
+zsh: no matches found: http://localhost:32338?x-debug=1
+abhineet@abhineet-M17KGYKQHL MASTER_1.21.7 % curl "http://localhost:32338?x-debug=1"
+"hello world from static-server-header-query-param default ns"
+
+Very Important observation:-
+
+The routing logic defined in service router does not work for api gateway. You have to explicitly define the logic in http routes configuration.
+Consul API Gateway is built on the native Kubernetes Gateway API. 
+Because the Gateway API uses HTTPRoute as its primary routing engine, the API Gateway completely ignores Consul ServiceRouter resources.
+However, service splitter logic works perfectly fine. Refer o/p of line 135 nad 137 above.
+The beautiful part of this design is that while the API Gateway ignores ServiceRouters, it still fully respects your ServiceSplitters and ServiceResolvers. 
+So your 10/90 traffic splits and backup failovers will continue to work perfectly once the gateway points to the right backend.
 
 
 
