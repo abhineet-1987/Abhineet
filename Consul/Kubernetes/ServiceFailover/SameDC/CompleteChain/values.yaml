@@ -1,0 +1,20 @@
+global:
+  enabled: true
+  name: consul
+  enableConsulNamespaces: true
+  image: hashicorp/consul-enterprise:1.21.7-ent
+  enterpriseLicense:
+    secretName: 'consul-ent-license'
+    secretKey: 'key'
+  datacenter: dc1
+  tls:
+    enabled: true
+server:
+  enabled: true
+  replicas: 1
+ui:
+  enabled: true
+  service:
+    type: NodePort
+connectInject:
+  enabled: true

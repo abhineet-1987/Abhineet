@@ -1,0 +1,65 @@
+# Failover for the base static-server
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: static-server
+  namespace: default
+spec:
+  failover:
+    '*':
+      namespace: backup
+---
+# Failover for the header/query param service
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: static-server-header-query-param
+  namespace: default
+spec:
+  failover:
+    '*':
+      namespace: backup
+---
+# Failover for Tea v1
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: static-server-tea-v1
+  namespace: default
+spec:
+  failover:
+    '*':
+      namespace: backup
+---
+# Failover for Tea v2
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: static-server-tea-v2
+  namespace: default
+spec:
+  failover:
+    '*':
+      namespace: backup
+---
+# Failover for Coffee v1
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: static-server-coffee-v1
+  namespace: default
+spec:
+  failover:
+    '*':
+      namespace: backup
+---
+# Failover for Coffee v2
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: static-server-coffee-v2
+  namespace: default
+spec:
+  failover:
+    '*':
+      namespace: backup
