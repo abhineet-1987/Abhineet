@@ -103,6 +103,10 @@ kubectl exec -it static-client-74bc477bcd-svgtf -c static-client -- sh
 / # curl static-server.virtual.consul/tea
 "hello world from static-server-tea-v2 backup ns"
 
+You can even validate the complete discovery chain :-
+kubectl exec -it consul-server-0 -- sh
+curl -k https://127.0.0.1:8501/v1/discovery-chain/static-server | jq
+
 
 
 
