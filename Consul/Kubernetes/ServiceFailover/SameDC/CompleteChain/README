@@ -41,6 +41,7 @@ cd default_ns_apps (Deploy all applications in default namespace)
 execute kubectl apply -f command on all the .yaml files. You may run the below script to achieve this:-
 ./apply-all.sh
 
+kubectl create ns backup
 cd ../backup_ns_apps (Deploy all applications in backup namespace)
 execute kubectl apply -f command on all the .yaml files in backup namespace. You may run the below script to achieve this:-
 ./apply-all.sh
