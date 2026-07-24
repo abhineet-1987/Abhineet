@@ -38,10 +38,12 @@ kind create cluster --name=dc1
 helm install consul hashicorp/consul --values=values.yaml --version=1.8.15 --debug
 
 cd default_ns_apps (Deploy all applications in default namespace)
-execute kubectl apply -f command on all the .yaml files
+execute kubectl apply -f command on all the .yaml files. You may run the below script to achieve this:-
+./apply-all.sh
 
 cd ../backup_ns_apps (Deploy all applications in backup namespace)
-execute kubectl apply -f command on all the .yaml files in backup namespace. You may refer to script apply.sh for same.
+execute kubectl apply -f command on all the .yaml files in backup namespace. You may run the below script to achieve this:-
+./apply-all.sh
 
 cd ..
 kubectl apply -f service-router.yaml
