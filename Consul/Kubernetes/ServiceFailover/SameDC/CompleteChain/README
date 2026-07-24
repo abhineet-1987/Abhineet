@@ -1,0 +1,111 @@
+I have deployed Consul on a Kubernetes Kind cluster and would like to build a lab environment to demonstrate the functionality of Service Router, Service Splitter, and Service Resolver.
+
+The lab should satisfy the following requirements:
+
+Base Applications
+static-client and static-server service deployed in the default namespace.
+We will use here static-client to access the services.
+By default, a request to:
+http://static-server should return the response from the static-server application.
+
+Service Router
+Route requests based on the URL path:
+http://static-server/tea → static-server-tea
+http://static-server/coffee → static-server-coffee
+
+Route requests based on an HTTP header or query parameter:
+If the request contains header x-debug: 1, route to static-server-header-query-param.
+If the request contains query parameter ?x-debug=1, also route to static-server-header-query-param.
+curl -s -H "x-debug: 1" static-server.virtual.consul
+OR
+curl -s static-server.virtual.consul?x-debug=1
+
+Service Splitter
+static-server-tea should be split between:
+static-server-tea-v1    (10%)
+static-server-tea-v2   (90%)
+static-server-coffee should be split between:
+static-server-coffee-v1    (10%)
+static-server-coffee-v2     (90%)
+The splitter should demonstrate traffic distribution 
+
+Service Resolver (Failover)
+Deploy an identical set of services in a backup namespace.
+Configure Consul Service Resolver so that if a service in the default namespace becomes unavailable, traffic automatically fails over to the corresponding service in the backup namespace.
+
+Steps:-
+kind create cluster --name=dc1
+helm install consul hashicorp/consul --values=values.yaml --version=1.8.15 --debug
+
+cd default_ns_apps (Deploy all applications in default namespace)
+execute kubectl apply -f command on all the .yaml files
+
+cd ../backup_ns_apps (Deploy all applications in backup namespace)
+execute kubectl apply -f command on all the .yaml files in backup namespace. You may refer to script apply.sh for same.
+
+cd ..
+kubectl apply -f service-router.yaml
+kubectl apply -f service-splitter.yaml
+kubectl apply -f service-resolver.yaml
+kubectl apply -f proxy-defaults.yaml
+
+Validation:-
+kubectl exec -it static-client-74bc477bcd-svgtf -c static-client -- sh
+/ # curl static-server
+"hello world from static-server default namespace"
+/ # curl static-server.virtual.consul
+"hello world from static-server default namespace"
+/ # curl static-server.virtual.consul/tea
+"hello world from static-server-tea-v2 default ns"
+/ # curl static-server.virtual.consul/tea
+"hello world from static-server-tea-v1 default ns"
+/ # curl static-server.virtual.consul/tea
+"hello world from static-server-tea-v2 default ns"
+/ # curl static-server.virtual.consul/tea
+"hello world from static-server-tea-v2 default ns"
+/ # curl static-server.virtual.consul/coffee
+"hello world from static-server-coffee-v2 default ns"
+/ # curl static-server.virtual.consul/coffee
+"hello world from static-server-coffee-v1 default ns"
+/ # curl static-server.virtual.consul/coffee
+"hello world from static-server-coffee-v2 default ns"
+/ # curl -s -H "x-debug: 1" static-server
+"hello world from static-server-header-query-param default ns"
+/ # curl -s -H "x-debug: 1" static-server.virtual.consul
+"hello world from static-server-header-query-param default ns"
+/ # curl -s http://static-server?x-debug=1
+"hello world from static-server-header-query-param default ns"
+/ # curl -s static-server?x-debug=1
+"hello world from static-server-header-query-param default ns"
+
+In order to test the failover I deleted resources associated with static-server-header-query-param.yaml and static-server-tea-v2.yaml from default namespace
+kubectl delete -f static-server-header-query-param.yaml
+kubectl delete -f static-server-tea-v2.yaml
+
+Then I again logged into static-client pod to test the failover:-
+kubectl exec -it static-client-74bc477bcd-svgtf -c static-client -- sh
+/ # curl -s -H "x-debug: 1" static-server
+"hello world from static-server-header-query-param backup ns"
+/ # curl -s static-server?x-debug=1
+"hello world from static-server-header-query-param backup ns"
+/ # curl static-server.virtual.consul/tea
+"hello world from static-server-tea-v2 backup ns"
+/ # curl static-server.virtual.consul/tea
+"hello world from static-server-tea-v2 backup ns"
+/ # curl static-server.virtual.consul/tea
+"hello world from static-server-tea-v2 backup ns"
+/ # curl static-server.virtual.consul/tea
+"hello world from static-server-tea-v2 backup ns"
+/ # curl static-server.virtual.consul/tea
+"hello world from static-server-tea-v2 backup ns"
+/ # curl static-server.virtual.consul/tea
+"hello world from static-server-tea-v1 default ns"
+/ # curl static-server.virtual.consul/tea
+"hello world from static-server-tea-v2 backup ns"
+
+
+
+
+
+
+
