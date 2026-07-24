@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: static-server-header-query-param
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-server-header-query-param
+spec:
+  selector:
+    app: static-server-header-query-param
+  ports:
+    - port: 1234
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: static-server-header-query-param
+  name: static-server-header-query-param
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: static-server-header-query-param
+  template:
+    metadata:
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/transparent-proxy: "true"
+      labels:
+        app: static-server-header-query-param
+    spec:
+      serviceAccountName: static-server-header-query-param
+      containers:
+        - name: static-server-header-query-param
+          image: hashicorp/http-echo:latest
+          args:
+            - -text="hello world from static-server-header-query-param backup ns"
+            - -listen=:8080
+          ports:
+            - containerPort: 8080
+              name: http
