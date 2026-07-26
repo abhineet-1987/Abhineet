@@ -45,6 +45,12 @@ kubectl apply -f meshservice-static-server.yaml
 kubectl apply -f meshservice-static-server-tea.yaml
 kubectl apply -f meshservice-static-server-coffee.yaml
 kubectl apply -f meshservice-static-server-nonmesh.yaml
+kubectl port-forward svc/consul-server 8501:8501    (on other terminal)
+export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
+export CONSUL_HTTP_SSL_VERIFY=false
+To register external service static-server-nonmesh into Consul, run below command:-
+curl -k --request PUT --data @ext.json https://localhost:8501/v1/catalog/register
+kubectl apply -f terminating-gw.yaml
 kubectl create ns consul
 kubectl apply -f api-gw.yaml
 kubectl apply -f http-route.yaml
