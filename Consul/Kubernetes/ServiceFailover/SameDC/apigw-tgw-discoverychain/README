@@ -1,1 +1,50 @@
- 
+Use Case:-
+
+Here we have used api gateway and http route for routing North - South traffic.
+Service Routers used for routing rules between internal service mesh East - West traffic.
+Below is the expected flow:-
+######## North - South ###########
+Note localhost:32338 is the api gateway url.
+curl localhost:32338    -> static-server
+curl localhost:32338    -> static-server (If not available) -> failover to non-mesh service static-server-nonmesh 
+curl localhost:32338/tea -> static-server-tea-v1 (10% of traffic), static-server-tea-v2 (90% of traffic) -> If any of v1, v2 or both not available then failover to v1, v2 services in backup namespace
+curl localhost:32338/coffee -> static-server-coffee -> If not available -> failover to static-server-coffee in backup namespace
+curl -s -H "x-debug: 1"  localhost:32338 -> static-server-header-query-param -> If not available -> failover to static-server-header-query-param in backup namespace [But the faiover will not work here because no Meshservice created for this service]
+curl -s "http://localhost:32338?x-debug=1" -> static-server-header-query-param -> If not available -> failover to static-server-header-query-param in backup namespace [But the faiover will not work here because no Meshservice created for this service]
+########## East - West Flow ############
+When we login to the static-client app in service mesh with consul
+curl static-server.virtual.consul   -> static-server (If not available) -> failover to non-mesh service static-server-nonmesh 
+curl static-server.virtual.consul/tea -> static-server-tea-v1 (10% of traffic), static-server-tea-v2 (90% of traffic) -> If any of v1, v2 or both not available then failover to v1, v2 services in backup namespace
+curl static-server.virtual.consul/coffee -> curl localhost:32338/coffee -> static-server-coffee -> If not available -> failover to static-server-coffee in backup namespace
+curl -s -H "x-debug: 1"  static-server.virtual.consul -> static-server-header-query-param -> If not available -> failover to static-server-header-query-param in backup namespace [failover will work here unlike N-S traffic bcos it is E-W traffic]
+curl "static-server.virtual.consul/coffee?x-debug=1" -> static-server-header-query-param -> If not available -> failover to static-server-header-query-param in backup namespace [failover will work here unlike N-S traffic bcos it is E-W traffic]
+
+Note:-
+Do not get confused with routing logic defined in http routes of api gw and service router. 
+Service router routing logic is for service mesh services only i.e for East - West traffic.
+While routing logic defined in http route is for North - South traffic.
+If you need to apply Consul service splitter and resolver logic to the service mesh services defined in http routes, you NEED TO CREATE Meshservice for them and define in http route config.
+You cannot access non-mesh services through api gateway, to use them you have to use terminating gateway.
+
+Deployment steps:-
+kind create cluster --config=kind.yaml
+secret=$(cat license.hclic)
+kubectl create secret generic consul-ent-license --from-literal="key=${secret}"
+helm install consul hashicorp/consul --values=values.yaml --version=1.8.15 --debug
+kubectl apply -f service-router.yaml
+kubectl apply -f service-splitter.yaml
+kubectl apply -f service-router.yaml
+kubectl apply -f proxy-defaults.yaml
+cd default_ns_apps
+./apply-all.sh
+cd ../backup_ns_apps
+kubectl create ns backup
+./apply-all.sh
+cd ..
+kubectl apply -f meshservice-static-server.yaml
+kubectl apply -f meshservice-static-server-tea.yaml
+kubectl apply -f meshservice-static-server-coffee.yaml
+kubectl apply -f meshservice-static-server-nonmesh.yaml
+kubectl create ns consul
+kubectl apply -f api-gw.yaml
+kubectl apply -f http-route.yaml
