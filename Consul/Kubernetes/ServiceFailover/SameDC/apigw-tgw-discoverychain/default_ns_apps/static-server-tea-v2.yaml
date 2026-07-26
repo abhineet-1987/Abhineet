@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: static-server-tea-v2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-server-tea-v2
+spec:
+  selector:
+    app: static-server-tea-v2
+  ports:
+    - port: 1234
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: static-server-tea-v2
+  name: static-server-tea-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: static-server-tea-v2
+  template:
+    metadata:
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/transparent-proxy: "true"
+      labels:
+        app: static-server-tea-v2
+    spec:
+      serviceAccountName: static-server-tea-v2
+      containers:
+        - name: static-server-tea-v2
+          image: hashicorp/http-echo:latest
+          args:
+            - -text="hello world from static-server-tea-v2 default ns"
+            - -listen=:8080
+          ports:
+            - containerPort: 8080
+              name: http
