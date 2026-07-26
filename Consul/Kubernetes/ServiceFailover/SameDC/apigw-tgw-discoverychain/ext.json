@@ -1,0 +1,9 @@
+{
+  "Node": "external-node",
+  "Address": "static-server-nonmesh.default.svc.cluster.local",
+  "Service": {
+    "ID": "external-service-app",
+    "Service": "static-server-nonmesh",
+    "Port": 1234
+  }
+}

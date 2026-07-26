@@ -1,0 +1,68 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: custom-http-route
+  namespace: default
+spec:
+  parentRefs:
+    - name: api-gateway
+      namespace: consul
+      sectionName: http
+  rules:
+    # 1. Route based on x-debug header
+    - matches:
+        - headers:
+            - name: x-debug
+              value: "1"
+      backendRefs:
+        - name: static-server-header-query-param
+          port: 1234
+          
+    # 2. Route based on x-debug query parameter
+    - matches:
+        - queryParams:
+            - name: x-debug
+              value: "1"
+      backendRefs:
+        - name: static-server-header-query-param
+          port: 1234
+          
+    # 3. Route /tea path
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /tea
+      backendRefs:
+        - group: consul.hashicorp.com
+          kind: MeshService
+          name: static-server-tea
+      
+    # 4. Route /coffee path
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /coffee
+      backendRefs:
+        - group: consul.hashicorp.com
+          kind: MeshService
+          name: static-server-coffee
+
+    # 5. Route /nonmesh path
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /nonmesh
+      backendRefs:
+        - group: consul.hashicorp.com
+          kind: MeshService
+          name: static-server-nonmesh
+
+    # 6. Default catch-all (Must be last)
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: consul.hashicorp.com
+          kind: MeshService
+          name: static-server
