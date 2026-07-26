@@ -1,0 +1,6 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: MeshService
+metadata:
+  name: static-server-tea
+spec:
+  name: static-server-tea # The logical name in Consul

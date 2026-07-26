@@ -1,0 +1,10 @@
+# kind-config.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: dc2
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 32338       #Node port for api gateway service
+        hostPort: 32338
+        protocol: TCP

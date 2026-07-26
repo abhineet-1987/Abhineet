@@ -1,0 +1,6 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: MeshService
+metadata:
+  name: static-server
+spec:
+  name: static-server # The logical name in Consul

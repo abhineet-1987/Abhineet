@@ -1,0 +1,38 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceRouter
+metadata:
+  name: static-server
+  namespace: default
+spec:
+  routes:
+    # 1. Route based on x-debug header
+    - match:
+        http:
+          header:
+            - name: x-debug
+              exact: '1'
+      destination:
+        service: static-server-header-query-param
+        
+    # 2. Route based on x-debug query parameter
+    - match:
+        http:
+          queryParam:
+            - name: x-debug
+              exact: '1'
+      destination:
+        service: static-server-header-query-param
+        
+    # 3. Route /tea path
+    - match:
+        http:
+          pathPrefix: /tea
+      destination:
+        service: static-server-tea
+        
+    # 4. Route /coffee path
+    - match:
+        http:
+          pathPrefix: /coffee
+      destination:
+        service: static-server-coffee
