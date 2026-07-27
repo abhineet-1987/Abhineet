@@ -8,7 +8,7 @@ If you deploy this way then probably you don't need to create MeshService config
 This approach creates two deployments with different names but have same service account and service.
 In http route you can directly mention the service name only. Splitter and Resolver works fine with this approach if you scale down any of the v1 or v2, the resolver works fine.
 But lets say if you have scaled down both the deployment versions v1 and v2, for this scenario you have to create MeshService and add it in http route because if any of the services 
-which is mentioned in http route configuration is not available or has no endpoints then the http route configuration cannot read hwats defined in Consul resolver configuration untill nad unless Meshservice is created for it.
+which is mentioned in http route configuration is not available or has no endpoints then the http route configuration cannot read what is defined in Consul resolver configuration untill nad unless Meshservice is created for it.
 
 
 
