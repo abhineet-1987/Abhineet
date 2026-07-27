@@ -1,0 +1,15 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: static-server-test
+spec:
+  destination:
+    name: static-server-test
+  sources:
+    # Allow traffic from the internal static-client
+    - name: static-client
+      action: allow
+    # Allow incoming external traffic from the API Gateway
+    - name: api-gateway
+      namespace: consul
+      action: allow

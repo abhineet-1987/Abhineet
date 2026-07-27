@@ -1,0 +1,16 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: static-server-test
+spec:
+  defaultSubset: v1
+  subsets:
+    v1:
+      filter: 'Service.Meta.version == v1'
+    v2:
+      filter: 'Service.Meta.version == v2'
+  failover:
+    '*':
+      targets:
+        - service: static-server-coffee
+          namespace: backup

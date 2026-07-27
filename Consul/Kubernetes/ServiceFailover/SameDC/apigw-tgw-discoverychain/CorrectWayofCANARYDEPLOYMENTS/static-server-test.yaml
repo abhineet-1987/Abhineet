@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: static-server-test
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-server-test
+spec:
+  selector:
+    app: static-server-test
+  ports:
+    - port: 1234
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: static-server-test
+  name: static-server-test-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: static-server-test
+  template:
+    metadata:
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/transparent-proxy: "true"
+        consul.hashicorp.com/service-meta-version: "v1"
+      labels:
+        app: static-server-test
+    spec:
+      serviceAccountName: static-server-test
+      containers:
+        - name: static-server-test
+          image: hashicorp/http-echo:latest
+          args:
+            - -text="hello world from static-server-test V1 default namespace"
+            - -listen=:8080
+          ports:
+            - containerPort: 8080
+              name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: static-server-test
+  name: static-server-test-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: static-server-test
+  template:
+    metadata:
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/transparent-proxy: "true"
+        consul.hashicorp.com/service-meta-version: "v2"
+      labels:
+        app: static-server-test
+    spec:
+      serviceAccountName: static-server-test
+      containers:
+        - name: static-server-test
+          image: hashicorp/http-echo:latest
+          args:
+            - -text="hello world from static-server-test V2 default namespace"
+            - -listen=:8080
+          ports:
+            - containerPort: 8080
+              name: http
