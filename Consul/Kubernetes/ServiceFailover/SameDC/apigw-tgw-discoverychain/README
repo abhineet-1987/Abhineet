@@ -73,3 +73,5 @@ kubectl apply -f service-intentions.yaml
 Validate again
 ###############################
 
+Refer contents of folder CorrectWayofCANARYDEPLOYMENTS in order to see how to set canary deployment strategy along with splitter, resolver configuration.
+
