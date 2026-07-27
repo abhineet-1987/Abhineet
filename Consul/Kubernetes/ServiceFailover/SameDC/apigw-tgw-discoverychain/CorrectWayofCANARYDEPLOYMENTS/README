@@ -1,0 +1,9 @@
+static-server-test.yaml
+resolver.yaml
+splitter.yaml
+http-route.yaml
+intention.yaml
+
+If you deploy this way then probably you don't need to create MeshService configuration entry for static-server-test app and define it in http route. 
+In http route you can directly mention the service name only. Splitter and Resolver works fine with this approach if you scale any of the v1 or v2 or both deployments 
+This approach creates two deployments with different names but have same service account and service.
