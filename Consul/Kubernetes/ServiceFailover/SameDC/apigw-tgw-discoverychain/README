@@ -25,6 +25,7 @@ Service router routing logic is for service mesh services only i.e for East - We
 While routing logic defined in http route is for North - South traffic.
 If you need to apply Consul service splitter and resolver logic to the service mesh services defined in http routes, you NEED TO CREATE Meshservice for them and define in http route config.
 You cannot access non-mesh services through api gateway, to use them you have to use terminating gateway.
+I have not used ACLs here.
 
 Deployment steps:-
 kind create cluster --config=kind.yaml
