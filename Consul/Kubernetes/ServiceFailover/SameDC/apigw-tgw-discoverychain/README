@@ -55,3 +55,21 @@ kubectl apply -f terminating-gw.yaml
 kubectl create ns consul
 kubectl apply -f api-gw.yaml
 kubectl apply -f http-route.yaml
+
+
+####################################### WITH ACLS ################ 
+Steps:
+Add below block to values.yaml :-
+
+acls:
+    manageSystemACLs: true
+
+and perform helm upgrade: 
+helm upgrade consul hashicorp/consul --values=values.yaml --version=1.8.15 --debug
+
+Apply service intentions:-
+kubectl apply -f service-intentions.yaml
+
+Validate again
+###############################
+
