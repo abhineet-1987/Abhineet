@@ -36,5 +36,7 @@ Validation:-
 SSH into the consul server pods "kubectl exec -it consul-server-0 -- sh" and execute :-
 consul peering list
 curl -k https://127.0.0.1:8501/v1/peering/cluster-01 | jq       (execute from cluster 2)
+export CONSUL_HTTP_TOKEN=xxxxxxxxx
+curl -k -H "X-Consul-Token: $CONSUL_HTTP_TOKEN" https://127.0.0.1:8501/v1/peering/cluster-01 | jq (if ACL enabled, execute from cluster 2)
 curl -k https://127.0.0.1:8501/v1/peering/cluster-02 | jq       (execute from cluster 1)     # You'll see the peering state as ACTIVE,  "State": "ACTIVE"
 
