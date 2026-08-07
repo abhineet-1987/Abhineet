@@ -1,1 +1,213 @@
- 
+References:-
+https://github.com/abhineet-1987/Abhineet/tree/main/Consul/Kubernetes/Admin-Partitions
+https://github.com/abhineet-1987/Abhineet/tree/main/Consul/Peering/Kubernetes/control-plane-peering
+
+SETUP:-
+I have deployed 4 kind clusters. 
+Cluster1 Consul control plane DC1
+Cluster2 Consul data plane with admin partition apdc1 DC1
+Cluster3 Consul control plane DC2
+Cluster4 Consul data plane with admin partition apdc2 DC2.
+Peering is set between :-
+C1 and C3 (Control Plane peering between default partitions) C1 = dialler, C3 = acceptor
+C2 and C4 (Dataplane peering between admin partitions apdc1 and apdc2) C2 = dialler, C4 = acceptor
+C1 and C4 (Peering between default partition in C1 and admin partition apdc2 in C4) C1 = dialler, C4 = acceptor
+C2 and C3 (Peering between admin partition apdc1 in C2 and default partition in C3) C2 = dialler, C3 = acceptor
+
+
+
+# Create 4 kind clusters
+./updated_script.sh
+
+
+export HELM_RELEASE_SERVER1=server1
+export HELM_RELEASE_CLIENT1=client1
+export HELM_RELEASE_SERVER2=server2
+export HELM_RELEASE_CLIENT2=client2
+
+# Setup cluster1 and cluster2. cluster1 -> dc1 control-lane, cluster2 -> dc1 admin partition dataplane
+export SERVER_CONTEXT=kind-cluster1
+export CLIENT_CONTEXT=kind-cluster2
+
+kubectl create --context ${SERVER_CONTEXT} namespace consul
+kubectl create secret --context ${SERVER_CONTEXT} --namespace consul generic license --from-file=key=license.hclic
+
+kubectl create --context ${CLIENT_CONTEXT} namespace consul
+kubectl create secret --context ${CLIENT_CONTEXT} --namespace consul generic license --from-file=key=license.hclic
+
+kubectl config use-context ${SERVER_CONTEXT}
+
+# Install Consul on cluster1 i.e dc1 control-plane
+helm install ${HELM_RELEASE_SERVER1} hashicorp/consul --create-namespace --namespace consul --values server1-values.yaml --version=2.0.1 --debug
+
+# Get the EXTERNAL-IP assigned to service consul-expose-servers (kubectl get svc -n consul) so that it can be added to the client configuration (externalServers.hosts) in client1-values.yaml
+#10.89.0.201 ext
+#Get the Kubernetes authentication method URL for the non-default partition cluster running your workloads:
+#Note: In my case I have used https://172.30.0.3:6443. "172.30.0.3" is the cluster2 control plane node ip address that I've got from "kubectl get node -o wide"
+
+# Copy the server certificate to the non-default partition cluster running your workloads.
+kubectl get secret consul-ca-cert --context ${SERVER_CONTEXT} -n consul --output yaml | kubectl apply --namespace consul --context ${CLIENT_CONTEXT} --filename -
+
+# Copy the server key to the non-default partition cluster running your workloads:
+kubectl get secret consul-ca-key --context ${SERVER_CONTEXT} -n consul --output yaml | kubectl apply --namespace consul --context ${CLIENT_CONTEXT} --filename -
+
+# If ACLs were enabled in the server configuration values file, copy the token to the non-default partition cluster running your workloads:
+kubectl get secret consul-partitions-acl-token --context ${SERVER_CONTEXT} -n consul --output yaml | kubectl apply --namespace consul --context ${CLIENT_CONTEXT} --filename -
+
+# Deploy client1-values.yaml on cluster2
+kubectl config use-context ${CLIENT_CONTEXT}
+
+
+# Make sure you've updated hostname and k8auth url with correct ips in client2-values.yaml
+# Install Consul on cluster2 i.e dc1 admin partition dataplane
+helm install ${HELM_RELEASE_CLIENT1} hashicorp/consul --create-namespace --namespace consul --values client1-values.yaml --version=2.0.1 --debug
+
+
+############ # Setup cluster3 and cluster4. cluster3 -> dc2 control-plane, cluster4 -> dc2 admin partition dataplane
+export SERVER_CONTEXT=kind-cluster3
+export CLIENT_CONTEXT=kind-cluster4
+
+
+kubectl create --context ${SERVER_CONTEXT} namespace consul
+kubectl create secret --context ${SERVER_CONTEXT} --namespace consul generic license --from-file=key=license.hclic
+
+kubectl create --context ${CLIENT_CONTEXT} namespace consul
+kubectl create secret --context ${CLIENT_CONTEXT} --namespace consul generic license --from-file=key=license.hclic
+
+kubectl config use-context ${SERVER_CONTEXT}
+
+# Install Consul on cluster3 i.e dc2 control-plane
+helm install ${HELM_RELEASE_SERVER2} hashicorp/consul --create-namespace --namespace consul --values server2-values.yaml --version=2.0.1 --debug
+
+# Get the EXTERNAL-IP assigned to service consul-expose-servers (kubectl get svc -n consul) so that it can be added to the client configuration (externalServers.hosts) in client1-values.yaml
+#10.89.0.212 ext
+#Get the Kubernetes authentication method URL for the non-default partition cluster running your workloads:
+#Note: In my case I have used https://10.89.0.5:6443. "10.89.0.5" is the cluster4 control plane node ip address that I've got from "kubectl get node -o wide"
+
+# Copy the server certificate to the non-default partition cluster running your workloads.
+kubectl get secret consul-ca-cert --context ${SERVER_CONTEXT} -n consul --output yaml | kubectl apply --namespace consul --context ${CLIENT_CONTEXT} --filename -
+
+# Copy the server key to the non-default partition cluster running your workloads:
+kubectl get secret consul-ca-key --context ${SERVER_CONTEXT} -n consul --output yaml | kubectl apply --namespace consul --context ${CLIENT_CONTEXT} --filename -
+
+# If ACLs were enabled in the server configuration values file, copy the token to the non-default partition cluster running your workloads:
+kubectl get secret consul-partitions-acl-token --context ${SERVER_CONTEXT} -n consul --output yaml | kubectl apply --namespace consul --context ${CLIENT_CONTEXT} --filename -
+
+# Deploy client2-values.yaml on cluster4
+kubectl config use-context ${CLIENT_CONTEXT}
+
+# Make sure you've updated hostname and k8auth url with correct ips in client2-values.yaml
+# Install Consul on cluster2 i.e dc1 admin partition dataplane
+helm install ${HELM_RELEASE_CLIENT2} hashicorp/consul --create-namespace --namespace consul --values client2-values.yaml --version=2.0.1 --debug
+
+
+
+############################################ CONTROL PLANE PEERING ########################################################################
+kubectl config use-context kind-cluster1
+cd CONTROLPLANE_PEERING
+
+# On DC1 Control plane Consul server
+kubectl apply -f mesh.yaml
+kubectl apply -f proxy-defaults.yaml
+kubectl apply -f acceptor.yaml
+kubectl get secret peering-token --output yaml > peering-token.yaml
+
+
+# On DC2 Control plane Consul server
+kubectl config use-context kind-cluster3
+kubectl apply -f mesh.yaml
+kubectl apply -f proxy-defaults.yaml
+kubectl apply -f peering-token.yaml
+kubectl apply -f dialer.yaml
+
+############################################ DATA PLANE PEERING ########################################################################
+
+# On DC1 Consul Data plane cluster
+kubectl config use-context kind-cluster2
+cd ../DATAPLANE_PEERING
+
+kubectl apply -f proxy-defaults.yaml
+kubectl apply -f acceptor.yaml
+kubectl get secret peering-token --output yaml > peering-token.yaml
+
+
+# On DC2 Consul Data plane cluster
+kubectl config use-context kind-cluster4
+
+kubectl apply -f proxy-defaults.yaml
+kubectl apply -f peering-token.yaml
+kubectl apply -f dialer.yaml 
+
+########################################## Peering between default partition in C1 and admin partition apdc2 in C4 #######################
+# Refer folder DPDC1-CPDC2-PEERING
+On C1
+kubectl apply -f acceptor.yaml
+kubectl get secret peering-token --output yaml > peering-token.yaml
+
+On C4
+kubectl apply -f peering-token.yaml
+kubectl apply -f dialer.yaml 
+
+########################################## Peering between admin partition apdc1 in C2 and default partition in C3 #######################
+# Refer folder APDC1-DPDC2-PEERING
+On C2
+kubectl apply -f acceptor.yaml
+kubectl get secret peering-token --output yaml > peering-token.yaml
+
+On C3
+kubectl apply -f peering-token.yaml
+kubectl apply -f dialer.yaml 
+
+############################################ Deploy applications ######################################################
+Refer folder APP
+# To create static-server apps across clusters
+./generate-ss.sh
+
+# To create static-client apps across clusters
+./generate-sc.sh
+
+# To create exported services config entry
+k apply -f exported-DP-C1.yaml
+k apply -f exported-AP-C2.yaml
+k apply -f exported-DP-C3.yaml
+k apply -f exported-AP-C4.yaml
+
+# Create service Intentions
+k apply -f SI-C1.yaml
+k apply -f SI-C2.yaml
+k apply -f SI-C3.yaml
+k apply -f SI-C4.yaml
+
+################################ API GW, HTTP ROUTES, SEVICE SPLITTER, ROUTER, RESOLVER SETUP ############################################
+Deploy all files using k apply -f <file-name.yaml>
+Note: In SPLITTER folder httproute is master one. Use that as it covers all scenarios.
+
+############################## VALIDATION ###################
+# From static-client
+curl static-server-dpdns-dc1.virtual.consul
+curl static-server-dpcns-dc1.virtual.nsdp-dc1.ns.consul
+curl static-server-apdns-dc1.virtual.default.ns.cluster-04.peer.consul
+curl static-server-dpdns-dc2.virtual.default.ns.cluster-03.peer.consul
+curl static-server-dpcns-dc2.virtual.nsdp-dc2.ns.cluster-03.peer.consul
+curl static-server-apcns-dc2.virtual.nsap-dc2.ns.cluster-04.peer.consul
+
+# To validate working of service router
+curl static-server-apdns-dc1.virtual.consul
+curl static-server-apdns-dc1.virtual.consul/consul
+curl static-server-apdns-dc1.virtual.consul/apcns-dc1
+
+# From api gw (Please note to change the node port to 32129 as opened for kind cluster)
+curl localhost:32129
+curl localhost:32129/split (run few runs to see the splitting effect between services)
+curl localhost:32129/apdns-dc1
+
+# To test service failover
+k scale deploy -n nsap-dc1 static-server-apcns-dc1 --replicas=0
+curl localhost:32129/apcns-dc1
+
+
+
+
+
+
+
