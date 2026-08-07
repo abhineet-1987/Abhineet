@@ -1,0 +1,10 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: PeeringAcceptor
+metadata:
+  name: cluster-03 ## The name of the peer you want to connect to
+spec:
+  peer:
+    secret:
+      name: "peering-token-ap-dp"
+      key: "data"
+      backend: "kubernetes"
