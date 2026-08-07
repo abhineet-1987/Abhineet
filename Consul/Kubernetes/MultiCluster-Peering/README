@@ -139,7 +139,7 @@ kubectl apply -f peering-token.yaml
 kubectl apply -f dialer.yaml 
 
 
-########## NOTE : TILL HERE WE HAVE A SCRIPT MASTER.sh , AFTER THIS WE CAN CONFIGURE MANUALLY FROM BELOW STEPS #######################
+########## NOTE : TILL HERE WE HAVE A SCRIPT master3.sh , AFTER THIS WE CAN CONFIGURE MANUALLY FROM BELOW STEPS #######################
 
 ########################################## Peering between default partition in C1 and admin partition apdc2 in C4 #######################
 # Refer folder DPDC1-CPDC2-PEERING
