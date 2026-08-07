@@ -3,6 +3,10 @@ https://github.com/abhineet-1987/Abhineet/tree/main/Consul/Kubernetes/Admin-Part
 https://github.com/abhineet-1987/Abhineet/tree/main/Consul/Peering/Kubernetes/control-plane-peering
 https://github.com/abhineet-1987/Abhineet/blob/main/Consul/Kubernetes/KIND/create-kind-clusters-podman.sh
 
+LIMITATION: THE ONLY PROBLEM THAT I'VE OBSERVED HERE IS THAT IN DC1 I.E WITHIN SAME DATACENTRE I WAS UNABLE TO EXPORT THE SERVICES FROM 
+CUSTOM ADMIN PARTITION APDC1 TO DEFAULT ADMIN PARTITION IN DC1, EVEN THOUGH I HAD CREATED EXPORTED SERVICES CONFIG ENTRY AND THEY WERE IN SYNC STATE BUT NOT GETTING EXPORTED.
+NOT SURE IF THIS IS BUG OR EXPECTED BEHAVIOUR. SEARCH IS ON ..........
+
 SETUP:-
 I have deployed 4 kind clusters. 
 Cluster1 Consul control plane DC1
