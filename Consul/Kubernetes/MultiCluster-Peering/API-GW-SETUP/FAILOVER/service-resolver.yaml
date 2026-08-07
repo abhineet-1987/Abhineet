@@ -1,0 +1,13 @@
+# Apply in C2: kind-cluster2
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: static-server-apcns-dc1
+  namespace: nsap-dc1
+spec:
+  failover:
+    '*':
+      targets:
+        - peer: cluster-04
+          service: static-server-apcns-dc2
+          namespace: nsap-dc2

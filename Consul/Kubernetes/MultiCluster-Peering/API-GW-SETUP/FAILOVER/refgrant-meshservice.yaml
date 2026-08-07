@@ -1,0 +1,14 @@
+# Apply in C2: kind-cluster2
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: meshservice-grant-nsap-dc1
+  namespace: nsap-dc1
+spec:
+  from:
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    namespace: consul
+  to:
+  - group: consul.hashicorp.com
+    kind: MeshService

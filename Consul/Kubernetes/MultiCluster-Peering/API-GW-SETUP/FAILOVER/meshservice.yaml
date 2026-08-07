@@ -1,0 +1,7 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: MeshService
+metadata:
+  name: static-server-apcns-dc1
+  namespace: nsap-dc1
+spec:
+  name: static-server-apcns-dc1
