@@ -1,0 +1,28 @@
+# Apply in C2: kind-cluster2
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: api-gw-grant-default
+  namespace: default
+spec:
+  from:
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    namespace: consul
+  to:
+  - group: ""
+    kind: Service
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: api-gw-grant-nsap
+  namespace: nsap-dc1
+spec:
+  from:
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    namespace: consul
+  to:
+  - group: ""
+    kind: Service

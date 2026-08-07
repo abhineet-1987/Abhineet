@@ -1,0 +1,36 @@
+# Apply in C2: kind-cluster2
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: MeshService
+metadata:
+  name: mesh-dpdns-dc2
+  namespace: consul
+spec:
+  name: static-server-dpdns-dc2
+  peer: cluster-03
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: MeshService
+metadata:
+  name: mesh-dpcns-dc2
+  namespace: consul
+spec:
+  name: static-server-dpcns-dc2
+  peer: cluster-03
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: MeshService
+metadata:
+  name: mesh-apdns-dc2
+  namespace: consul
+spec:
+  name: static-server-apdns-dc2
+  peer: cluster-04
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: MeshService
+metadata:
+  name: mesh-apcns-dc2
+  namespace: consul
+spec:
+  name: static-server-apcns-dc2
+  peer: cluster-04

@@ -1,0 +1,44 @@
+# Apply in C2: kind-cluster2 (consul namespace)
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: static-server-dpdns-dc2
+  namespace: consul
+spec:
+  redirect:
+    peer: cluster-03
+    service: static-server-dpdns-dc2
+    namespace: default
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: static-server-dpcns-dc2
+  namespace: consul
+spec:
+  redirect:
+    peer: cluster-03
+    service: static-server-dpcns-dc2
+    namespace: nsdp-dc2
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: static-server-apdns-dc2
+  namespace: consul
+spec:
+  redirect:
+    peer: cluster-04
+    service: static-server-apdns-dc2
+    namespace: default
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: static-server-apcns-dc2
+  namespace: consul
+spec:
+  redirect:
+    peer: cluster-04
+    service: static-server-apcns-dc2
+    namespace: nsap-dc2
