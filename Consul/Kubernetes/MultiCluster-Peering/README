@@ -1,6 +1,7 @@
 References:-
 https://github.com/abhineet-1987/Abhineet/tree/main/Consul/Kubernetes/Admin-Partitions
 https://github.com/abhineet-1987/Abhineet/tree/main/Consul/Peering/Kubernetes/control-plane-peering
+https://github.com/abhineet-1987/Abhineet/blob/main/Consul/Kubernetes/KIND/create-kind-clusters-podman.sh
 
 SETUP:-
 I have deployed 4 kind clusters. 
