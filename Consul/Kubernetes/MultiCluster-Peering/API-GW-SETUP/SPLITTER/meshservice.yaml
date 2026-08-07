@@ -1,0 +1,7 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: MeshService
+metadata:
+  name: split-service
+  namespace: consul
+spec:
+  name: split-service

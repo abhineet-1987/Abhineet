@@ -1,0 +1,13 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceSplitter
+metadata:
+  name: split-service
+  namespace: consul
+spec:
+  splits:
+    - weight: 10
+      service: static-server-apdns-dc1
+      namespace: default
+    - weight: 90
+      service: static-server-apcns-dc1
+      namespace: nsap-dc1

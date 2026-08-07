@@ -1,0 +1,93 @@
+# Apply in C2: kind-cluster2
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: static-server-routes
+  namespace: consul
+spec:
+  parentRefs:
+  - name: api-gateway
+    namespace: consul
+  rules:
+  # --- Local C2 Routes ---
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /split
+    backendRefs:
+    - group: consul.hashicorp.com
+      kind: MeshService
+      name: split-service
+      namespace: consul
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /apdns-dc1
+    backendRefs:
+    - name: static-server-apdns-dc1
+      namespace: default
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /apcns-dc1
+    backendRefs:
+    - group: consul.hashicorp.com
+      kind: MeshService
+      name: static-server-apcns-dc1
+      namespace: nsap-dc1
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /apcons-dc1
+    backendRefs:
+    - name: static-server-apcons-dc1
+      namespace: consul
+
+  # --- Remote C3 Routes via MeshService ---
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /dpdns-dc2
+    backendRefs:
+    - group: consul.hashicorp.com
+      kind: MeshService
+      name: mesh-dpdns-dc2
+      namespace: consul
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /dpcns-dc2
+    backendRefs:
+    - group: consul.hashicorp.com
+      kind: MeshService
+      name: mesh-dpcns-dc2
+      namespace: consul
+
+  # --- Remote C4 Routes via MeshService ---
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /apdns-dc2
+    backendRefs:
+    - group: consul.hashicorp.com
+      kind: MeshService
+      name: mesh-apdns-dc2
+      namespace: consul
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /apcns-dc2
+    backendRefs:
+    - group: consul.hashicorp.com
+      kind: MeshService
+      name: mesh-apcns-dc2
+      namespace: consul
+      
+  # --- Default Catch-all Route ---
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: static-server-apcons-dc1
+      namespace: consul
