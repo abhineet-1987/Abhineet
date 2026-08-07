@@ -1,0 +1,33 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: allow-static-server-dpdns-dc1
+  namespace: default
+spec:
+  destination:
+    name: static-server-dpdns-dc1
+  sources:
+    - name: '*'
+      namespace: '*'
+      action: allow
+    - name: '*'
+      namespace: '*'
+      partition: apdc1
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: allow-static-server-dpcns-dc1
+  namespace: nsdp-dc1
+spec:
+  destination:
+    name: static-server-dpcns-dc1
+  sources:
+    - name: '*'
+      namespace: '*'
+      action: allow
+    - name: '*'
+      namespace: '*'
+      partition: apdc1
+      action: allow

@@ -1,0 +1,10 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ExportedServices
+metadata:
+  name: apdc1
+spec:
+  services:
+    - name: static-server-apdns-dc1
+      namespace: default
+      consumers:
+        - partition: default

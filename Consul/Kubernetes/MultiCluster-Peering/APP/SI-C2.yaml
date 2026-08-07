@@ -1,0 +1,50 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: allow-static-server-apdns-dc1
+  namespace: default
+spec:
+  destination:
+    name: static-server-apdns-dc1
+  sources:
+    - name: '*'
+      namespace: '*'
+      action: allow
+    - name: '*'
+      namespace: '*'
+      partition: default
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: allow-static-server-apcns-dc1
+  namespace: nsap-dc1
+spec:
+  destination:
+    name: static-server-apcns-dc1
+  sources:
+    - name: '*'
+      namespace: '*'
+      action: allow
+    - name: '*'
+      namespace: '*'
+      partition: default
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: allow-static-server-apcons-dc1
+  namespace: consul
+spec:
+  destination:
+    name: static-server-apcons-dc1
+  sources:
+    - name: '*'
+      namespace: '*'
+      action: allow
+    - name: '*'
+      namespace: '*'
+      partition: default
+      action: allow

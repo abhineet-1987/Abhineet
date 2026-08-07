@@ -1,0 +1,11 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ExportedServices
+metadata:
+  name: apdc2
+spec:
+  services:
+    - name: "*"
+      namespace: "*"
+      consumers:
+        - peer: cluster-02
+        - peer: cluster-01
