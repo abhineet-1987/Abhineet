@@ -1,0 +1,22 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceRouter
+metadata:
+  name: static-server-apdns-dc1
+  namespace: default
+spec:
+  routes:
+    # 3. Route /consul path
+    - match:
+        http:
+          pathPrefix: /consul
+      destination:
+        service: static-server-apcons-dc1
+        namespace: consul
+        
+    # 4. Route /apcns-dc1 path
+    - match:
+        http:
+          pathPrefix: /apcns-dc1
+      destination:
+        service: static-server-apcns-dc1
+        namespace: nsap-dc1
