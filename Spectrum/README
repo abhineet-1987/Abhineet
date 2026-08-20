@@ -1,1 +1,8 @@
- 
+Terms:-
+https://www.ibm.com/docs/en/spectrum-lsf/10.1.0?topic=overview-lsf-introduction
+LSF, daemons, daemon roles, logs, and job lifecycle
+LSF architecture & daemons: LIM, RES, mbatchd, mbschd, sbatchd; log anatomy.
+Environment & directories: lsf.conf, LSF_ENVDIR, LSB_CONFDIR, LSF_LOGDIR.
+Start/stop/reconfigure flows: lsadmin, badmin, lsfstartup; ckconfig, reconfig, mbdrestart.
+Raising debug log levels; scheduler profiling basics.
+Job lifecycle, states, event/accounting files (lsb.events, lsb.acct).
