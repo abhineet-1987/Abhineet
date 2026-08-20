@@ -1,5 +1,75 @@
-Terms:-
+References:-
 https://www.ibm.com/docs/en/spectrum-lsf/10.1.0?topic=overview-lsf-introduction
+https://www.ibm.com/docs/en/spectrum-lsf/10.1.0?topic=lsf-daemons
+https://www.ibm.com/docs/en/spectrum-lsf/10.1.0?topic=lsf-job-lifecycle
+https://www.ibm.com/docs/en/spectrum-lsf/10.1.0?topic=reference-configuration-files
+https://www.ibm.com/docs/en/spectrum-lsf/10.1.0?topic=files-about-lsf-log
+
+Terms:-
+Cluster, hosts, job, job slot, queue, resources
+Daemons:-
+mbatchd (mbd)
+lsfproxyd
+mbschd
+sbatchd
+res
+lim
+Parent lim
+elim
+pim
+
++------------------------+
+                             |   Management LIM       | (Master Load Information Manager)
+                             | (Elected Head Daemon)  |
+                             +-----------+------------+
+                                         |
+                                         |  Provides host metrics & load status
+                                         v
++-----------------------+     +------------------------+     +------------------------+
+|      lsfproxyd        |<--->|       mbatchd          |<--->|        mbschd          |
+| (Rate Limiter Gate)   |     | (Master Batch Daemon)  |     | (Master Scheduler)     |
++-----------------------+     +-----------+------------+     +------------------------+
+                                          |
+                                          |  Dispatches Job
+                                          v
+                              ( Execution Host Server )
+
+[ USER COMMAND ]
+  (e.g., bsub, bjobs)
+       |
+       v
+[ Rate Limiting Gate ] ---->  lsfproxyd  
+                                |
+                                | (Filters/Protects mbatchd from high load)
+                                v
+[ Management Host ] --------> mbatchd (Master Batch Daemon)
+                                |
+                                |--- 1. Asks for load status ---> Master LIM
+                                |                                   ^
+                                |                                   | (Monitors dynamic metrics)
+                                |--- 2. Requests job schedule ---> mbschd
+                                |                                   |
+                                |<-- 3. Returns scheduled host <----+
+                                |
+                                |--- 4. Dispatches job to execution host
+                                v
+[ Execution Host ] ---------> sbatchd (Server Batch Daemon)
+                                |
+                                |---> Forks: Child sbatchd
+                                                |
+                                                v
+                                             res (Remote Execution Server)
+                                                |
+                                                +---> Spawns: User Job / Application
+                                                |
+                                                v
+                                             PIM (Process Info Manager)
+                                                |
+                                                +---> Monitors CPU/RAM & reports back to sbatchd
+
+
+
+
 LSF, daemons, daemon roles, logs, and job lifecycle
 LSF architecture & daemons: LIM, RES, mbatchd, mbschd, sbatchd; log anatomy.
 Environment & directories: lsf.conf, LSF_ENVDIR, LSB_CONFDIR, LSF_LOGDIR.
