@@ -78,3 +78,29 @@ Environment & directories: lsf.conf, LSF_ENVDIR, LSB_CONFDIR, LSF_LOGDIR.
 Start/stop/reconfigure flows: lsadmin, badmin, lsfstartup; ckconfig, reconfig, mbdrestart.
 Raising debug log levels; scheduler profiling basics.
 Job lifecycle, states, event/accounting files (lsb.events, lsb.acct).
+
+----------------------------------------
+Two layers, two directories:
+
+Base layer ($LSF_CONFDIR) — describes the cluster: hosts, resources, global paths → read by lim / base daemons → reloaded with lsadmin reconfig
+Batch layer ($LSB_CONFDIR/cluster/configdir) — describes workload rules: queues, limits, user shares → read by mbatchd/mbschd → reloaded with badmin reconfig
+The 4 files you'll touch most often:
+
+lsf.conf — the master anchor; wrong path = nothing starts
+lsf.shared — declare custom resources (GPU, licenses) here before using them anywhere else
+lsb.queues — create/modify queues, set priorities and limits
+lsb.params — cluster-wide tuning (default queue, scheduling cycle, max jobs)
+The golden rule: Always run ckconfig -v before reconfig — a syntax error in a live reload can destabilize daemons.
+
+
+Two families of logs — different jobs:
+
+Daemon error logs ($LSF_LOGDIR) — one file per daemon per host, written in real time. Your troubleshooting source.
+Batch event/accounting logs ($LSB_SHAREDIR) — lsb.events (every job state change) and lsb.acct (finished-job resource usage). Your job history source.
+Reading a log line: Every line is DATE TIME PID SEVERITY VERSION FUNCTION: message. The severity number (3=ERR, 4=WARN, 6=INFO, 7=DEBUG) is your fastest triage filter — grep for " 3 " to surface only errors instantly.
+
+Log level rule of thumb: Default is LOG_WARNING. Raise to debug temporarily with badmin mbddebug -c all -l 2 — always revert after or logs will bloat fast.
+
+The 5-step log triage chain: lsid → bhosts/bqueues → bjobs -p → mbatchd.log → sbatchd.log — follow it in order and you'll resolve most tickets before even opening res.log or lim.log.
+
+
