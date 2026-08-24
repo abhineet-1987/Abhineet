@@ -103,4 +103,16 @@ Log level rule of thumb: Default is LOG_WARNING. Raise to debug temporarily with
 
 The 5-step log triage chain: lsid → bhosts/bqueues → bjobs -p → mbatchd.log → sbatchd.log — follow it in order and you'll resolve most tickets before even opening res.log or lim.log.
 
+Two tools, two layers:
 
+lsadmin → controls lim + res (base layer)
+badmin → controls mbatchd + sbatchd (batch layer)
+The 3 reconfigure commands — know the difference:
+
+Command	                Impact	                                                            When
+badmin reconfig	    Hot-reload, zero disruption	                                            Most config changes (queues, hosts, users)
+badmin mbdrestart	  Full mbatchd restart, slow on large clusters	                          Only for lsb.params changes
+lsadmin reconfig	  Restarts LIM everywhere, brief pause	                                  Base config changes (lsf.shared, lsf.cluster.*)
+The golden workflow: Edit → ckconfig -v → fix if errors → apply. Never skip the ckconfig step — it's the #1 thing that prevents daemon instability tickets.
+
+bctrld is the modern replacement for the old lsadmin lim* / badmin h* subcommands. On newer fix packs, prefer it
