@@ -1,0 +1,574 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LSF Bootcamp — Week 1 Study Guide</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #1f2328;
+    background: #ffffff;
+    padding: 32px 16px 48px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+
+  /* Header */
+  .header { border-bottom: 2px solid #e5e7eb; padding-bottom: 16px; margin-bottom: 28px; }
+  .week-badge {
+    display: inline-block;
+    background: #3b82d4;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  h1 { font-size: 22px; font-weight: 700; color: #1f2328; }
+  .subtitle { color: #57606a; font-size: 13px; margin-top: 4px; }
+
+  /* Goal box */
+  .goal-box {
+    background: #f7f8fa;
+    border-left: 4px solid #3b82d4;
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 32px;
+    font-size: 13.5px;
+  }
+  .goal-box strong { color: #3b82d4; }
+
+  /* Section headings */
+  h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2328;
+    margin: 32px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  h2 .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    background: #3b82d4;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  h3 { font-size: 13.5px; font-weight: 700; margin: 18px 0 6px; color: #1f2328; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th {
+    background: #f7f8fa;
+    font-weight: 600;
+    text-align: left;
+    padding: 7px 10px;
+    border: 1px solid #e5e7eb;
+    color: #1f2328;
+  }
+  td { padding: 7px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+
+  /* Code / mono */
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    background: #f0f2f5;
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #24292f;
+  }
+  .codeblock {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #24292f;
+    margin: 10px 0;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* Callout */
+  .callout {
+    background: #fff8e1;
+    border: 1px solid #f0c040;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin: 10px 0;
+  }
+  .callout-blue {
+    background: #f0f6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin: 10px 0;
+  }
+
+  /* State pills */
+  .pill {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    margin: 1px 2px;
+  }
+  .pill-pend { background: #fef3c7; color: #92400e; }
+  .pill-run  { background: #d1fae5; color: #065f46; }
+  .pill-done { background: #dbeafe; color: #1e40af; }
+  .pill-exit { background: #fee2e2; color: #991b1b; }
+  .pill-susp { background: #ede9fe; color: #5b21b6; }
+
+  /* Flow diagram using pure HTML/CSS */
+  .flow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 16px 0;
+  }
+  .flow-box {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1f2328;
+    white-space: nowrap;
+  }
+  .flow-arrow { color: #57606a; font-size: 16px; font-weight: 300; }
+  .flow-box.mgr { background: #dbeafe; border-color: #93c5fd; color: #1e3a8a; }
+  .flow-box.exec { background: #d1fae5; border-color: #6ee7b7; color: #065f46; }
+  .flow-box.all  { background: #ede9fe; border-color: #c4b5fd; color: #4c1d95; }
+
+  /* Checklist */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li { padding: 4px 0 4px 22px; position: relative; font-size: 13px; }
+  .checklist li::before { content: "✓"; position: absolute; left: 0; color: #3b82d4; font-weight: 700; }
+
+  /* Quiz box */
+  .quiz-box {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-top: 10px;
+  }
+  .quiz-box ol { padding-left: 18px; }
+  .quiz-box li { font-size: 13px; margin: 5px 0; }
+
+  /* Footer */
+  .footer {
+    margin-top: 48px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    font-size: 12px;
+    color: #57606a;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  
+  <div class="header">
+    <div class="week-badge">Week 1 of 6</div>
+    <h1>LSF Bootcamp — Foundations, Installation &amp; Cluster Anatomy</h1>
+    <div class="subtitle">IBM Spectrum LSF 10.1.0  ·  SME Bootcamp Study Guide</div>
+  </div>
+
+  <div class="goal-box">
+    <strong>Week Goal:</strong> Build muscle memory for daemon roles, logs, and job lifecycle — so you can navigate any LSF cluster confidently from day one.
+  </div>
+
+
+  
+  <h2><span class="num">1</span> LSF Architecture in Plain English</h2>
+
+  <p style="font-size:13.5px">Think of LSF as a <strong>job post office</strong>. Users drop off jobs (letters). A central manager sorts and dispatches them to the right workers. Workers run the jobs and report back.</p>
+
+  <h3>The Big Picture</h3>
+  <div class="flow">
+    <div class="flow-box" style="background:#fef9c3;border-color:#fde68a;color:#78350f">User<br /><small>bsub</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box mgr">Management Host<br /><small>mbatchd + mbschd</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box exec">Exec Host 1<br /><small>sbatchd + res</small></div>
+    <div class="flow-arrow"> </div>
+    <div class="flow-box exec">Exec Host 2<br /><small>sbatchd + res</small></div>
+    <div class="flow-arrow"> </div>
+    <div class="flow-box exec">Exec Host N<br /><small>sbatchd + res</small></div>
+  </div>
+  <div class="flow">
+    <div class="flow-box all" style="width:100%;text-align:center">Every Host runs:  <strong>lim</strong> (health reporter)  +  <strong>pim</strong> (process watcher)  +  <strong>res</strong> (job launcher)</div>
+  </div>
+
+
+  
+  <h2><span class="num">2</span> The 6 Daemons — Who Does What</h2>
+
+  <table>
+    <tr>
+      <th>Daemon</th>
+      <th>Full Name</th>
+      <th>Runs On</th>
+      <th>Simple Role</th>
+    </tr>
+    <tr>
+      <td><code>mbatchd</code></td>
+      <td>Management Batch Daemon</td>
+      <td>Manager only</td>
+      <td>The <strong>job registry</strong>. Accepts all job submissions, holds them in queues, dispatches them to workers. Single source of truth for all job state.</td>
+    </tr>
+    <tr>
+      <td><code>mbschd</code></td>
+      <td>Management Batch Scheduler Daemon</td>
+      <td>Manager only</td>
+      <td>The <strong>brain</strong>. Works alongside mbatchd to decide <em>which job runs on which host and when</em>. Makes all scheduling decisions.</td>
+    </tr>
+    <tr>
+      <td><code>sbatchd</code></td>
+      <td>Slave Batch Daemon</td>
+      <td>Every exec host</td>
+      <td>The <strong>local foreman</strong>. Receives dispatch orders from mbatchd, starts and monitors jobs on the local host, reports status back. Forks one child per job.</td>
+    </tr>
+    <tr>
+      <td><code>res</code></td>
+      <td>Remote Execution Server</td>
+      <td>Every exec host</td>
+      <td>The <strong>job launcher</strong>. Creates the execution environment (user, env vars, directories) in which each job actually runs. Called by sbatchd's child.</td>
+    </tr>
+    <tr>
+      <td><code>lim</code></td>
+      <td>Load Information Manager</td>
+      <td>Every host</td>
+      <td>The <strong>health reporter</strong>. Constantly collects CPU, memory, disk, and I/O metrics. Reports them up to mbatchd so the scheduler can pick lightly-loaded hosts.</td>
+    </tr>
+    <tr>
+      <td><code>pim</code></td>
+      <td>Process Information Manager</td>
+      <td>Every exec host</td>
+      <td>The <strong>resource cop</strong>. Tracks CPU/memory used by each running job process. Used to enforce resource limits and fair-share policy. Started and watched by lim.</td>
+    </tr>
+  </table>
+
+  <div class="callout-blue">
+    <strong>Tip — startup order to remember:</strong> When you run <code>lsfstartup</code>, you will see:<br />
+    <code>LIM started → RES started → sbatchd started</code><br />
+    On the manager, mbatchd/mbschd also start. LIM always comes up first because everyone else depends on it.
+  </div>
+
+
+  
+  <h2><span class="num">3</span> Key Environment Variables &amp; Directories</h2>
+
+  <p style="font-size:13px;margin-bottom:8px">LSF is directory-driven. If a path variable is wrong, daemons refuse to start. Know these cold.</p>
+
+  <table>
+    <tr>
+      <th>Variable</th>
+      <th>What it points to</th>
+      <th>Why it matters</th>
+    </tr>
+    <tr>
+      <td><code>LSF_ENVDIR</code></td>
+      <td><code>/etc</code> (default)</td>
+      <td>Where LSF looks for <code>lsf.conf</code>. <strong>The most critical variable.</strong> Wrong path = nothing starts.</td>
+    </tr>
+    <tr>
+      <td><code>LSF_CONFDIR</code></td>
+      <td><em>LSF_TOP</em><code>/conf</code></td>
+      <td>All LSF configuration files live here (lsf.cluster.*, lsf.shared, etc.)</td>
+    </tr>
+    <tr>
+      <td><code>LSB_CONFDIR</code></td>
+      <td><em>LSF_TOP</em><code>/conf/lsbatch</code></td>
+      <td>Batch-specific config files: <code>lsb.queues</code>, <code>lsb.hosts</code>, <code>lsb.params</code>, etc.</td>
+    </tr>
+    <tr>
+      <td><code>LSF_LOGDIR</code></td>
+      <td><em>LSF_TOP</em><code>/log</code></td>
+      <td>All daemon error logs. Must be owned by root. If missing/broken, logs fall back to <code>/tmp</code>.</td>
+    </tr>
+    <tr>
+      <td><code>LSB_SHAREDIR</code></td>
+      <td><em>LSF_TOP</em><code>/work</code></td>
+      <td>Job history files: <code>lsb.events</code> and <code>lsb.acct</code> live here.</td>
+    </tr>
+  </table>
+
+  <div class="callout">
+    <strong>Most common Day-1 mistake:</strong> Daemon fails to start and logs land in <code>/tmp</code> instead of <code>LSF_LOGDIR</code>. Always check <code>LSF_LOGDIR</code> ownership (<code>ls -ld $LSF_LOGDIR</code>) first.
+  </div>
+
+  <h3>The Master Config File: <code>lsf.conf</code></h3>
+  <p style="font-size:13px">This is <strong>the most important file in LSF</strong>. It lives in <code>$LSF_ENVDIR/lsf.conf</code> and tells every daemon where everything else is. If LSF can't find it, nothing works.</p>
+
+  <div class="codeblock"># Typical lsf.conf entries you will see
+LSF_TOP="/usr/share/lsf"
+LSF_CONFDIR="$LSF_TOP/conf"
+LSB_CONFDIR="$LSF_TOP/conf/lsbatch"
+LSF_LOGDIR="$LSF_TOP/log"
+LSB_SHAREDIR="$LSF_TOP/work"
+LSF_CLUSTER_NAME="bootcamp"</div>
+
+
+  
+  <h2><span class="num">4</span> Start / Stop / Reconfigure Commands</h2>
+
+  <p style="font-size:13px;margin-bottom:8px">Two admin tools control everything. Only LSF administrators or root can run them.</p>
+
+  <table>
+    <tr>
+      <th>Command</th>
+      <th>Controls</th>
+      <th>What it does</th>
+    </tr>
+    <tr>
+      <td><code>lsadmin</code></td>
+      <td><code>lim</code>, <code>res</code></td>
+      <td>Start/stop/restart the base LSF layer daemons</td>
+    </tr>
+    <tr>
+      <td><code>badmin</code></td>
+      <td><code>sbatchd</code>, <code>mbatchd</code></td>
+      <td>Start/stop/restart the batch layer daemons</td>
+    </tr>
+    <tr>
+      <td><code>lsfstartup</code></td>
+      <td>All daemons</td>
+      <td>Start <em>all</em> LSF daemons at once (used at system boot / initial setup)</td>
+    </tr>
+  </table>
+
+  <h3>The Config Check → Reconfigure Workflow</h3>
+  <p style="font-size:13px">Always check before you reload. Never reload with errors.</p>
+
+  <div class="codeblock"># Step 1 — Check for errors BEFORE applying changes
+lsadmin ckconfig -v       # checks lsf.conf, lsf.cluster, lsf.shared
+badmin ckconfig -v        # checks lsb.queues, lsb.hosts, lsb.params etc.
+
+# Step 2 — Apply if clean
+lsadmin reconfig          # reload LIM config (no restart needed)
+badmin reconfig           # reload batch config (no restart needed)
+badmin mbdrestart         # full mbatchd restart (reads lsb.events too — may be slow)</div>
+
+  <div class="callout-blue">
+    <strong>Remember:</strong> <code>ckconfig</code> = lint check. <code>reconfig</code> = hot-reload. <code>mbdrestart</code> = full restart. Use them in that order.
+  </div>
+
+  <h3>Raising Debug Log Levels (temporary)</h3>
+  <div class="codeblock"># Increase mbatchd verbosity for one investigation, then revert
+badmin diagnose -c all -l 2    # raise mbatchd log class detail
+# ... reproduce the issue ...
+badmin diagnose -c all -l 0    # revert to normal</div>
+
+  <h3>Scheduler Profiling</h3>
+  <div class="codeblock"># In lsf.conf, add temporarily:
+LSB_PROFILE_MBD=Y
+# Then: badmin mbdrestart
+# Profile timing lines appear in mbatchd.log — grep for "PROFILE:"
+# Remove the param and restart when done.</div>
+
+
+  
+  <h2><span class="num">5</span> Job Lifecycle — From bsub to DONE</h2>
+
+  <p style="font-size:13px;margin-bottom:10px">Every LSF job passes through states. Understanding the state transitions is how you debug 80% of support tickets.</p>
+
+  
+  <div class="flow" style="justify-content:center">
+    <div class="flow-box" style="background:#fef9c3;border-color:#fde68a;color:#78350f">bsub</div>
+    <div class="flow-arrow">→</div>
+    <span class="pill pill-pend">PEND</span>
+    <div class="flow-arrow">→</div>
+    <span class="pill pill-run">RUN</span>
+    <div class="flow-arrow">→</div>
+    <span class="pill pill-done">DONE</span>
+    <div class="flow-arrow"> or </div>
+    <span class="pill pill-exit">EXIT</span>
+  </div>
+  <div class="flow" style="justify-content:center;margin-top:4px">
+    <span style="font-size:12px;color:#57606a">Suspensions:  </span>
+    <span class="pill pill-susp">PSUSP</span>
+    <span style="font-size:12px;color:#57606a">(pending suspended)</span>
+     
+    <span class="pill pill-susp">USUSP</span>
+    <span style="font-size:12px;color:#57606a">(user suspended)</span>
+     
+    <span class="pill pill-susp">SSUSP</span>
+    <span style="font-size:12px;color:#57606a">(system suspended)</span>
+  </div>
+
+  <h3>State Meanings</h3>
+  <table>
+    <tr><th>State</th><th>Meaning</th><th>What to check</th></tr>
+    <tr><td><span class="pill pill-pend">PEND</span></td><td>Waiting in queue to be scheduled</td><td><code>bjobs -p &lt;jobid&gt;</code> shows the <em>reason</em> — no free slots, resource unavailable, queue policy, etc.</td></tr>
+    <tr><td><span class="pill pill-run">RUN</span></td><td>Dispatched and executing on a host</td><td><code>bjobs -l &lt;jobid&gt;</code> shows exec host, start time, resource usage so far</td></tr>
+    <tr><td><span class="pill pill-done">DONE</span></td><td>Finished with exit code 0</td><td>Healthy completion. Check output file.</td></tr>
+    <tr><td><span class="pill pill-exit">EXIT</span></td><td>Finished with non-zero exit code</td><td><code>bhist -l &lt;jobid&gt;</code> shows exit reason, exit code, and log evidence</td></tr>
+    <tr><td><span class="pill pill-susp">SSUSP</span></td><td>Suspended by LSF (load threshold crossed)</td><td>Host load too high. LSF auto-resumes when load drops.</td></tr>
+    <tr><td><span class="pill pill-susp">USUSP</span></td><td>Suspended by user (<code>bstop</code>)</td><td>User ran <code>bstop &lt;jobid&gt;</code>. Resume with <code>bresume &lt;jobid&gt;</code>.</td></tr>
+  </table>
+
+  <h3>The 5 Steps LSF Takes for Every Job</h3>
+  <div class="codeblock">1. SUBMIT   User runs bsub → mbatchd receives and assigns a Job ID → job state = PEND
+2. SCHEDULE mbschd evaluates queue policies, resources, fair-share → picks a host
+3. DISPATCH mbatchd sends job to target sbatchd → sbatchd forks child → res sets up env
+4. EXECUTE  Job runs under the user's identity on the exec host
+5. COMPLETE sbatchd reports exit status to mbatchd → state = DONE or EXIT
+            Event written to lsb.events, accounting written to lsb.acct</div>
+
+
+  
+  <h2><span class="num">6</span> Log Files — Where Evidence Lives</h2>
+
+  <p style="font-size:13px;margin-bottom:8px">Every daemon writes its own log. Knowing which log to look in first saves minutes on every ticket.</p>
+
+  <table>
+    <tr><th>Log File</th><th>Daemon</th><th>Host</th><th>What you'll find there</th></tr>
+    <tr><td><code>mbatchd.log.&lt;mgr&gt;</code></td><td>mbatchd</td><td>Manager</td><td>Job submissions, dispatch decisions, queue operations, errors affecting all jobs</td></tr>
+    <tr><td><code>mbschd.log.&lt;mgr&gt;</code></td><td>mbschd</td><td>Manager</td><td>Scheduling cycle details, why jobs stayed PEND, scheduler profiling output</td></tr>
+    <tr><td><code>sbatchd.log.&lt;host&gt;</code></td><td>sbatchd</td><td>Each exec host</td><td>JOB_START, JOB_EXIT, exit codes, per-host job execution events</td></tr>
+    <tr><td><code>lim.log.&lt;host&gt;</code></td><td>lim</td><td>Every host</td><td>Load index updates, LIM heartbeat, host join/leave events</td></tr>
+    <tr><td><code>res.log.&lt;host&gt;</code></td><td>res</td><td>Every exec host</td><td>Remote execution requests, connection errors, env setup</td></tr>
+    <tr><td><code>pim.log.&lt;host&gt;</code></td><td>pim</td><td>Every exec host</td><td>Process tracking, resource limit enforcement events</td></tr>
+  </table>
+
+  <h3>Event &amp; Accounting Files</h3>
+  <table>
+    <tr><th>File</th><th>Location</th><th>Purpose</th><th>Key command</th></tr>
+    <tr>
+      <td><code>lsb.events</code></td>
+      <td><code>$LSB_SHAREDIR/&lt;cluster&gt;/logdir/</code></td>
+      <td>Real-time event journal. Every job state change is appended here. Used by mbatchd on restart to reconstruct state.</td>
+      <td><code>bhist -l &lt;jobid&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>lsb.acct</code></td>
+      <td>same directory</td>
+      <td>Accounting record. Written when a job finishes. Contains resource usage, start/end time, exit status.</td>
+      <td><code>bacct -l &lt;jobid&gt;</code></td>
+    </tr>
+  </table>
+
+  <div class="callout">
+    <strong>Troubleshooting shortcut:</strong> Start with <code>mbatchd.log</code> (what happened cluster-wide?) → then <code>sbatchd.log.&lt;host&gt;</code> (what happened on the exec host?) → then <code>bhist -l &lt;jobid&gt;</code> (what does LSF's own record say?).
+  </div>
+
+
+  
+  <h2><span class="num">7</span> Essential Commands Cheat Sheet</h2>
+
+  <table>
+    <tr><th>Command</th><th>What it does</th></tr>
+    <tr><td><code>bsub -J myjob -o out.txt /bin/hostname</code></td><td>Submit a job; give it a name; write stdout to file</td></tr>
+    <tr><td><code>bjobs</code></td><td>List your running/pending jobs</td></tr>
+    <tr><td><code>bjobs -l &lt;jobid&gt;</code></td><td>Full detail on one job (exec host, resources, state)</td></tr>
+    <tr><td><code>bjobs -p &lt;jobid&gt;</code></td><td>Show why a job is PEND</td></tr>
+    <tr><td><code>bhist -l &lt;jobid&gt;</code></td><td>Full history: every state change with timestamps</td></tr>
+    <tr><td><code>bhosts</code></td><td>Show all hosts and their status (ok/closed/unavail)</td></tr>
+    <tr><td><code>bqueues</code></td><td>List all queues and their open/closed/active status</td></tr>
+    <tr><td><code>lsid</code></td><td>Show cluster name, master host, LSF version — and confirms LIM is alive</td></tr>
+    <tr><td><code>lshosts</code></td><td>Show static host resources (CPUs, RAM, model)</td></tr>
+    <tr><td><code>lsload</code></td><td>Show real-time load on all hosts</td></tr>
+  </table>
+
+
+  
+  <h2><span class="num">8</span> Break/Fix Scenarios to Know</h2>
+
+  <table>
+    <tr><th>Symptom</th><th>Root Cause</th><th>Fix</th></tr>
+    <tr>
+      <td>Daemons won't start; logs in <code>/tmp</code></td>
+      <td><code>LSF_LOGDIR</code> has wrong ownership or permissions</td>
+      <td><code>chown root $LSF_LOGDIR &amp;&amp; chmod 755 $LSF_LOGDIR</code>, then restart</td>
+    </tr>
+    <tr>
+      <td>All daemons fail silently on startup</td>
+      <td><code>lsf.conf</code> missing or <code>LSF_ENVDIR</code> points to wrong directory</td>
+      <td>Verify <code>ls $LSF_ENVDIR/lsf.conf</code> exists; correct symlink if needed</td>
+    </tr>
+    <tr>
+      <td>sbatchd starts but mbatchd does not</td>
+      <td>Manager's LIM is temporarily unknown; management host unreachable</td>
+      <td>Run <code>lsid</code> — if LIM is down, fix LIM first, then mbatchd will reconnect</td>
+    </tr>
+    <tr>
+      <td>Jobs stay PEND on a cluster that looks healthy</td>
+      <td>Host not in queue's hostlist, or mbatchd doesn't see the worker</td>
+      <td>Check <code>bhosts</code>, verify host is in queue's <code>HOSTS</code> parameter in <code>lsb.queues</code></td>
+    </tr>
+  </table>
+
+
+  
+  <h2><span class="num">9</span> RCA Template (Lite) — Use from Week 1</h2>
+
+  <div class="codeblock">Symptom    : (copy from ticket — verbatim)
+Impact     : Which users / queues / hosts are affected?
+Timeline   : (UTC timestamps pulled from logs)
+             HH:MM  — first error in mbatchd.log
+             HH:MM  — user reports issue
+             HH:MM  — daemon restart / fix applied
+Primary    : One-line root cause statement
+Evidence   : 3–6 log lines + commands that prove the cause
+Fix        : Config change or command applied
+Prevention : Policy / alert / test to stop recurrence</div>
+
+
+  
+  <h2><span class="num">10</span> Weekly Quiz — Topics to Review</h2>
+
+  <div class="quiz-box">
+    <ol>
+      <li>What does each daemon do? (lim, res, pim, sbatchd, mbatchd, mbschd)</li>
+      <li>What is the difference between <code>lsf.conf</code> and <code>lsb.params</code>?</li>
+      <li>When do you use <code>lsadmin ckconfig</code> vs <code>badmin ckconfig</code>?</li>
+      <li>Where are daemon log files stored, and what happens if <code>LSF_LOGDIR</code> is unwritable?</li>
+      <li>What is the difference between <code>mbatchd</code> and <code>mbschd</code> responsibilities?</li>
+      <li>List all job states and what triggers transitions between them.</li>
+      <li>What is the difference between <code>badmin reconfig</code> and <code>badmin mbdrestart</code>?</li>
+      <li>What information lives in <code>lsb.events</code> vs <code>lsb.acct</code>?</li>
+    </ol>
+  </div>
+
+  
+  <h2><span class="num">11</span> Target Outcomes Checklist</h2>
+  <ul class="checklist">
+    <li>Build a 3-node cluster (lsfmgr, lsfexec1, lsfexec2) and identify each daemon in logs</li>
+    <li><code>bhosts</code> shows all 3 hosts <code>ok</code>; <code>bqueues</code> shows <code>normal</code> queue open</li>
+    <li>Submit a job and watch it go PEND → RUN → DONE</li>
+    <li>Find <code>Dispatch &lt;jobid&gt;</code> in <code>mbatchd.log</code> and <code>JOB_FINISH exit_status=0</code> in <code>sbatchd.log</code></li>
+    <li>Verify the job record in <code>lsb.events</code>; match it with <code>bhist -l &lt;jobid&gt;</code></li>
+    <li>Successfully raise and revert debug log level</li>
+    <li>Run and interpret <code>lsadmin ckconfig -v</code> and <code>badmin ckconfig -v</code> with 0 errors</li>
+  </ul>
+
+  <div class="footer">Made with IBM Bob</div>
+</div>
+</body>
+</html>

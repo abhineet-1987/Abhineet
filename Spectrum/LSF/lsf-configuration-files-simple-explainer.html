@@ -1,0 +1,558 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LSF Configuration Files — Simple Explainer</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #1f2328;
+    background: #ffffff;
+    padding: 32px 16px 48px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+
+  .header { border-bottom: 2px solid #e5e7eb; padding-bottom: 16px; margin-bottom: 28px; }
+  .badge {
+    display: inline-block;
+    background: #3b82d4;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  h1 { font-size: 22px; font-weight: 700; }
+  .subtitle { color: #57606a; font-size: 13px; margin-top: 4px; }
+
+  h2 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 32px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  h2 .icon {
+    width: 22px; height: 22px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    flex-shrink: 0;
+    color: #fff;
+  }
+  h3 { font-size: 13px; font-weight: 700; margin: 16px 0 6px; color: #1f2328; }
+
+  /* File cards */
+  .file-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin: 10px 0;
+    overflow: hidden;
+  }
+  .file-card-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 10px 14px;
+    background: #f7f8fa;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .file-name {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1f2328;
+  }
+  .file-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 7px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .tag-core   { background: #fee2e2; color: #991b1b; }
+  .tag-base   { background: #dbeafe; color: #1e40af; }
+  .tag-batch  { background: #d1fae5; color: #065f46; }
+  .tag-adv    { background: #ede9fe; color: #5b21b6; }
+  .file-card-body { padding: 10px 14px; font-size: 13px; }
+  .file-path {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 11.5px;
+    color: #57606a;
+    margin-bottom: 6px;
+  }
+  .simple-desc { margin-bottom: 8px; }
+  .what-list { list-style: none; padding: 0; }
+  .what-list li {
+    padding: 2px 0 2px 18px;
+    position: relative;
+    font-size: 13px;
+    color: #1f2328;
+  }
+  .what-list li::before { content: "·"; position: absolute; left: 5px; color: #3b82d4; font-weight: 900; }
+
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    background: #f0f2f5;
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #24292f;
+  }
+  .codeblock {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 11px 14px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    line-height: 1.75;
+    color: #24292f;
+    margin: 10px 0;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .callout {
+    background: #fff8e1;
+    border: 1px solid #f0c040;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin: 12px 0;
+  }
+  .callout-blue {
+    background: #f0f6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin: 12px 0;
+  }
+  .callout-green {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin: 12px 0;
+  }
+
+  /* Two-column dir layout */
+  .dir-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+  .dir-box {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 12.5px;
+  }
+  .dir-box strong { display: block; font-size: 12px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; margin-bottom: 3px; color: #3b82d4; }
+
+  /* Hierarchy tree */
+  .tree {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px 14px;
+    line-height: 1.9;
+    color: #24292f;
+    margin: 10px 0;
+  }
+  .tree .dir  { color: #3b82d4; font-weight: 700; }
+  .tree .file { color: #1f2328; }
+  .tree .note { color: #57606a; font-style: normal; }
+
+  /* Summary table */
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th {
+    background: #f7f8fa;
+    font-weight: 600;
+    text-align: left;
+    padding: 7px 10px;
+    border: 1px solid #e5e7eb;
+  }
+  td { padding: 7px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+
+  .footer {
+    margin-top: 48px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    font-size: 12px;
+    color: #57606a;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="badge">Week 1 Reference</div>
+    <h1>LSF Configuration Files — Simply Explained</h1>
+    <div class="subtitle">IBM Spectrum LSF 10.1.0  ·  What every config file does, where it lives, and when you edit it</div>
+  </div>
+
+  
+  <h2><span class="icon" style="background:#3b82d4">1</span> The Mental Model — Two Layers, Two Directories</h2>
+
+  <p style="font-size:13.5px;margin-bottom:10px">LSF config files split into two layers. Think of them as <strong>the foundation</strong> and <strong>the rules</strong>:</p>
+
+  <div class="dir-grid">
+    <div class="dir-box">
+      <strong>$LSF_CONFDIR  (Base Layer)</strong>
+      Describes the <em>cluster itself</em> — what hosts exist, what resources are defined, global env settings. Read by LIM and the base daemons.
+    </div>
+    <div class="dir-box">
+      <strong>$LSB_CONFDIR/&lt;cluster&gt;/configdir  (Batch Layer)</strong>
+      Describes the <em>workload rules</em> — queues, job limits, user shares, resource policies. Read by mbatchd and mbschd.
+    </div>
+  </div>
+
+  <div class="tree">
+<span class="dir">$LSF_CONFDIR/</span>                         ← Base layer
+├── <span class="file">lsf.conf</span>            <span class="note">★ The master config</span>
+├── <span class="file">lsf.shared</span>          <span class="note">Resource/host-type dictionary</span>
+└── <span class="file">lsf.cluster.&lt;name&gt;</span> <span class="note">Host roster + admins</span>
+
+<span class="dir">$LSB_CONFDIR/&lt;cluster&gt;/configdir/</span>    ← Batch layer
+├── <span class="file">lsb.params</span>          <span class="note">Global batch tuning knobs</span>
+├── <span class="file">lsb.queues</span>          <span class="note">★ Queue definitions</span>
+├── <span class="file">lsb.hosts</span>           <span class="note">Per-host scheduling rules</span>
+├── <span class="file">lsb.users</span>           <span class="note">User groups &amp; fair share</span>
+├── <span class="file">lsb.resources</span>       <span class="note">Resource limits &amp; allocation</span>
+├── <span class="file">lsb.applications</span>    <span class="note">App-specific job profiles</span>
+└── <span class="file">lsb.modules</span>         <span class="note">Scheduler plug-in modules</span>
+  </div>
+
+  <div class="callout-blue">
+    <strong>Ownership rule:</strong> <code>lsf.conf</code> is owned by <strong>root</strong>. All other config files are owned by the <strong>primary LSF administrator</strong>, and are readable by all cluster users.
+  </div>
+
+  
+  <h2><span class="icon" style="background:#3b82d4">2</span> Base Layer — Cluster Foundation Files</h2>
+
+  <div class="file-card">
+    <div class="file-card-header">
+      <span class="file-name">lsf.conf</span>
+      <span class="file-tag tag-core">★ Most Critical</span>
+      <span style="font-size:12px;color:#57606a">in $LSF_ENVDIR (usually /etc)</span>
+    </div>
+    <div class="file-card-body">
+      <div class="simple-desc">The <strong>master config file</strong> for the entire cluster. It tells every daemon where everything else is — directories, binaries, logs. <em>If LSF can't find this file, nothing starts.</em></div>
+      <ul class="what-list">
+        <li>Sets all path variables: <code>LSF_CONFDIR</code>, <code>LSB_CONFDIR</code>, <code>LSF_LOGDIR</code>, <code>LSB_SHAREDIR</code></li>
+        <li>Sets the cluster name, master host selection, and authentication method</li>
+        <li>Controls global feature toggles (cgroups, EGO, multicluster, SSL)</li>
+        <li>Sets log verbosity levels (<code>LSF_LOG_MASK</code>)</li>
+      </ul>
+      <div class="codeblock">LSF_TOP="/usr/share/lsf"
+LSF_CONFDIR="$LSF_TOP/conf"
+LSB_CONFDIR="$LSF_TOP/conf/lsbatch"
+LSF_LOGDIR="$LSF_TOP/log"
+LSF_CLUSTER_NAME="bootcamp"
+LSF_MASTER_LIST="lsfmgr"</div>
+    </div>
+  </div>
+
+  <div class="file-card">
+    <div class="file-card-header">
+      <span class="file-name">lsf.shared</span>
+      <span class="file-tag tag-base">Base Layer</span>
+      <span style="font-size:12px;color:#57606a">in $LSF_CONFDIR</span>
+    </div>
+    <div class="file-card-body">
+      <div class="simple-desc">The <strong>cluster dictionary</strong>. Defines all the named concepts LSF knows about — host types, host models, and custom resources like GPUs or licenses. Think of it as registering vocab before using it anywhere else.</div>
+      <ul class="what-list">
+        <li><strong>Cluster section</strong> — lists all clusters (one line per cluster)</li>
+        <li><strong>HostType section</strong> — names for OS/arch combos (e.g. <code>LINUX64</code>, <code>X86_64</code>)</li>
+        <li><strong>HostModel section</strong> — CPU model names and speed factors (used for fair scheduling)</li>
+        <li><strong>Resource section</strong> — declares custom resources like <code>gpu</code>, <code>license1</code>, <code>scratch</code></li>
+      </ul>
+      <div class="codeblock">Begin Resource
+RESOURCENAME  TYPE    INTERVAL INCREASING  DESCRIPTION
+gpu           Numeric 60       N           (Number of GPU cards)
+license1      Numeric 60       N           (App license count)
+End Resource</div>
+    </div>
+  </div>
+
+  <div class="file-card">
+    <div class="file-card-header">
+      <span class="file-name">lsf.cluster.&lt;clustername&gt;</span>
+      <span class="file-tag tag-base">Base Layer</span>
+      <span style="font-size:12px;color:#57606a">in $LSF_CONFDIR</span>
+    </div>
+    <div class="file-card-body">
+      <div class="simple-desc">The <strong>host roster</strong>. Lists every host in the cluster, its type/model, and whether it's a server (can run jobs) or client (submit-only). Also names the LSF administrators.</div>
+      <ul class="what-list">
+        <li><strong>Administrators section</strong> — who has lsadmin/badmin authority</li>
+        <li><strong>Hosts section</strong> — hostname, host type, host model, server flag (1=server, 0=client-only)</li>
+        <li>Management host candidates are marked here (failover priority)</li>
+      </ul>
+      <div class="codeblock">Begin Host
+HOSTNAME  model    type   server  RESOURCES
+lsfmgr    IntelI7  LINUX64  1     (mg)
+lsfexec1  IntelI7  LINUX64  1     ()
+lsfexec2  IntelI7  LINUX64  1     ()
+End Host</div>
+    </div>
+  </div>
+
+  
+  <h2><span class="icon" style="background:#065f46">3</span> Batch Layer — Workload Rules Files</h2>
+
+  <div class="file-card">
+    <div class="file-card-header">
+      <span class="file-name">lsb.queues</span>
+      <span class="file-tag tag-core">★ Most Critical</span>
+      <span style="font-size:12px;color:#57606a">in $LSB_CONFDIR/&lt;cluster&gt;/configdir</span>
+    </div>
+    <div class="file-card-body">
+      <div class="simple-desc">Defines <strong>every job queue</strong> and its rules. A queue is a named bucket for jobs, with its own priority, limits, allowed users, allowed hosts, and scheduling policy. This is the file you'll edit most often.</div>
+      <ul class="what-list">
+        <li><code>PRIORITY</code> — higher number = dispatched first</li>
+        <li><code>HOSTS</code> — which exec hosts can run jobs from this queue</li>
+        <li><code>USERS</code> — who can submit to this queue</li>
+        <li><code>RUNLIMIT</code> — max wall-clock time a job can run</li>
+        <li><code>RES_REQ</code> — default resource requirements for all jobs in queue</li>
+        <li><code>MAX_JOBS</code> — max concurrent running jobs in this queue</li>
+        <li><code>DISPATCH_WINDOW</code> — time windows when queue is active</li>
+        <li><code>FAIRSHARE</code> — enable user-fair-share within this queue</li>
+      </ul>
+      <div class="codeblock">Begin Queue
+QUEUE_NAME   = normal
+PRIORITY     = 30
+RUNLIMIT     = 1:0   # 1 hour
+USERS        = all
+HOSTS        = all
+DESCRIPTION  = Default queue for normal jobs
+End Queue</div>
+    </div>
+  </div>
+
+  <div class="file-card">
+    <div class="file-card-header">
+      <span class="file-name">lsb.params</span>
+      <span class="file-tag tag-batch">Batch Layer</span>
+      <span style="font-size:12px;color:#57606a">in $LSB_CONFDIR/&lt;cluster&gt;/configdir</span>
+    </div>
+    <div class="file-card-body">
+      <div class="simple-desc">The <strong>global batch tuning file</strong>. Contains cluster-wide settings that apply to all queues and all jobs — not specific to any one queue or host.</div>
+      <ul class="what-list">
+        <li><code>DEFAULT_QUEUE</code> — which queue jobs go to if user doesn't specify one</li>
+        <li><code>MAX_JOB_NUM</code> — maximum number of jobs (running + pending) in the system</li>
+        <li><code>CLEAN_PERIOD</code> — how long finished job records stay in memory</li>
+        <li><code>MBD_SLEEP_TIME</code> — scheduling cycle interval (seconds)</li>
+        <li><code>CONDENSE_PENDING_REASONS</code> — condense pending reason display in bjobs</li>
+        <li><code>JOB_ACCEPT_INTERVAL</code> — seconds between dispatch cycles per host</li>
+      </ul>
+      <div class="codeblock">Begin Parameters
+DEFAULT_QUEUE    = normal
+MAX_JOB_NUM      = 10000
+MBD_SLEEP_TIME   = 10
+CLEAN_PERIOD     = 3600
+End Parameters</div>
+    </div>
+  </div>
+
+  <div class="file-card">
+    <div class="file-card-header">
+      <span class="file-name">lsb.hosts</span>
+      <span class="file-tag tag-batch">Batch Layer</span>
+      <span style="font-size:12px;color:#57606a">in $LSB_CONFDIR/&lt;cluster&gt;/configdir</span>
+    </div>
+    <div class="file-card-body">
+      <div class="simple-desc">Per-host batch settings. Lets you override scheduling thresholds, set job slot limits, and define dispatch windows <em>per host</em> — independent of any queue.</div>
+      <ul class="what-list">
+        <li><code>MXJ</code> — max concurrent job slots on this host (e.g. <code>!</code> = use CPU count)</li>
+        <li><code>DISPATCH_WINDOW</code> — time windows when this host accepts jobs</li>
+        <li>Load thresholds: <code>loadSched</code> / <code>loadStop</code> — at what CPU/mem load to stop dispatching or suspend</li>
+        <li><code>RES_REQ</code> — additional resource requirements for any job on this host</li>
+      </ul>
+      <div class="codeblock">Begin Host
+HOST_NAME   MXJ  loadSched  loadStop  DISPATCH_WINDOW
+lsfexec1    4    -          -         ()
+lsfexec2    !    3.5/3.5    -         (5:30-22:00)
+End Host</div>
+    </div>
+  </div>
+
+  <div class="file-card">
+    <div class="file-card-header">
+      <span class="file-name">lsb.users</span>
+      <span class="file-tag tag-batch">Batch Layer</span>
+      <span style="font-size:12px;color:#57606a">in $LSB_CONFDIR/&lt;cluster&gt;/configdir</span>
+    </div>
+    <div class="file-card-body">
+      <div class="simple-desc">Defines <strong>user groups and fair-share policies</strong>. Controls how much cluster capacity each user or team can consume.</div>
+      <ul class="what-list">
+        <li>Defines named user groups (e.g. <code>devteam</code>, <code>analysts</code>)</li>
+        <li>Sets hierarchical fair-share trees — shares determine scheduling priority when competing for resources</li>
+        <li><code>MAX_JOBS</code> per user or group — hard cap on concurrent running jobs</li>
+        <li><code>MAX_PEND_JOBS</code> — cap on pending jobs per user</li>
+      </ul>
+      <div class="codeblock">Begin UserGroup
+GROUP_NAME  GROUP_MEMBER
+devteam     (alice bob charlie)
+End UserGroup</div>
+    </div>
+  </div>
+
+  <div class="file-card">
+    <div class="file-card-header">
+      <span class="file-name">lsb.resources</span>
+      <span class="file-tag tag-batch">Batch Layer</span>
+      <span style="font-size:12px;color:#57606a">in $LSB_CONFDIR/&lt;cluster&gt;/configdir</span>
+    </div>
+    <div class="file-card-body">
+      <div class="simple-desc">Defines <strong>resource allocation limits</strong> — cluster-wide caps on how much of a shared resource any user, project, queue, or application can consume at once.</div>
+      <ul class="what-list">
+        <li>Limit sections — e.g. "no user can hold more than 100 GPU slots"</li>
+        <li>Can scope limits by user, queue, host, project, or application</li>
+        <li>Also configures resource export/import for multicluster setups</li>
+      </ul>
+      <div class="codeblock">Begin Limit
+NAME        = gpu_cap
+PER_USER    = all
+QUEUES      = gpuq
+SLOTS       = 32
+End Limit</div>
+    </div>
+  </div>
+
+  <div class="file-card">
+    <div class="file-card-header">
+      <span class="file-name">lsb.applications</span>
+      <span class="file-tag tag-adv">Optional</span>
+      <span style="font-size:12px;color:#57606a">in $LSB_CONFDIR/&lt;cluster&gt;/configdir</span>
+    </div>
+    <div class="file-card-body">
+      <div class="simple-desc">Defines <strong>named application profiles</strong>. When many jobs of the same type (e.g. MPI, Python ML) always need the same resource settings, you package those settings into a named profile so users don't have to repeat them at submission time.</div>
+      <ul class="what-list">
+        <li>Pre-set <code>RES_REQ</code>, <code>RUNLIMIT</code>, <code>MEMLIMIT</code>, pre/post-execution scripts per app</li>
+        <li>Users submit with <code>bsub -app myprofile myjob</code></li>
+        <li>Set a default profile with <code>DEFAULT_APPLICATION</code> in <code>lsb.params</code></li>
+      </ul>
+      <div class="codeblock">Begin Application
+NAME         = mpi_app
+RES_REQ      = span[ptile=16]
+MEMLIMIT     = 8192    # MB per process
+PROCLIMIT    = 64
+End Application</div>
+    </div>
+  </div>
+
+  <div class="file-card">
+    <div class="file-card-header">
+      <span class="file-name">lsb.modules</span>
+      <span class="file-tag tag-adv">Advanced</span>
+      <span style="font-size:12px;color:#57606a">in $LSB_CONFDIR/&lt;cluster&gt;/configdir</span>
+    </div>
+    <div class="file-card-body">
+      <div class="simple-desc">Lists the <strong>scheduler plug-in modules</strong> that mbschd loads. If this file is absent or empty, LSF uses the default scheduler module (<code>schmod_default</code>). You rarely need to edit this unless enabling advanced features like fairshare or reservation plug-ins.</div>
+    </div>
+  </div>
+
+  
+  <h2><span class="icon" style="background:#7c5cd8">4</span> What to Edit for Common Tasks</h2>
+
+  <table>
+    <tr>
+      <th>I want to…</th>
+      <th>Edit this file</th>
+      <th>Apply with</th>
+    </tr>
+    <tr><td>Add a new host to the cluster</td><td><code>lsf.cluster.&lt;name&gt;</code></td><td><code>lsadmin reconfig</code></td></tr>
+    <tr><td>Define a new custom resource (GPU, license)</td><td><code>lsf.shared</code></td><td><code>lsadmin reconfig</code></td></tr>
+    <tr><td>Create or modify a job queue</td><td><code>lsb.queues</code></td><td><code>badmin reconfig</code></td></tr>
+    <tr><td>Change a host's max job slots or load threshold</td><td><code>lsb.hosts</code></td><td><code>badmin reconfig</code></td></tr>
+    <tr><td>Change default queue or global job limits</td><td><code>lsb.params</code></td><td><code>badmin mbdrestart</code></td></tr>
+    <tr><td>Add a user group or change fair-share shares</td><td><code>lsb.users</code></td><td><code>badmin reconfig</code></td></tr>
+    <tr><td>Cap resource usage per user/project/queue</td><td><code>lsb.resources</code></td><td><code>badmin reconfig</code></td></tr>
+    <tr><td>Create a named job profile (MPI, ML, etc.)</td><td><code>lsb.applications</code></td><td><code>badmin reconfig</code></td></tr>
+    <tr><td>Change log directory or enable cgroups</td><td><code>lsf.conf</code></td><td>Daemon restart required</td></tr>
+  </table>
+
+  
+  <h2><span class="icon" style="background:#3b82d4">5</span> The Safe Change Workflow — Always Do This</h2>
+
+  <div class="callout-green">
+    <strong>Golden rule:</strong> Always <em>check</em> before you <em>apply</em>. A config error that reaches a running daemon can cause daemon restarts or job failures.
+  </div>
+
+  <div class="codeblock"># 1. Edit the config file
+vi $LSB_CONFDIR/bootcamp/configdir/lsb.queues
+
+# 2. Lint check — catch errors BEFORE touching live daemons
+badmin ckconfig -v
+#    → "No errors found"  ✓ safe to proceed
+#    → "Error in line 42" ✗ fix the file first
+
+# 3. Apply without downtime
+badmin reconfig           # hot-reload for most batch files
+# OR — if you changed lsb.params or need a full restart:
+badmin mbdrestart         # reads lsb.events on restart — may take time
+
+# For base-layer files (lsf.conf, lsf.shared, lsf.cluster.*):
+lsadmin ckconfig -v       # check first
+lsadmin reconfig          # apply</div>
+
+  
+  <h2><span class="icon" style="background:#3b82d4">6</span> How the Files Relate to Each Other</h2>
+
+  <p style="font-size:13px;margin-bottom:8px">Files at different layers reference each other. Here's the dependency chain:</p>
+
+  <div class="codeblock">lsf.conf          → defines where all other files live (the anchor)
+  ↓
+lsf.shared        → declares resource names and host-type names used everywhere
+  ↓
+lsf.cluster.*     → assigns hosts to types/models defined in lsf.shared
+  ↓
+lsb.queues        → references hostnames, resource names from lsf.shared
+lsb.hosts         → references hostnames from lsf.cluster.*
+lsb.users         → defines groups referenced by lsb.queues (USERS param)
+lsb.resources     → references queues from lsb.queues, users from lsb.users
+lsb.applications  → profiles referenced at bsub time via -app flag</div>
+
+  <div class="callout">
+    <strong>Common mistake:</strong> Defining a resource in <code>lsb.queues</code> (<code>RES_REQ=rusage[gpu=1]</code>) but forgetting to declare <code>gpu</code> in <code>lsf.shared</code> first. The result is a <code>ckconfig</code> error: <em>"resource not defined"</em>.
+  </div>
+
+  
+  <h2><span class="icon" style="background:#3b82d4">7</span> One-Line Summary of Every File</h2>
+
+  <table>
+    <tr><th>File</th><th>One-Line Purpose</th><th>Layer</th></tr>
+    <tr><td><code>lsf.conf</code></td><td>Master config — paths, cluster name, global feature flags</td><td>Base</td></tr>
+    <tr><td><code>lsf.shared</code></td><td>Dictionary — declares host types, models, custom resources</td><td>Base</td></tr>
+    <tr><td><code>lsf.cluster.*</code></td><td>Host roster — lists every host, its type, server/client role, admins</td><td>Base</td></tr>
+    <tr><td><code>lsb.params</code></td><td>Global batch tuning — default queue, cycle timings, max jobs</td><td>Batch</td></tr>
+    <tr><td><code>lsb.queues</code></td><td>Queue definitions — priority, limits, users, hosts, policies</td><td>Batch</td></tr>
+    <tr><td><code>lsb.hosts</code></td><td>Per-host rules — job slots, load thresholds, dispatch windows</td><td>Batch</td></tr>
+    <tr><td><code>lsb.users</code></td><td>User groups and fair-share trees — who gets what share</td><td>Batch</td></tr>
+    <tr><td><code>lsb.resources</code></td><td>Resource limits — caps on GPU/CPU/mem usage per user/queue/project</td><td>Batch</td></tr>
+    <tr><td><code>lsb.applications</code></td><td>Named job profiles — reusable resource/limit presets per app type</td><td>Batch</td></tr>
+    <tr><td><code>lsb.modules</code></td><td>Scheduler plug-in list — rarely edited, controls mbschd modules</td><td>Batch</td></tr>
+  </table>
+
+  <div class="footer">Made with IBM Bob</div>
+</div>
+</body>
+</html>
