@@ -1,0 +1,31 @@
+To restart mbatchd:-
+badmin mbdrestart
+
+To check status:-
+badmin hist
+badmin showstatus
+
+To restart sbatchd:-
+badmin hrestart <host-name>
+Eg: "badmin hrestart lsf-master"
+
+To check sbatchd status:-
+lsf_daemons status
+
+
+# To stop sbd, res and lim seperately ( SEQUENCE IS IMPORTANT )
+bctrld stop sbd lsf-master
+bctrld stop res lsf-master
+bctrld stop lim lsf-master
+
+# To start sbd, res and lim seperately ( SEQUENCE IS IMPORTANT )
+
+While starting lim if you get below error:-
+lsfadmin@lsf-master:~$ bctrld start lim lsf-master
+Sep  7 12:03:59 2026 6877 4 10.1 setAdmins: root is defined as an administrator. This is not recommended.
+Cannot start <lim> because bctrld does not have the setuid bit. To enable the setuid bit, run 'chmod u+s' on the bctrld binary file, or run the 'hostsetup --setuid' command.
+
+Run: "chmod u+s /opt/ibm/lsfsuite/lsf/10.1/linux3.10-glibc2.17-x86_64/bin/bctrld"
+and then start lim, but still I got some issues finally I used below command:-
+
+lsf_daemons start
