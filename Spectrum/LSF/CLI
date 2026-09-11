@@ -38,6 +38,7 @@ Method1: commands "bhosts" and "bqueues". If it returns your cluster host list a
 If it throws an error like batch system daemon not responding, mbatchd is down or hung.
 Method2: ps auxfww | grep mbatchd
 Method3: badmin mbdhist
+         badmin showstatus
 
 # TO CHECK STATUS OF pim
 If lim is running successfully on a host, pim should automatically be running right alongside it.
