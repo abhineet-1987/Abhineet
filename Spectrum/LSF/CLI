@@ -29,3 +29,16 @@ Run: "chmod u+s /opt/ibm/lsfsuite/lsf/10.1/linux3.10-glibc2.17-x86_64/bin/bctrld
 and then start lim, but still I got some issues finally I used below command:-
 
 lsf_daemons start
+
+--------------------- 11 SEP 2026 UPDATE ------------------------
+# TO CHECK STATUS OF mbatchd
+Just like we run "lsf_daemons status" and it gives us running status of lim,res and sbatchd. For getting status of mbtachd is not direct you can 
+indirectly check its status by running:-
+Method1: commands "bhosts" and "bqueues". If it returns your cluster host list and queues normally, mbatchd is up and running.
+If it throws an error like batch system daemon not responding, mbatchd is down or hung.
+Method2: ps auxfww | grep mbatchd
+Method3: badmin mbdhist
+
+# TO CHECK STATUS OF pim
+If lim is running successfully on a host, pim should automatically be running right alongside it.
+ps auxfww | grep pim
