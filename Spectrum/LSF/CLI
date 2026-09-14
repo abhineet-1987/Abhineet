@@ -49,3 +49,11 @@ ps auxfww | grep pim
 bhist -a -u all
 # displays the active, complete runtime configuration parameters for the LSF batch system (mbatchd). It confirms whether changes made to lsb.params (after running badmin reconfig) have actually been loaded into memory.
 bparams -a
+
+#Log verbosity level from most verbose (topmost) to least verbose (in the bottom). Set in lsb.params or daemon environment variables (e.g., LSF_LOG_MASK=LOG_CRIT),:-
+LOG_DEBUG
+LOG_INFO
+LOG_WARNING
+LOG_ERR
+LOG_CRIT
+LOG_EMERG
