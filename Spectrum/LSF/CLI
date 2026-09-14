@@ -43,3 +43,7 @@ Method3: badmin mbdhist
 # TO CHECK STATUS OF pim
 If lim is running successfully on a host, pim should automatically be running right alongside it.
 ps auxfww | grep pim
+
+---------------------------------------------
+# to view historical completed or exit jobs whose records have already cleared from bjobs memory.
+bhist -a -u all
