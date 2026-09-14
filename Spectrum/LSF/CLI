@@ -47,3 +47,5 @@ ps auxfww | grep pim
 ---------------------------------------------
 # to view historical completed or exit jobs whose records have already cleared from bjobs memory.
 bhist -a -u all
+# displays the active, complete runtime configuration parameters for the LSF batch system (mbatchd). It confirms whether changes made to lsb.params (after running badmin reconfig) have actually been loaded into memory.
+bparams -a
