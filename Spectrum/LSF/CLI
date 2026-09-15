@@ -57,3 +57,19 @@ LOG_WARNING
 LOG_ERR
 LOG_CRIT
 LOG_EMERG
+
+## Not sure but check on this --------> DMD ------------------------ 
+Please follow the steps below to replace the existing dmd binary with the instrumented version:
+
+Log in to the LSF master server as root (recommended) or an LSF administrator.(based on file ownership)
+Source the LSF profile to ensure the LSF environment is loaded.
+Take a backup of the existing dmd binary:
+                   mv $LSF_SERVERDIR/dmd $LSF_SERVERDIR/dmd.backup
+            4.Copy or move the instrumented dmd binary into the $LSF_SERVERDIR directory:
+                   mv /path_to_new_dmd $LSF_SERVERDIR/dmd
+            5.Reload the configuration by running:
+                    bdata admin reconfig
+After completing these steps, please reproduce the issue and share the generated logs with us so we can continue the investigation.
+
+bdata cache -l <job-id> , could you please provide the contents of the status files associated with the OUTPUT entry? 
+
