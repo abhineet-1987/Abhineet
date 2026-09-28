@@ -1,0 +1,18 @@
+global:
+  name: consul
+  enabled: false
+  datacenter: xds-dc
+  enableConsulNamespaces: true
+  image: hashicorp/consul-enterprise:2.0.2-ent
+  imageK8S: hashicorp/consul-k8s-control-plane:2.0.2
+externalServers:
+  enabled: true
+  hosts:
+    - "ip1"
+    - "ip2"
+    - "ip3"
+  httpsPort: 8500
+  grpcPort: 8502
+  k8sAuthMethodHost: https://XXXXXXXXXXXXXXXXXX.gr7.us-west-2.eks.amazonaws.com # See step 5 from `Install Consul server cluster`
+connectInject:
+  enabled: true
