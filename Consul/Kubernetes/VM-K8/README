@@ -1,0 +1,5 @@
+# This setup uses 3 Consul servers deployed on VMs (AWS ec2 instances) and workload cluster deployed on EKS.
+# Enterprise Consul is used. 
+# NO TLS and NO ACLS used, to keep things simple.
+
+helm install consul hashicorp/consul --create-namespace --namespace consul --values client1-values.yaml --version=2.0.2 --debug
