@@ -4,6 +4,9 @@ https://developer.hashicorp.com/consul/tutorials/get-started-kubernetes/kubernet
 
 git clone https://github.com/hashicorp-education/learn-consul-get-started-kubernetes
 cd learn-consul-get-started-kubernetes/self-managed/eks
+
+NOTE: IF YOU WANT TO DEPLOY EKS CLUSTER WITH HC-BASE IMAGES THEN YOU MAY USE AWS.TF ATTACHED IN THE EKS FOLDER AND REPLACE IT WITH AWS.TF AS GOT FROM git clone https://github.com/hashicorp-education/learn-consul-get-started-kubernetes
+
 terraform init
 terraform applyhttps://github.com/abhineet-1987/Abhineet/tree/main/Consul/Kubernetes/EKS
 aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw kubernetes_cluster_id)
