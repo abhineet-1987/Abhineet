@@ -1,3 +1,8 @@
 kv, kv-v2 
 kv-v2 Concepts:-
 The data/ and metadata/ prefix is required for API and when writing Vault policies and not whe using CLI
+vault kv put kv/app/db pass=123 user=admin group=abc  (same syntax for both kv and kv-v2)
+If the latest version of the secret has been deleted (KV V2), it will return the related metadata but no data (secrets)
+
+DB secret engine:-
+generates dynamic credentials (username and password). Creds generated based on roles and lease is attached to creds.
