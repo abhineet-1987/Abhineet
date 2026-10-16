@@ -68,8 +68,8 @@ vault read -format=json sys/replication/dr/status
             Vault has a Paths Filters capability when using Performance Replication. This enables you to configure an allowlist or denylist for paths in Vault.
             Determines what is replicated to other clusters. Paths Filters work on paths such as secrets engines, auth methods, AND namespaces
             You can mark a secrets engine or auth method as local so it is not replicated or removed by replication configurations. Eg vault secrets enable –local –path=apac kv-v2
-            vault write sys/replication/performance/primary/paths-filter/us-east-dr \
-mode=allow \
-paths=aws/,hcvop/,customers/
+            vault write sys/replication/performance/primary/paths-filter/us-east-dr mode=allow paths=aws/,hcvop/,customers/
+
+Employ Vault security Model
             
 
