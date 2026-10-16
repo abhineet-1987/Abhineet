@@ -40,8 +40,36 @@ HSM Integration: (Hardware Security Model)
 2. Seal Wrapping essentially provides "double encryption" by encrypting the data using keys stored on an HSM
 
 Scale Vault for performance:-
-Batch Tokens: lightweight, scalable, NOT persisted to storage, but they are not fully-featured, Can be used for DR Replication cluster promotion as well, Batch tokens are encrypted using the barrier key, which is why they can
-be used across all clusters within the replica set.
-Can be used across Performance Replication clusters (if orphan)
-vault token create -type=batch -orphan=true -policy=hcvop
-You can use a batch token to promote a DR secondary cluster as it eliminates the requirement to generate a DR operation token using the unseal/recovery keys
+            Batch Tokens: lightweight, scalable, NOT persisted to storage, but they are not fully-featured, Can be used for DR Replication cluster promotion as well, Batch tokens are encrypted using the barrier key, which is why they can
+            be used across all clusters within the replica set.
+            Can be used across Performance Replication clusters (if orphan)
+            vault token create -type=batch -orphan=true -policy=hcvop
+            You can use a batch token to promote a DR secondary cluster as it eliminates the requirement to generate a DR operation token using the unseal/recovery keys
+
+            Performance Standby Nodes: Serves READ requests, WRITE are still served by ACTIVE node
+            How Do I Target a Performance Standby? Vault provides health information via the /sys/health endpoint. Load Balancers can target specific return codes to determine an Active node
+            vs. a Performance Standby node.
+            Performance standby feature It's enabled by default for Vault Enterprise - if licensed. You can disable it by disable_performance_standby=true.
+            Does not replicate tokens or leases to performance secondaries while in DR repliocation these are replicated.
+            In performance replication If a cluster becomes unavailable and you failover, applications will need to reauthenticate with the new Vault cluster. Exception here is if you failover to a DR cluster
+            Performance replicated clusters handle the retrieval of secrets and the generation of dynamic credentials (for eg creds for DB, AWS etc) for local clients. These requests are handled locally and tokens/leases not replicated to the primary cluster.
+Steps:-
+1. Activate Performance Replication
+primary$ vault write -f sys/replication/performance/primary/enable
+2. Create the Secondary Token
+primary$ vault write sys/replication/performance/primary/secondary-token id=<id>
+3. Activate the Secondary Cluster
+secondary$ vault write sys/replication/performance/secondary/enable token=<token>
+4. Check replication status (all/performance/dr)
+vault read -format=json sys/replication/status
+vault read -format=json sys/replication/performance/status
+vault read -format=json sys/replication/dr/status
+            Paths Filter:- Regulatory Compliances may restrict you from replicating certain data (GDPR) if PR cluster in different region.
+            Vault has a Paths Filters capability when using Performance Replication. This enables you to configure an allowlist or denylist for paths in Vault.
+            Determines what is replicated to other clusters. Paths Filters work on paths such as secrets engines, auth methods, AND namespaces
+            You can mark a secrets engine or auth method as local so it is not replicated or removed by replication configurations. Eg vault secrets enable –local –path=apac kv-v2
+            vault write sys/replication/performance/primary/paths-filter/us-east-dr \
+mode=allow \
+paths=aws/,hcvop/,customers/
+            
+
