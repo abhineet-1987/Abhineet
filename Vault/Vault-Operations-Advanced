@@ -10,3 +10,8 @@ You can easily rotate the root credentials for each database configuration using
 credentials – no human would know the creds.
 Static role is a 1-1 mapping of a role to an existing, static user on the database. Vault will rotate the credential based on a configurable time period but
 the user does not change
+vault read database/creds/app-hcvop
+Like anything else in Vault, a Vault client requires a token with a policy that has permission to generate database credentials. # Get credentials from the database secrets engine
+path "database/creds/app-hcvop" {
+capabilities = ["read"]
+}
