@@ -1,0 +1,3 @@
+kv, kv-v2 
+kv-v2 Concepts:-
+The data/ and metadata/ prefix is required for API and when writing Vault policies and not whe using CLI
