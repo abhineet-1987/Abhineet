@@ -15,3 +15,26 @@ Like anything else in Vault, a Vault client requires a token with a policy that 
 path "database/creds/app-hcvop" {
 capabilities = ["read"]
 }
+
+Identity secret engine:
+Identity secrets engine -> Maintains clients recognized by Vault , Each client is designated as an entity, Operators can manage entities in Vault.
+Vault creates an entity and attaches an alias. An entity is a representation of a single person or system that logged into Vault. 
+Each has a unique value. Each entity is made up of zero or more aliases. Alias is a combination of the auth method plus some identification. It is a mapping between an entity and auth method(s)
+Vault Groups: A group can contain multiple entities as its members. Can have subgroups as well. Token inherits capabilities granted by alias, entity, and the group.
+Internal groups: Groups created in Vault to group entities to propagate identical permissions. Created manually. Frequently used when using Vault Namespaces to propagate permissions down
+to child namespaces
+External groups: Groups which Vault infers and creates based on group associations coming from auth methods. Created Manually or Automatically
+
+Vault security hardening:
+encryption keys are stored in memory
+Run Vault as an Unprivileged User. Never run Vault as Root
+turn off core dumps that may reveal encryption keys
+use immutable archtecture i.e new nodes preferred than to fix the broken nodes
+disable swap. enabling mlock to prevent memory swap
+Stop Using Root Tokens, Root tokens have unrestricted access to Vault with no TTL
+disable ui if not in use
+dont store the unseal/recovery keys in Vault itself
+
+HSM Integration: (Hardware Security Model)
+1. For auto unseal
+2. Seal Wrapping essentially provides "double encryption" by encrypting the data using keys stored on an HSM
