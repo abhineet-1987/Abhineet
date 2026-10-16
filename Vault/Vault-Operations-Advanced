@@ -38,3 +38,10 @@ dont store the unseal/recovery keys in Vault itself
 HSM Integration: (Hardware Security Model)
 1. For auto unseal
 2. Seal Wrapping essentially provides "double encryption" by encrypting the data using keys stored on an HSM
+
+Scale Vault for performance:-
+Batch Tokens: lightweight, scalable, NOT persisted to storage, but they are not fully-featured, Can be used for DR Replication cluster promotion as well, Batch tokens are encrypted using the barrier key, which is why they can
+be used across all clusters within the replica set.
+Can be used across Performance Replication clusters (if orphan)
+vault token create -type=batch -orphan=true -policy=hcvop
+You can use a batch token to promote a DR secondary cluster as it eliminates the requirement to generate a DR operation token using the unseal/recovery keys
