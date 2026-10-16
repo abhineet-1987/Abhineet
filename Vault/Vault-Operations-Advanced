@@ -5,4 +5,4 @@ vault kv put kv/app/db pass=123 user=admin group=abc  (same syntax for both kv a
 If the latest version of the secret has been deleted (KV V2), it will return the related metadata but no data (secrets)
 
 DB secret engine:-
-generates dynamic credentials (username and password). Creds generated based on roles and lease is attached to creds.
+generates dynamic credentials (username and password). Creds generated based on roles (based on permissions required) and lease is attached to creds.
