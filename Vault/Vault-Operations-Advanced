@@ -72,5 +72,14 @@ vault read -format=json sys/replication/dr/status
 
 Employ Vault security Model:
             Secure Platform, Secure Orchestrator (ci/cd), Secure Orchestrator (Terraform), Vault agent
+
+Fault Tolerant Vault environment:-
+Each retry_join stanza can include DNS names or IP addresses and the port
+Manually join: vault operator raft join https://active_node.example.com:8200
+If auto unseal use -> On leader run (vault operator init, vault operator unseal) -> on other follower node run the "vault operator raft join https://active_node.example.com:8200" command to join this node to Vault cluster
+If manual unseal keys used then -> On leader run (vault operator init, vault operator unseal) -> on other follower node run the "vault operator raft join https://active_node.example.com:8200" command to join this node to Vault cluster -> manually unseal this node using unseal keys
+
+
+
             
 
