@@ -86,6 +86,32 @@ Cannot service reads from client requests
 Sort of warm standby cluster
 Will replicate tokens and leases created on the primary cluster
 If Vault sits behind a load balancer which is terminating TLS, it will break the mutual TLS between the nodes if inter-cluster traffic is forced through the load balancer.
+The secondary token is protected with response wrapping. Once the token is successfully used, it is useless (single-use token). 
+The secondary token includes information such as:
+• The redirect address of the primary cluster
+• The client certificate and CA certificate
+                        1. Activate DR Replication
+                        primary$ vault write -f sys/replication/dr/primary/enable
+                        2. Create the Secondary Token
+                        primary$ vault write sys/replication/dr/primary/secondary-token id=<id>
+                        3. Activate the Secondary Cluster
+                        secondary$ vault write sys/replication/dr/secondary/enable token=<token>
+Promote DR secondary to primary (in case primary gets down):-
+Promotion of a DR cluster requires a DR Operation Token
+This is generated directly on the DR cluster using the unseal/recovery keys. Process is similar to generating a root token (requires threshold of keys).
+How to generate DR Operation token?
+Initialize The Process: vault operator generate-root -dr-token –init   (you get otp from this command)
+Provide the Keys: vault operator generate-root -dr-token (you will enter 3 keys here and then you get encoded token)
+Decode the DR operation token: 
+            vault operator generate-root -dr-token /
+            -decode="LgQCHzFBByxxxxxxxxIyF1dA" /
+            -otp="Frqxxxxxxxxxx46"
+Promote the cluster: 
+            vault write sys/replication/dr/secondary/promote /
+            dr_operation_token=hvxxxxxxxxxxLAB
+
+
+                        
 
             
 
