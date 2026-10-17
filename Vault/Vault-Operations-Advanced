@@ -82,6 +82,10 @@ If manual unseal keys used then -> On leader run (vault operator init, vault ope
 
 DR Replication:-
 The primary cluster acts as the system of record and replicates most Vault data asynchronously
+Cannot service reads from client requests
+Sort of warm standby cluster
+Will replicate tokens and leases created on the primary cluster
+If Vault sits behind a load balancer which is terminating TLS, it will break the mutual TLS between the nodes if inter-cluster traffic is forced through the load balancer.
 
             
 
