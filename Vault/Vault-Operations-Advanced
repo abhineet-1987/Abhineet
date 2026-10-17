@@ -79,7 +79,8 @@ Manually join: vault operator raft join https://active_node.example.com:8200
 If auto unseal use -> On leader run (vault operator init, vault operator unseal) -> on other follower node run the "vault operator raft join https://active_node.example.com:8200" command to join this node to Vault cluster
 If manual unseal keys used then -> On leader run (vault operator init, vault operator unseal) -> on other follower node run the "vault operator raft join https://active_node.example.com:8200" command to join this node to Vault cluster -> manually unseal this node using unseal keys
 
-
+DR Replication:-
+The primary cluster acts as the system of record and replicates most Vault data asynchronously
 
             
 
