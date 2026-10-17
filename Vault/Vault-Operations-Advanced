@@ -51,6 +51,7 @@ Scale Vault for performance:-
             vs. a Performance Standby node.
             Performance standby feature It's enabled by default for Vault Enterprise - if licensed. You can disable it by disable_performance_standby=true.
             Does not replicate tokens or leases to performance secondaries while in DR repliocation these are replicated.
+            Clients will authenticate to the performance replicated cluster separately
             In performance replication If a cluster becomes unavailable and you failover, applications will need to reauthenticate with the new Vault cluster. Exception here is if you failover to a DR cluster
             Performance replicated clusters handle the retrieval of secrets and the generation of dynamic credentials (for eg creds for DB, AWS etc) for local clients. These requests are handled locally and tokens/leases not replicated to the primary cluster.
 Steps:-
