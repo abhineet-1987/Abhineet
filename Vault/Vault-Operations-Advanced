@@ -23,10 +23,11 @@ Each has a unique value. Each entity is made up of zero or more aliases. Alias i
 Vault Groups: A group can contain multiple entities as its members. Can have subgroups as well. Token inherits capabilities granted by alias, entity, and the group.
 Internal groups: Groups created in Vault to group entities to propagate identical permissions. Created manually. Frequently used when using Vault Namespaces to propagate permissions down
 to child namespaces
-External groups: Groups which Vault infers and creates based on group associations coming from auth methods. Created Manually or Automatically
+External groups: Groups which Vault infers and creates based on group associations coming from auth methods. Created Manually or Automatically. External groups are used to set permissions based on group membership from
+an external identity provider, such as LDAP, Okta, or OIDC provider. Note that the group name must match the group name in your identity provider.
 
 Vault security hardening:
-encryption keys are stored in memory
+encryption keys are stored in memory.
 Run Vault as an Unprivileged User. Never run Vault as Root
 turn off core dumps that may reveal encryption keys
 use immutable archtecture i.e new nodes preferred than to fix the broken nodes
@@ -156,6 +157,18 @@ ACL:
             Vault Groups:
                         A group can contain multiple entities as its members.
                         A group can also have subgroups.
+            Vault Policies:
+                        In JSON or HCL. Policies are attached to a token. A token can have multiple policies.
+                        Policies are cumulative and capabilities are additive.
+                        root policy is created by default – superuser with all permissions. You cannot change nor delete this policy. Attached to all root tokens.
+                        default policy is created by default – provides common permissions. You can change this policy, but it cannot be deleted. Attached to all non-root tokens by default (can be removed if needed)
+                        Many paths in Vault require a root token or sudo capability to use
+                        Capabilities:-
+                                    sudo: Allows access to paths that are root-protected
+                        The plus (+) supports wildcard matching for a single directory in the path 
+                        ACL Templating: Use variable replacement in some policy strings with values available to the token
+                                    Eg: path "secret/data/{{identity.entity.id}}/*" {
+                                    capabilities = ["create", "update", "read", "delete"]}
 
             
 
