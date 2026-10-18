@@ -135,7 +135,27 @@ Telemetry:
             }
 vault logs: journalctl –b -–no-pager –u vault
 docker logs vault0
-                        
+
+ACL:
+            Vault entities: Using Identity secrets engine, An entity is a representation of a single person or system used to log into Vault. 
+            Each has a unique value. Each entity is made up of zero or more aliases
+            Alias is a combination of the auth method plus some identification. It is a mapping between an entity and auth method(s)
+            can be automatically or manually created
+            An entity can be manually created to map multiple entities for a single user to provide more efficient authorization management. By doing this teh Token inherits capabilities granted by both policies
+            Create and entity:
+                        vault write identity/entity name="Julie Smith" \
+                        policies="it-management" \
+                        metadata="organization"="HCVOP, Inc" \
+                        metadata="team"="management"
+            Add an Alias to an Entity:
+                        Add GitHub auth as an alias
+                        $ vault write identity/entity-alias name="jsmith22" \
+                        canonical_id=<entity_id> \
+                        mount_accessor=<github_auth_accessor>
+                        Note: canonical_id is the entity id that we get from step 1 when we had created entity and mount_accessor we cxan get by running "vault auth list"
+            Vault Groups:
+                        A group can contain multiple entities as its members.
+                        A group can also have subgroups.
 
             
 
