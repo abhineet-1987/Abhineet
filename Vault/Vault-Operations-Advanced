@@ -115,6 +115,18 @@ To help secure tokens when using Auth-Auth, you can have Vault response wrap the
 • Response wrapped by the auth method
 • Response wrapped by the token sink
 The placement of the wrap_ttl in the Vault Agent configuration file determines where the response wrapping happens.
+            Templating:
+            To further extend the functionality of the Vault Agent, a subset of the Consul-Template functionality is directly embedded into the Vault Agent
+                        • No need to install the Consul-Template binary on the application server
+                        template_config {} -> global setting for all templates
+
+Telemetry:
+            Audit Logs: Keep a detailed log of all authenticated requests and responses to Vault
+            Sensitive information is hashed with a salt using HMAC-SHA256 to ensure secrets and tokens are never in plain text
+                        • Log files should be protected as a user with permission can still check the value of those secrets via the /sts/audit-hash API and compare to the log file
+            Can and should have more than one audit device enabled
+            If there are any audit devices enabled, Vault requires that it can write to the log before completing the client request. Prioritizes safety over availability
+            If Vault cannot write to a persistent log, it will stop responding to client requests – which means Vault is down!
 
 
                         
