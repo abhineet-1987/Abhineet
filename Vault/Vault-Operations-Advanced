@@ -127,8 +127,14 @@ Telemetry:
             Can and should have more than one audit device enabled
             If there are any audit devices enabled, Vault requires that it can write to the log before completing the client request. Prioritizes safety over availability
             If Vault cannot write to a persistent log, it will stop responding to client requests – which means Vault is down!
-
-
+            If you need to work with an Audit Device, you need a root token or sudo privileges (plus the capabilities you need for the action) on the specific path
+            # Required Permissions for interacting with the file audit device
+            at the default path of file/
+            path "sys/audit/file" {
+            capabilities = ["read","create","list","update","delete","sudo"]
+            }
+vault logs: journalctl –b -–no-pager –u vault
+docker logs vault0
                         
 
             
