@@ -110,6 +110,12 @@ Promote the cluster:
             vault write sys/replication/dr/secondary/promote /
             dr_operation_token=hvxxxxxxxxxxLAB
 
+Vault Agent:
+To help secure tokens when using Auth-Auth, you can have Vault response wrap the token when the Vault Agent authenticates
+• Response wrapped by the auth method
+• Response wrapped by the token sink
+The placement of the wrap_ttl in the Vault Agent configuration file determines where the response wrapping happens.
+
 
                         
 
