@@ -169,6 +169,8 @@ ACL:
                         ACL Templating: Use variable replacement in some policy strings with values available to the token
                                     Eg: path "secret/data/{{identity.entity.id}}/*" {
                                     capabilities = ["create", "update", "read", "delete"]}
+            Sentinel Policies:
+                        Sentinel is an embeddable policy as code framework
 
             
 
