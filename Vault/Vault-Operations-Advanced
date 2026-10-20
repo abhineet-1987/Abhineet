@@ -171,6 +171,10 @@ ACL:
                                     capabilities = ["create", "update", "read", "delete"]}
             Sentinel Policies:
                         Sentinel is an embeddable policy as code framework
+                        Eg time based access to certain paths for eg 9 to 5.
+                        Types of Sentinel Policies :
+                                    Role Governing Policies (RGPs): Sentinel policies that are tied to tokens, identity entities, or identity groups
+                                    Endpoint Governing Policies (EGPs): Sentinel policies that are tied to paths instead of tokens
 
             
 
