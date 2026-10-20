@@ -175,6 +175,19 @@ ACL:
                         Types of Sentinel Policies :
                                     Role Governing Policies (RGPs): Sentinel policies that are tied to tokens, identity entities, or identity groups
                                     Endpoint Governing Policies (EGPs): Sentinel policies that are tied to paths instead of tokens
+                        Enforcement Levels:-
+                                    Enforcement Levels: Advisory (as a warning only), Soft Mandatory (use the –policy-override flag to overwride) , Hard Mandatory
+                                    Understand Policy evaluation flow: Is request authenticated -> yes -> evaluate acl ploiciies, rgp, egp
+                                                                         Is request authenticated -> no -> evaluate egp
+Implementing Integrated storage: 
+            Use Raft protocol, locally stored data
+            Since Integrated Storage stores all data on a local disk, it is recommended that you use storage optimized, high IOPS volumes wherever you are storing the data
+            Features: replication, autopilot, auto snapshots, cloud auto join
+            performance_multiplier = configure the time it takes Vault to detect leader failures and to perform leader elections
+
+Auth methods:
+            Likely on exam: approle, tokens, userpass
+
 
             
 
