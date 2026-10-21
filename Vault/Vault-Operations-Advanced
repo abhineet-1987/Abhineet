@@ -187,6 +187,17 @@ Implementing Integrated storage:
 
 Auth methods:
             Likely on exam: approle, tokens, userpass
+            The token auth method is enabled by default
+            Enable an Auth Method using a Custom Path: vault auth enable –path=hcvop approle
+            curl \
+            --request POST \
+            --data '{"role_id":"22549d0d-...","secret_id":"b30f2778-..."}' \
+            https://vault.hcvop.com:8200/v1/auth/approle/login | jq
+            Token auth method:
+                        Periodic token: vault token create -policy=hcvop -period=24h (no max ttl here, You can renew a periodic token an infinite number of times)
+                        Create a Use-Limited Token: vault token create -policy="hcvop" -use-limit=2 (after 2 uses it will be automatically revoked)
+                        Create a Orphan Token: vault token create -policy="hcvop" -orphan (n HashiCorp Vault, an orphan token is a token that has no parent token. The main benefit is that it is not automatically revoked when the token that created it expires or is revoked)
+            Update a Password for a User: vault write auth/userpass/users/hcvop-engineer/password password=xxxxxxxx
 
 
             
