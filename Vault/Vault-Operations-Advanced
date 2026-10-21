@@ -179,11 +179,19 @@ ACL:
                                     Enforcement Levels: Advisory (as a warning only), Soft Mandatory (use the –policy-override flag to overwride) , Hard Mandatory
                                     Understand Policy evaluation flow: Is request authenticated -> yes -> evaluate acl ploiciies, rgp, egp
                                                                          Is request authenticated -> no -> evaluate egp
+            Control groups: Control groups add an additional authorization requirement on configured paths
+                        Control Group requirements can be specified in either ACL policies or within a Sentinel policy
+                        Currently, the only supported Control Group factor is an Identity Group
+                        Vault returns a wrapping token – rather than the requested secrets
+                        The authorizers defined in the control group policy must approve the request
+
+
 Implementing Integrated storage: 
             Use Raft protocol, locally stored data
             Since Integrated Storage stores all data on a local disk, it is recommended that you use storage optimized, high IOPS volumes wherever you are storing the data
             Features: replication, autopilot, auto snapshots, cloud auto join
             performance_multiplier = configure the time it takes Vault to detect leader failures and to perform leader elections
+
 
 Auth methods:
             Likely on exam: approle, tokens, userpass
@@ -198,6 +206,23 @@ Auth methods:
                         Create a Use-Limited Token: vault token create -policy="hcvop" -use-limit=2 (after 2 uses it will be automatically revoked)
                         Create a Orphan Token: vault token create -policy="hcvop" -orphan (n HashiCorp Vault, an orphan token is a token that has no parent token. The main benefit is that it is not automatically revoked when the token that created it expires or is revoked)
             Update a Password for a User: vault write auth/userpass/users/hcvop-engineer/password password=xxxxxxxx
+
+Secure Vault Initialization:-
+            initialize -> unseal -> configure
+            unseal keys OR recovery keys (as in auto unseal)
+            Encrypt the Unseal Keys with Provided PGP Keys
+            Protecting the root token: Encrypt the Root Token with Provided PGP Key (-root-token-pgp-key)
+
+Regenerate a root token:
+            root tokens do not have ttl
+            Used for initial configuration – such as auth methods or audit devices
+            Once your new auth method is configured and tested, the root token should be revoked
+            Generating a Root Token:
+                        Step 1 – Initialize the Process: vault operator generate-root -init
+                        Step 2 - vault operator generate-root
+                        Step 3 - vault operator generate-root \
+                        -otp="hM9q24nNxxxxxxxxxxxxFc3" \
+                        -decode="G2NxxxxxxxxxxxAs"
 
 
             
