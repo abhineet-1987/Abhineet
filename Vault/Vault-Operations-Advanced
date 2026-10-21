@@ -223,6 +223,19 @@ Regenerate a root token:
                         Step 3 - vault operator generate-root \
                         -otp="hM9q24nNxxxxxxxxxxxxFc3" \
                         -decode="G2NxxxxxxxxxxxAs"
+Namespaces:
+            Multi-tenant but centralized management
+            The default namespace is ‘root’
+            Tokens are only valid in a single namespace, but you can create an entity who has access to other namespaces
+            Using Namespaces on the CLI:
+                        export VAULT_NAMESPACE=<namespace>
+                        vault kv get –namespace=<namespace> kv/data/sql/prod
+            Referencing Namespaces in the API: 
+                        X-Vault-Namespace
+                        Add the Namespace to the API Endpoint after ...v1/<ns>/...
+            We can Authenticating to a given Namespace via UI
+            Authenticating to a Namespace via CLI: vault login -namespace=cloud-team -method=userpass username=xyz
+            Enabling an Auth Method In a Namespace: vault auth enable -namespace=cloud-team userpass
 
 
             
