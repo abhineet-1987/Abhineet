@@ -237,6 +237,32 @@ Namespaces:
             Authenticating to a Namespace via CLI: vault login -namespace=cloud-team -method=userpass username=xyz
             Enabling an Auth Method In a Namespace: vault auth enable -namespace=cloud-team userpass
 
+Rekey Vault and Rotate Encryption Keys:
+            Rekey: Creates a new set of Vault recovery/unseal keys
+            Provides a nonce value to be given to key holders
+            The Rekey operation is an online operation and can be done anytime
+
+            Key Rotation: Rotates the encryption key that is used to protect data on the storage backend
+                          New keys are added to the keyring - old values can still be decrypted with the old key
+                          the encryption key is never available to users or operators
+                          Permissions Needed for Key Rotation: The sys/rotate endpoint is a root protected API endpoint. This means that you either need a root token or sudo privileges on the sys/rotate path
+                                                                path "sys/rotate" {
+                                                                        capabilities = ["update","sudo"]
+                                                                        }
+                                                            path "sys/key-status" {
+                                                            capabilities = ["read"]
+                                                                        } # Needed to read the status of the key after rotating it, not to rotate it
+
+Cubbyhole secret engine:
+            Cubbyhole Secrets Engine is used to store arbitrary secrets. Enabled by default at the cubbyhole/ path
+            Its lifetime is linked to the token used to write the data. No concept of a time-to-live (TTL) or refresh interval for values in cubbyhole
+            Even the root token cannot read the data if it wasn't written by the root
+            Cubbyhole Secrets Engine cannot be disabled, moved, or enabled multiple times
+            Each service token gets its own cubbyhole. Cubbyhole expires when the token does
+            Writing and Read Data to Cubbyhole via CLI: vault write cubbyhole/training certification=hcvop
+                                                         vault read cubbyhole/training
+            Instead of sending secrets over the network, you can use cubbyhole's response wrapping feature
+            
 
             
 
