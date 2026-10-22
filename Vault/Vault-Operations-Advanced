@@ -262,7 +262,20 @@ Cubbyhole secret engine:
             Writing and Read Data to Cubbyhole via CLI: vault write cubbyhole/training certification=hcvop
                                                          vault read cubbyhole/training
             Instead of sending secrets over the network, you can use cubbyhole's response wrapping feature
+            wrap-ttl=60 sec to send wrapping token: vault kv get -wrap-ttl=5m secrets/certification/hcvop
+            You can get static or dynamic secrets using response wrapping
+            vault unwrap <wrapping-token>
+
+PKI Secrets engine:
+            Can only have one CA certificate per PKI secrets engine. If you need to issue certs from multiple CAs, use multiple PKI secrets engines on different paths
+            PKI secrets engine is use for INTERNAL certificates, not for public use.
+            Most likely, you’re going to use Vault as an Intermediate as your root CA is generally offline (industry best practices)
+            Most organizations already have an existing CA structure in place and Vault can plug right into that, if needed.
+            Using multiple PKI secrets engines, Vault can perform the root and the intermediate(s) CA functionality from the same cluster
+            Revoke a Certificate: vault write pki/revoke serial_number="4d:00:0xxxxxxxxxxxxba:a9:7b"
+            Remove Revoked and Expired Certificates: vault write pki/tidy tidy_cert_store=true tidy_revoked_certs=true (to keep storage backend clean by periodically removing certs)
             
+          
 
             
 
