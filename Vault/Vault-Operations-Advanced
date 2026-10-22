@@ -276,6 +276,40 @@ PKI Secrets engine:
             Remove Revoked and Expired Certificates: vault write pki/tidy tidy_cert_store=true tidy_revoked_certs=true (to keep storage backend clean by periodically removing certs)
             
           
+Auto Unseal Vault:
+            Rather than use shared keys (unseal keys), auto unseal can use a trusted cloud-based key to protect the master key
+            Transit Secrets Engine from another Vault cluster can also be used to unseal.
+            The master key is encrypted with the cloud-based key and stored on the storage backend – stored at path/core/master. It uses the cloud-based key to decrypt the master key during the unseal process
+            This is different from a Vault cluster not using auto unseal and is using Shamir (unseal keys) - where the master key is never written to persistent storage.
+            Vault does support rotation for cloud-based keys
+            Remember that some cloud-based KMS services are regional, so if an entire region goes down, the KMS key will not be available to unseal
+            Service downtime is only a problem if your Vault cluster is restarted or sealed and needs to be unsealed during that time
+            Auto Unseal with Transit: Using another Vault cluster, configure the transit secrets engine and create a key to be used by Vault.
+            HSM integration also enables Seal Wrapping as well to provide FIPS 140-2 compliance
+            Seal migration:
+                        You can migrate from one seal type to another if needed
+                        Unfortunately, it requires downtime for Vault since you must restart the service
+                        Examples of migrations: Shamir keys -> AWS KMS
+                        Shamir clusters don't have a seal configuration because it's the default configuration
+                        Steps :-
+                        Add seal "awskms" {} stanza in vault config file and restart vault (systemctl restart vault.service) -> Run "vault operator unseal -migrate" (provide existing unseal key here)
+                        For 3 node vault cluster: 
+                                    Perform unseal migration on follower node 1
+                                    Perform unseal migration on follower node 2
+                                    Run vault operator step-down on the Leader node
+                                    Perform unseal migration on the last node (previous leader)
 
+                        Examples of migrations: AWS KMS -> Shamir keys
+                                    Update the seal stanza to include disabled = true (This allows Vault to decrypt the key, but it will NOT use it for unseal operations)
+                                    Follow the same process as previously discussed:
+                                                Restart the Vault service
+                                                Run vault operator unseal –migrate
+                                                Provide RECOVERY keys to perform the migration. Recovery keys will be migrated to be used as unseal keys moving forward
+
+                        Auto Unseal to Auto Unseal:-
+                                    Update the original seal stanza to include disabled = true
+                                    Add the NEW stanza to the configuration
+                                    Follow the same process as previously discussed
             
+                                    
 
