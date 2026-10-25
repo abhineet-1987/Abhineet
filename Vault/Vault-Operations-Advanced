@@ -98,7 +98,7 @@ The secondary token includes information such as:
                         3. Activate the Secondary Cluster
                         secondary$ vault write sys/replication/dr/secondary/enable token=<token>
 Promote DR secondary to primary (in case primary gets down):-
-Promotion of a DR cluster requires a DR Operation Token
+Promotion of a DR cluster requires a DR Operation Token (DR operation token will be created on existing secondary DR cluster)
 This is generated directly on the DR cluster using the unseal/recovery keys. Process is similar to generating a root token (requires threshold of keys).
 How to generate DR Operation token?
 Initialize The Process: vault operator generate-root -dr-token –init   (you get otp from this command)
