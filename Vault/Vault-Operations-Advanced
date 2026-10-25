@@ -274,6 +274,8 @@ PKI Secrets engine:
             Using multiple PKI secrets engines, Vault can perform the root and the intermediate(s) CA functionality from the same cluster
             Revoke a Certificate: vault write pki/revoke serial_number="4d:00:0xxxxxxxxxxxxba:a9:7b"
             Remove Revoked and Expired Certificates: vault write pki/tidy tidy_cert_store=true tidy_revoked_certs=true (to keep storage backend clean by periodically removing certs)
+            Some important endpoints to go through:-
+                        pki/config/issuers
             
           
 Auto Unseal Vault:
