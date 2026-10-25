@@ -111,6 +111,9 @@ Promote the cluster:
             vault write sys/replication/dr/secondary/promote /
             dr_operation_token=hvxxxxxxxxxxLAB
 
+VERY IMPORTANT NOTE: While enabling performance or DR replication, everything existing on the secondary gets wiped off and you wont be able to login to it using its original root token. 
+                     However using root token of primary you would be able to login to the DR cluster in case of DR replication but not in case of performance replication bcos performance replication does nort replicates tokens to performance secondaries. So you have to create say for eg some auth method eg userpass auth method on primary and then use its creds to login to secondary in case of performance replication.
+
 Vault Agent:
 To help secure tokens when using Auth-Auth, you can have Vault response wrap the token when the Vault Agent authenticates
 • Response wrapped by the auth method
