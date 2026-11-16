@@ -1,3 +1,40 @@
+Method of restarting IBM Spectrum LSF daemons (lim, res, and sbatchd):-
+         Method 1: Remote Control via Management Host (lsadmin & badmin)
+                  Restart lim and res:
+                           lsadmin limrestart <hostname>       (Use all instead of <hostname> to restart across the entire cluster.)
+                           lsadmin resrestart <hostname>       (Use all instead of <hostname> to restart across the entire cluster.)
+                  Restart sbatchd:
+                           badmin hrestart <hostname>  (Use all instead of <hostname> to restart sbatchd across all batch host)
+                  Verification:
+                           lsload
+                           bhosts
+                           lshosts
+         Method 2: Unified Local or Remote Daemon Control (bctrld) [bctrld is LSF's unified daemon control utility (typically used when LSF_ROOT_USER=N or when managing daemons via lsf_daemons / systemd).]
+                  bctrld restart lim <hostname>
+                  bctrld restart res <hostname>
+                  bctrld restart sbd <hostname>
+                  Note: (Omit <hostname> if executing directly on the target node).
+                  Verification:
+                           Check running processes locally via ps -ef | grep -E "lim|res|sbatchd" | grep -v grep
+         Method 3: OS Service Management (lsf_daemons / systemd)
+                  3.1 Using systemd (RHEL 7/8/9, SLES 12/15, Ubuntu):
+                           sudo systemctl restart lsfd
+                  3.2 Using the native LSF init wrapper script: (Note: (This cleanly stops and restarts lim, res, and sbatchd together on the local machine))
+                           sudo $LSF_SERVERDIR/lsf_daemons restart
+                  Verification: Run sudo systemctl status lsfd or sudo $LSF_SERVERDIR/lsf_daemons status to verify all three processes show as active.
+         Method 4: Manual Kill and Cold Start (Recovery for Hung Daemons)
+                  If a daemon is completely frozen (defunct or unresponsive to bctrld / lsadmin), manually terminate the process on the target host and start it fresh.
+                  Locate the PIDs on the target host: ps -ef | grep -E "lim|res|sbatchd"
+                  Terminate the hung process (start with SIGTERM, escalate to SIGKILL -9 only if needed):
+                           sudo kill -15 <pid>    (for graceful shutdown)
+                           sudo kill -9 <pid>    (for forceful shutdown)
+                  Start the daemons cleanly in order (lim → res → sbatchd):
+                           bctrld start lim, bctrld start res, bctrld start sbd
+                           
+
+
+Note: If you need to temporarily run LSF commands with root privileges, specify LSF_ROOT_USER=Y in the lsf.conf file.
+
 To restart mbatchd:-
 badmin mbdrestart
 
